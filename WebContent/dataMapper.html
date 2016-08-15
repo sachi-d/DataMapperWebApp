@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Data Mapper Tool</title>
+    <link rel=stylesheet href="assets/lib/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/application/style.css">
+    <script src="assets/lib/jQuery/jquery-3.1.0.js"></script>
+</head>
+
+<body>
+
+    <div class="col-md-12" id="page-body">
+        <div class="col-md-12" id="canvas">
+            <div class="col-md-6 canvas-container">
+                <button id="load-input-btn">Load input</button>
+
+                <div class="load-file" id="load-input">
+                    <input type="file" id="input-file-select" name="input-select[]" />
+                    <div class="file-drag" id="input-file-drag">or drop files here</div>
+                </div>
+                <div class="scroll-box" id="input-structure">
+
+                </div>
+
+                <div class="result" id="input-file-content">
+                    File information:-
+                </div>
+            </div>
+
+            <div class="col-md-6 canvas-container">
+                <button id="load-output-btn">Load output</button>
+
+                <div class="load-file" id="load-output">
+                    <input type="file" id="output-file-select" name="output-select[]" />
+                    <div class="file-drag" id="output-file-drag">or drop files here</div>
+                </div>
+                <div class="scroll-box" id="output-structure">
+
+                </div>
+
+                <div class="result" id="output-file-content">
+                    File information:-
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <script src="assets/application/fileHandler.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".load-file").hide();
+            $("#load-output-btn").click(function () {
+                $("#load-output").slideToggle();
+            });
+            $("#load-input-btn").click(function () {
+                $("#load-input").slideToggle();
+            });
+        });
+    </script>
+</body>
+
+</html>

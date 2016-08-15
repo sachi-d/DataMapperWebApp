@@ -1,0 +1,58 @@
+#page-body {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+}
+
+#page-body #canvas {
+    width: 60%;
+    margin: 50px auto;
+    padding: 10px;
+    border: 2px dashed black;
+}
+
+#canvas .canvas-container {
+    text-align: center;
+    margin: 0 auto;
+}
+
+#canvas .canvas-container .scroll-box {
+    height: 300px;
+    width: 40%;
+    border: 1px solid #ccc;
+    font: 16px/26px Georgia, Garamond, Serif;
+    overflow: auto;
+    text-align: left;
+    margin: 10px auto;
+}
+
+#canvas .canvas-container .result {
+    padding: 10px;
+    text-align: left;
+}
+
+#canvas .canvas-container .load-file {
+    /*    display: none;*/
+}
+
+#canvas .canvas-container .load-file .file-drag {
+    height: 75px;
+    font-weight: bold;
+    text-align: center;
+    /*
+    padding: 1em 0;
+    margin: 1em 0;
+*/
+    color: #555;
+    border: 2px dashed #555;
+    border-radius: 7px;
+    cursor: default;
+}
+
+#canvas .canvas-container .load-file .file-drag.hover {
+    height: 75px;
+    color: #f00;
+    border-color: #f00;
+    border-style: solid;
+    box-shadow: inset 0 3px 4px #888;
+}
