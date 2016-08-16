@@ -11,7 +11,7 @@
     function fileDragHover(e) {
         e.stopPropagation();
         e.preventDefault();
-        e.target.className = (e.type == "dragover" ? "hover" : "");
+        e.target.className = (e.type == "dragover" ? "file-drag-hover" : "file-drag");
     }
 
 
@@ -20,16 +20,6 @@
     function parseFile(file, resultpane) {
         var res = "<p>File name: <strong>" + file.name + "</strong><br> type: <strong>" + file.type + "</strong><br> size: <strong>" + file.size + "</strong> bytes</p>";
         appendToResult(res, resultpane);
-
-        // display an image
-        if (file.type.indexOf("image") == 0) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                var resimg = "<p><strong>" + file.name + ":</strong><br />" + '<img src="' + e.target.result + '" /></p>';
-                appendToResult(resimg, resultpane);
-            }
-            reader.readAsDataURL(file);
-        }
 
         // display text
         if (file.type.indexOf("text") == 0) {
@@ -40,6 +30,10 @@
             }
             reader.readAsText(file);
         }
+
+        // hide load-file div
+        var elementname = "#load-" + resultpane.split("-")[0];
+        $(elementname).slideUp();
 
     }
 

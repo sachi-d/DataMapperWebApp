@@ -8,7 +8,7 @@
     width: 60%;
     margin: 50px auto;
     padding: 10px;
-    border: 2px dashed black;
+    border: 2px solid black;
 }
 
 #canvas .canvas-container {
@@ -26,30 +26,30 @@
     margin: 10px auto;
 }
 
-#canvas .canvas-container .result {
+.file-content {
     padding: 10px;
     text-align: left;
 }
 
 #canvas .canvas-container .load-file {
-    /*    display: none;*/
+    display: none;
 }
 
-#canvas .canvas-container .load-file .file-drag {
+.file-drag {
     height: 75px;
     font-weight: bold;
     text-align: center;
     /*
     padding: 1em 0;
     margin: 1em 0;
-*/
+    */
     color: #555;
     border: 2px dashed #555;
     border-radius: 7px;
     cursor: default;
 }
 
-#canvas .canvas-container .load-file .file-drag.hover {
+.file-drag-hover {
     height: 75px;
     color: #f00;
     border-color: #f00;
