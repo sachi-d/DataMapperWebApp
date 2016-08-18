@@ -25,8 +25,8 @@
                 </div>
                 <div class="scroll-box" id="input-structure">
                     <div class="scroll-box-title" id="input-structure-title">Input</div>
-                    <div class="in-leaf">in-elem1</div>
-                    <div class="in-leaf">in-elem2</div>
+                    <div class="leaf in-leaf">in-elem1</div>
+                    <div class="leaf in-leaf">in-elem2</div>
                 </div>
 
                 <div class="file-content" id="input-file-content">
@@ -43,8 +43,8 @@
                 </div>
                 <div class="scroll-box" id="output-structure">
                     <div class="scroll-box-title" id="output-structure-title">Output</div>
-                    <div class="in-leaf">out-elem1</div>
-                    <div class="in-leaf">out-elem2</div>
+                    <div class="leaf out-leaf">out-elem1</div>
+                    <div class="leaf out-leaf">out-elem2</div>
                 </div>
 
                 <div class="file-content" id="output-file-content">
@@ -59,6 +59,8 @@
     <script src="assets/application/fileHandler.js"></script>
     <script>
         $(document).ready(function () {
+
+            //display or hide the load file options
             $("#load-output-btn").click(function () {
                 $("#load-output").slideToggle();
             });
@@ -66,8 +68,10 @@
                 $("#load-input").slideToggle();
             });
 
+
+            //set the inpu/output file structures draggable
             $(".scroll-box").draggable({
-                containment: $(".scroll-box").parent().parent()
+                //                containment: $(".scroll-box").parent().parent()
             });
         });
     </script>

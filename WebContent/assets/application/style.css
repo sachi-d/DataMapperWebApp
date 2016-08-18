@@ -4,7 +4,7 @@
     padding: 0;
 }
 
-#page-body #canvas {
+#canvas {
     border: 2px solid black;
     margin: 50px auto;
     padding: 10px;
@@ -12,12 +12,12 @@
     float: none;
 }
 
-#canvas .canvas-container {
+.canvas-container {
     text-align: center;
     margin: 0 auto;
 }
 
-#canvas .canvas-container .scroll-box {
+.scroll-box {
     height: 300px;
     width: 40%;
     border: 2px solid black;
@@ -35,20 +35,36 @@
     border-bottom: 2px solid black;
 }
 
-#page-body #canvas #input-structure #input-structure-title {
-    background-color: #902040;
+#input-structure-title {
+    background-color: #E1455A;
 }
 
-#page-body #canvas #output-structure #output-structure-title {
-    background-color: #7270a8;
+#output-structure-title {
+    background-color: #D8DD38;
 }
 
-.file-content {
-    padding: 10px;
-    text-align: left;
+.leaf {
+    position: relative;
+    top: 1px;
+    /*        display: inline-block;*/
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
 }
 
-#canvas .canvas-container .load-file {
+.in-leaf:after {
+    content: "\e072";
+    position: absolute;
+    right: 0;
+}
+
+.out-leaf:before {
+    content: "\e072";
+    left: 0;
+}
+
+.load-file {
     display: none;
 }
 
@@ -68,4 +84,9 @@
     border-color: #f00;
     border-style: solid;
     box-shadow: inset 0 3px 4px #888;
+}
+
+.file-content {
+    padding: 10px;
+    text-align: left;
 }
