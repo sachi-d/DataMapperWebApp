@@ -5,10 +5,11 @@
 }
 
 #page-body #canvas {
-    width: 60%;
+    border: 2px solid black;
     margin: 50px auto;
     padding: 10px;
-    border: 2px solid black;
+    width: 80%;
+    float: none;
 }
 
 #canvas .canvas-container {
@@ -19,11 +20,27 @@
 #canvas .canvas-container .scroll-box {
     height: 300px;
     width: 40%;
-    border: 1px solid #ccc;
+    border: 2px solid black;
+    /*    border-radius: 4px;*/
     font: 16px/26px Georgia, Garamond, Serif;
     overflow: auto;
     text-align: left;
     margin: 10px auto;
+    position: relative;
+}
+
+.scroll-box-title {
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 2px solid black;
+}
+
+#page-body #canvas #input-structure #input-structure-title {
+    background-color: #902040;
+}
+
+#page-body #canvas #output-structure #output-structure-title {
+    background-color: #7270a8;
 }
 
 .file-content {
@@ -39,10 +56,6 @@
     height: 75px;
     font-weight: bold;
     text-align: center;
-    /*
-    padding: 1em 0;
-    margin: 1em 0;
-    */
     color: #555;
     border: 2px dashed #555;
     border-radius: 7px;

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>plumb trial</title>
+    <script src="assets/lib/jQuery/jquery-3.1.0.js"></script>
+    <script src="assets/lib/jquery-ui-1.12.0.custom/jquery-ui.js"></script>
+    <script src="assets/lib/jsPlumb/jsPlumb-2.1.5.js"></script>
+    <link rel="stylesheet" href="assets/application/plumbstyle.css">
+</head>
+
+<body>
+    <div id="state1" class="item"></div>
+    <div id="state2" class="item"></div>
+    <div id="state3" class="item"></div>
+
+    <script>
+        jsPlumb.ready(function () {
+            jsPlumb.makeSource($('.item'), {
+                connector: 'StateMachine'
+            });
+            jsPlumb.makeTarget($('.item'), {
+                anchor: 'Continuous'
+            });
+            jsPlumb.draggable("state1");
+        });
+    </script>
+
+</body>
+
+</html>
