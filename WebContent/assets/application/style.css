@@ -12,10 +12,16 @@
     float: none;
 }
 
+
+/*two canvas containers for each input and output*/
+
 .canvas-container {
     text-align: center;
     margin: 0 auto;
 }
+
+
+/*where the file structure will be loaded*/
 
 .scroll-box {
     height: 300px;
@@ -43,25 +49,25 @@
     background-color: #D8DD38;
 }
 
-.leaf {
-    position: relative;
-    top: 1px;
-    /*        display: inline-block;*/
-    font-family: 'Glyphicons Halflings';
-    font-style: normal;
-    font-weight: normal;
-    line-height: 1;
+
+/*set leaf node css*/
+
+.leaf-holder {
+    border: 1px solid #000;
+    margin: 0 auto;
+    width: 200px;
 }
 
-.in-leaf:after {
-    content: "\e072";
+.leaf.glyphicon {
+    display: block;
+    line-height: 20px;
+    top: auto;
+}
+
+.in-leaf.glyphicon:before {
     position: absolute;
     right: 0;
-}
-
-.out-leaf:before {
-    content: "\e072";
-    left: 0;
+    top: 0;
 }
 
 .load-file {
