@@ -7,34 +7,115 @@
     <script src="assets/lib/jQuery/jquery-3.1.0.js"></script>
     <script src="assets/lib/jquery-ui-1.12.0.custom/jquery-ui.js"></script>
     <script src="assets/lib/jsPlumb/jsPlumb-2.1.5.js"></script>
+    <script src="assets/lib/xmlDisplay/XMLDisplay.js"></script>
+
+
     <link rel="stylesheet" href="assets/application/plumbstyle.css">
+    <link rel="stylesheet" href="assets/lib/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="assets/application/style.css">
+    <link rel="stylesheet" href="assets/lib/xmlDisplay/XMLDisplay.css">
+    <link rel="stylesheet" href="assets/lib/jquery-ui-1.12.0.custom/jquery-ui.css">
+    <style>
+        .window {
+            background-color: white;
+            border: 3px solid #346789;
+            color: black;
+            font-family: helvetica;
+            font-size: 0.8em;
+            height: 12em;
+            opacity: 0.8;
+            padding: 0.5em;
+            position: absolute;
+            width: 14em;
+            z-index: 20;
+            text-align: center;
+        }
+        
+        .dragActive {
+            border: 3px solid #346789;
+        }
+    </style>
 </head>
 
 <body>
+    <!--
     <div id="state1" class="item"></div>
-    <div id="state2" class="item"></div>
-    <div id="state3" class="item"></div>
-
-    <div class="scroll-box ui-widget-content">
-        <div class="scroll-box-title" id="input-structure-title">Input</div>
-        <div id="input-structure"></div>
-
-        <!--
-                    <div class="leaf in-leaf glyphicon glyphicon-play">in-elem1</div>
-                    <div class="leaf in-leaf glyphicon glyphicon-play">in-elem2</div>
+<div id="state2" class="item"></div>
+<div id="state3" class="item"></div>
 -->
-    </div>
 
+    <!--
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="scroll-box ui-widget-content">
+                <div class="scroll-box-title" id="input-structure-title">Input</div>
+                <div id="input-structure"></div>
+
+                <div class="leaf in-leaf glyphicon glyphicon-play" id="ss">
+                    in-elem1</div>
+                <div class="leaf in-leaf glyphicon glyphicon-play">in-elem2</div>
+            </div>
+
+        </div>
+        <div class="col-md-6">
+            <div class="scroll-box ui-widget-content">
+                <div class="scroll-box-title" id="output-structure-title">Output</div>
+                <div id="output-structure"></div>
+
+                <div class="leaf out-leaf glyphicon glyphicon-play" id="rr">out-elem1</div>
+                <div class="leaf out-leaf glyphicon glyphicon-play">out-elem2</div>
+            </div>
+        </div>
+    </div>
+-->
+
+
+    <div id="a" class="a window" style="width: 100px;height: 100px;border: solid 1px;top:30px;left:10px">VL0071P1</div>
+    <div id="b" class="b window" style="width: 100px;height: 100px;border: solid 1px;top:60px;left:250px;"></div>
     <script>
         jsPlumb.ready(function () {
-            jsPlumb.makeSource($('.item'), {
-                connector: 'StateMachine'
+            var a = $("#a");
+            var b = $("#b");
+
+            var stateMachineConnector = {
+                connector: "Straight",
+                paintStyle: {
+                    lineWidth: 1,
+                    strokeStyle: "#056"
+                },
+                hoverPaintStyle: {
+                    strokeStyle: "#dbe300"
+                },
+                endpoint: "Blank",
+                anchor: "Continuous",
+                overlays: [["PlainArrow", {
+                    location: 1,
+                    width: 15,
+                    length: 12
+                }]]
+            };
+
+            jsPlumb.connect({
+                source: "a",
+                target: "b"
+            }, stateMachineConnector);
+
+            //            jsPlumb.connect({ // source: "b", // target: "a" // }, stateMachineConnector);
+
+            jsPlumb.draggable($(".window"));
+            jsPlumb.animate($("#b"), {
+                "left": 50,
+                "top": 300
+            }, {
+                duration: "slow"
             });
-            jsPlumb.makeTarget($('.item'), {
-                anchor: 'Continuous'
+            jsPlumb.animate($("#a"), {
+                "left": 250,
+                "top": 100
+            }, {
+                duration: "slow"
             });
-            jsPlumb.draggable("state1");
+
         });
     </script>
 

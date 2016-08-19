@@ -22,3 +22,19 @@
     left: 100px;
     top: 250px;
 }
+
+.chevron-toolbox {
+    position: absolute;
+    widows: 72px;
+    height: 80px;
+    background-color: aqua;
+}
+
+#dropArea {
+    cursor: pointer;
+    border: 1px solid red;
+    height: 400px;
+    width: 800px;
+    position: relative;
+    overflow: scroll;
+}
