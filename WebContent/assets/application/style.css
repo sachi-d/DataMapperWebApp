@@ -18,6 +18,7 @@
 .canvas-container {
     text-align: center;
     margin: 0 auto;
+    height: 800px;
 }
 
 
@@ -26,13 +27,11 @@
 .scroll-box {
     height: 300px;
     width: 40%;
-    border: 2px solid black;
-    /*    border-radius: 4px;*/
     font: 16px/26px Georgia, Garamond, Serif;
-    overflow: auto;
     text-align: left;
     margin: 10px auto;
     position: relative;
+    background-color: white;
 }
 
 .scroll-box-title {
@@ -52,13 +51,8 @@
 
 /*set leaf node css*/
 
-.leaf-holder {
-    border: 1px solid #000;
-    margin: 0 auto;
-    width: 200px;
-}
-
-.leaf.glyphicon {
+.leaf {
+    margin-left: 20px;
     display: block;
     line-height: 20px;
     top: auto;
@@ -69,6 +63,13 @@
     right: 0;
     top: 0;
 }
+
+.out-leaf.glyphicon {
+    margin-left: 0;
+}
+
+
+/* file load options */
 
 .load-file {
     display: none;

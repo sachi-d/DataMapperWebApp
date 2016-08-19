@@ -7,31 +7,36 @@
     <script src="assets/lib/jQuery/jquery-3.1.0.js"></script>
     <script src="assets/lib/jquery-ui-1.12.0.custom/jquery-ui.js"></script>
     <script src="assets/lib/jsPlumb/jsPlumb-2.1.5.js"></script>
+    <script src="assets/lib/xmlDisplay/XMLDisplay.js"></script>
+
+
     <link rel="stylesheet" href="assets/lib/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="assets/application/style.css">
+    <link rel="stylesheet" href="assets/lib/xmlDisplay/XMLDisplay.css">
+    <link rel="stylesheet" href="assets/lib/jquery-ui-1.12.0.custom/jquery-ui.css">
 
 </head>
 
 <body>
-
+    <div id="XMLHolder"></div>
     <div class="col-md-12" id="page-body">
         <div class="container" id="canvas">
             <div class="col-md-6 canvas-container">
                 <button id="load-input-btn">Load input</button>
 
                 <div class="load-file" id="load-input">
-                    <input type="file" id="input-file-select" name="input-select[]" />
+                    <input type="file" id="input-file-select" name="input-select[]" accept=".xml" />
                     <div class="file-drag" id="input-file-drag">or drop files here</div>
                 </div>
-                <div class="scroll-box" id="input-structure">
-                    <div class="scroll-box-title" id="input-structure-title">Input</div>
-                    <div class="leaf">elem1</div>
-                    <div class="leaf in-leaf">in-elem1</div>
-                    <div class="leaf in-leaf">in-elem2</div>
-                </div>
 
-                <div class="file-content" id="input-file-content">
-                    File information:-
+                <div class="scroll-box ui-widget-content">
+                    <div class="scroll-box-title" id="input-structure-title">Input</div>
+                    <div id="input-structure"></div>
+
+                    <!--
+                    <div class="leaf in-leaf glyphicon glyphicon-play">in-elem1</div>
+                    <div class="leaf in-leaf glyphicon glyphicon-play">in-elem2</div>
+-->
                 </div>
             </div>
 
@@ -39,17 +44,30 @@
                 <button id="load-output-btn">Load output</button>
 
                 <div class="load-file" id="load-output">
-                    <input type="file" id="output-file-select" name="output-select[]" />
+                    <input type="file" id="output-file-select" name="output-select[]" accept=".xml" />
                     <div class="file-drag" id="output-file-drag">or drop files here</div>
                 </div>
-                <div class="scroll-box" id="output-structure">
+                <div class="scroll-box ui-widget-content">
                     <div class="scroll-box-title" id="output-structure-title">Output</div>
-                    <div class="leaf out-leaf">out-elem1</div>
-                    <div class="leaf out-leaf">out-elem2</div>
-                </div>
+                    <div id="output-structure"></div>
 
+                    <!--
+                    <div class="leaf out-leaf glyphicon glyphicon-play">out-elem1</div>
+<div class="leaf out-leaf glyphicon glyphicon-play">out-elem2</div>
+-->
+                </div>
+            </div>
+
+        </div>
+        <div class="container">
+            <div class="col-md-6 ">
+                <div class="file-content" id="input-file-content">
+                    Input File information:-
+                </div>
+            </div>
+            <div class="col-md-6 ">
                 <div class="file-content" id="output-file-content">
-                    File information:-
+                    Output File information:-
                 </div>
             </div>
 
@@ -74,6 +92,7 @@
             $(".scroll-box").draggable({
                 //                containment: $(".scroll-box").parent().parent()
             });
+            $(".scroll-box").resizable();
         });
     </script>
 </body>
