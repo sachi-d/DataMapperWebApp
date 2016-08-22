@@ -7,19 +7,32 @@
     <script src="assets/lib/jQuery/jquery-3.1.0.js"></script>
     <script src="assets/lib/jquery-ui-1.12.0.custom/jquery-ui.js"></script>
     <script src="assets/lib/jsPlumb/jsPlumb-2.1.5.js"></script>
-    <script src="assets/lib/xmlDisplay/XMLDisplay.js"></script>
+    <!--    <script src="assets/lib/xmlDisplay/XMLDisplay.js"></script>-->
 
 
     <link rel="stylesheet" href="assets/lib/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="assets/application/style.css">
-    <link rel="stylesheet" href="assets/lib/xmlDisplay/XMLDisplay.css">
+    <!--    <link rel="stylesheet" href="assets/lib/xmlDisplay/XMLDisplay.css">-->
     <link rel="stylesheet" href="assets/lib/jquery-ui-1.12.0.custom/jquery-ui.css">
 
+    <style>
+        .dr {
+            position: relative;
+        }
+    </style>
 </head>
 
 <body>
-    <div id="XMLHolder"></div>
+    <!--
+    <div class="col-md-12">
+<div style="border:1px solid red; width:60px; height:60px;" id="tem" class="in-leaf dr">in1</div>
+<div style="border:1px solid red; width:60px; height:60px; margin-left:400px;" id="temp" class="out-leaf dr">out1</div>
+</div>
+-->
+
+
     <div class="col-md-12" id="page-body">
+
         <div class="container" id="canvas">
             <div class="col-md-6 canvas-container">
                 <button id="load-input-btn">Load input</button>
@@ -33,10 +46,14 @@
                     <div class="scroll-box-title" id="input-structure-title">Input</div>
                     <div id="input-structure"></div>
 
+
+
                     <!--
-                    <div class="leaf in-leaf glyphicon glyphicon-play">in-elem1</div>
-                    <div class="leaf in-leaf glyphicon glyphicon-play">in-elem2</div>
+                    <div class="leaf in-leaf ">in-elem1</div>
+                    <div class="leaf in-leaf " id="eg1">in-elem2</div>
 -->
+
+
                 </div>
             </div>
 
@@ -51,10 +68,14 @@
                     <div class="scroll-box-title" id="output-structure-title">Output</div>
                     <div id="output-structure"></div>
 
+
+
                     <!--
-                    <div class="leaf out-leaf glyphicon glyphicon-play">out-elem1</div>
-<div class="leaf out-leaf glyphicon glyphicon-play">out-elem2</div>
+                    <div class="leaf out-leaf ">out-elem1</div>
+                    <div class="leaf out-leaf " id="eg2">out-elem2</div>
 -->
+
+
                 </div>
             </div>
 
@@ -74,25 +95,42 @@
         </div>
     </div>
 
-
+    <script src="assets/application/elementSketcher.js"></script>
     <script src="assets/application/fileHandler.js"></script>
+
     <script>
         $(document).ready(function () {
-
             //display or hide the load file options
             $("#load-output-btn").click(function () {
                 $("#load-output").slideToggle();
             });
+
             $("#load-input-btn").click(function () {
                 $("#load-input").slideToggle();
             });
 
 
-            //set the inpu/output file structures draggable and resizable
+
+
+
+        });
+        jsPlumb.ready(function () {
             $(".scroll-box").draggable({
-                //                containment: $(".scroll-box").parent().parent()
+                //listen for element dragged event
+                drag: function () {
+                    jsPlumb.repaintEverything();
+                }
             });
-            $(".scroll-box").resizable();
+            //            $('.dr').draggable({ // //listen for element dragged event // drag: function () { // jsPlumb.repaintEverything(); // } // });
+            //            drawEndPoints(in-l, "Right"); // drawEndPoints(temp, "Left");
+
+            // call initialization file
+            if (window.File && window.FileList && window.FileReader) {
+                init("input-file-select", "input-file-drag", "input-structure");
+                init("output-file-select", "output-file-drag", "output-structure");
+
+            }
+
         });
     </script>
 </body>

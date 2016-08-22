@@ -4,17 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <title>plumb trial</title>
+    <!--
     <script src="assets/lib/jQuery/jquery-3.1.0.js"></script>
     <script src="assets/lib/jquery-ui-1.12.0.custom/jquery-ui.js"></script>
     <script src="assets/lib/jsPlumb/jsPlumb-2.1.5.js"></script>
-    <script src="assets/lib/xmlDisplay/XMLDisplay.js"></script>
+-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsPlumb/2.0.7/jsPlumb.min.js"></script>
 
 
-    <link rel="stylesheet" href="assets/application/plumbstyle.css">
-    <link rel="stylesheet" href="assets/lib/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="assets/application/style.css">
-    <link rel="stylesheet" href="assets/lib/xmlDisplay/XMLDisplay.css">
-    <link rel="stylesheet" href="assets/lib/jquery-ui-1.12.0.custom/jquery-ui.css">
+    <!--    <link rel="stylesheet" href="assets/application/plumbstyle.css">-->
+    <!--    <link rel="stylesheet" href="assets/lib/bootstrap/css/bootstrap.css">-->
+
+    <!--    <link rel="stylesheet" href="assets/lib/jquery-ui-1.12.0.custom/jquery-ui.css">-->
     <style>
         .window {
             background-color: white;
@@ -33,6 +36,13 @@
         
         .dragActive {
             border: 3px solid #346789;
+        }
+        
+        .dd {
+            border: 1px solid red;
+            /*            position: absolute;*/
+            height: 60px;
+            width: 60px;
         }
     </style>
 </head>
@@ -72,49 +82,58 @@
 
     <div id="a" class="a window" style="width: 100px;height: 100px;border: solid 1px;top:30px;left:10px">VL0071P1</div>
     <div id="b" class="b window" style="width: 100px;height: 100px;border: solid 1px;top:60px;left:250px;"></div>
+    <div class="container">
+        <div id="window3" class="dd" style="margin-left:50px;margin-top:100px"></div>
+        <div id="window4" class="dd" style="margin-left:400px;margin-top:100px"></div>
+    </div>
     <script>
         jsPlumb.ready(function () {
-            var a = $("#a");
-            var b = $("#b");
+            //           
 
-            var stateMachineConnector = {
+
+
+            $('.dd').draggable({
+                //listen for element dragged event
+                drag: function () {
+                    jsPlumb.repaintEverything();
+                }
+            });
+
+
+
+            var endpointOptions = {
+                isSource: true,
+                isTarget: true,
+                endpoint: ["Dot", {
+                    radius: 10
+                }],
+                style: {
+                    fillStyle: 'blue'
+
+                },
+                maxConnections: -1,
                 connector: "Straight",
-                paintStyle: {
-                    lineWidth: 1,
-                    strokeStyle: "#056"
+                connectorStyle: {
+                    lineWidth: 3,
+                    strokeStyle: 'black'
+
                 },
-                hoverPaintStyle: {
-                    strokeStyle: "#dbe300"
-                },
-                endpoint: "Blank",
-                anchor: "Continuous",
-                overlays: [["PlainArrow", {
-                    location: 1,
-                    width: 15,
-                    length: 12
-                }]]
+                scope: "blackline",
+                dropOptions: {
+                    drop: function (e, ui) {
+                        alert('drop!');
+                    }
+                }
             };
+            var window3Endpoint = jsPlumb.addEndpoint('window3', {
+                anchor: "Right"
+            }, endpointOptions);
+            var window4Endpoint = jsPlumb.addEndpoint('window4', {
+                anchor: "Left"
+            }, endpointOptions);
 
-            jsPlumb.connect({
-                source: "a",
-                target: "b"
-            }, stateMachineConnector);
 
-            //            jsPlumb.connect({ // source: "b", // target: "a" // }, stateMachineConnector);
 
-            jsPlumb.draggable($(".window"));
-            jsPlumb.animate($("#b"), {
-                "left": 50,
-                "top": 300
-            }, {
-                duration: "slow"
-            });
-            jsPlumb.animate($("#a"), {
-                "left": 250,
-                "top": 100
-            }, {
-                duration: "slow"
-            });
 
         });
     </script>

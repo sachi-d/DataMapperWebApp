@@ -32,6 +32,7 @@
     margin: 10px auto;
     position: relative;
     background-color: white;
+    overflow: auto;
 }
 
 .scroll-box-title {
@@ -51,13 +52,26 @@
 
 /*set leaf node css*/
 
-.leaf {
-    margin-left: 20px;
+.node {
     display: block;
     line-height: 20px;
     top: auto;
+    position: relative;
+    margin-left: 10px;
 }
 
+.leaf {
+    width: 80%;
+    margin-left: 10px;
+    border: 1px dotted red;
+}
+
+.leaf-endpoint {
+    z-index: 1;
+}
+
+
+/*
 .in-leaf.glyphicon:before {
     position: absolute;
     right: 0;
@@ -65,8 +79,9 @@
 }
 
 .out-leaf.glyphicon {
-    margin-left: 0;
+    position: relative;
 }
+*/
 
 
 /* file load options */
