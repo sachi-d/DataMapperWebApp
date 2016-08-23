@@ -4,9 +4,9 @@ function drawEndPoints(classname, endpointposition) {
         isSource: true,
         isTarget: true,
         endpoint: ["Image", {
-            src: "assets/application/images/arrow-head.png",
-            cssClass: "leaf-endpoint"
+            src: "assets/application/images/arrow-head.png"
                 }],
+//        endpoint: ["Dot",{radius:10}],
         style: {
             fillStyle: 'blue'
 
@@ -36,5 +36,5 @@ function drawEndPoints(classname, endpointposition) {
     jsPlumb.addEndpoint($("." + classname), {
         anchor: endpointposition
     }, endpointOptions);
-    jsPlumb.repaintEverything();
+    //jsPlumb.repaintEverything();
 }

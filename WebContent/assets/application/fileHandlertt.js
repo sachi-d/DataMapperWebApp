@@ -1,14 +1,20 @@
 function setDivElement(nodeName) {
-    return "<div class = \"nde\">" + nodeName + "</div>";
+    return "<div class=\"node\">" + nodeName + "</div>";
 }
 
 function setInLeaf(nodeName) {
-    return "<div class=\"nde leaf\"> <div class=\"in-leaf \" > " + nodeName + "</div></div>";
+    return "<div class=\"node leaf\"> <div class=\"in-leaf \" > --" + nodeName + "</div></div>";
 }
 
 function setOutLeaf(nodeName) {
-    return "<div class=\"nde leaf\"> <div class=\"out-leaf \" > " + nodeName + "</div></div>";
+    return "<div class=\"node leaf\"> <div class=\"out-leaf \" > --" + nodeName + "</div></div>";
 }
+
+
+
+
+
+
 
 //traverse XML tree
 function traverseTree(rootNode, resultBox) {
@@ -17,8 +23,8 @@ function traverseTree(rootNode, resultBox) {
     }
     var children = rootNode.childNodes;
     var nodeName = "";
-    if (children.length == 1) {
-        if (resultBox.split("-")[0] == "input") {
+    if (children.length === 1) {
+        if (resultBox.split("-")[0] === "input") {
             nodeName = setInLeaf(rootNode.nodeName);
 
             //            drawEndPoints("in-leaf", "Right");
@@ -37,14 +43,17 @@ function traverseTree(rootNode, resultBox) {
 
     for (var i = 0; i < children.length; i++) {
         var child = children[i];
-        $("#" + resultBox).append("<div class=\"nodee\">--s--" + i);
         traverseTree(child, resultBox);
-        $("#" + resultBox).append(i + "closed</div>");
-        //        if(child.nodeType == Node.ELEMENT_NODE && child.childNodes.length != 1) {
-        //            break;
-        //        }
+//        if (child.nodeType === Node.ELEMENT_NODE && child.childNodes.length !== 1) {
+//            break;
+//        }
     }
 }
+
+
+
+
+
 
 //parse XML tree
 function parseXMLTree(inputText, resultBox) {
@@ -61,6 +70,13 @@ function parseXMLTree(inputText, resultBox) {
 }
 
 
+
+
+
+
+
+
+
 // get file information
 function parseFile(file, resultpane) {
     var fileContentPane = resultpane.split("-")[0] + "-file-content";
@@ -69,7 +85,7 @@ function parseFile(file, resultpane) {
         $("#" + fileContentPane).append(res);
 
         // display text
-        if (file.type.indexOf("text") == 0) {
+        if (file.type.indexOf("text") === 0) {
             var reader = new FileReader();
             reader.onload = function (e) {
                 var restxt = "<p><strong>File content:</strong></p><pre>" + e.target.result.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</pre>";
@@ -81,9 +97,9 @@ function parseFile(file, resultpane) {
                 parseXMLTree(text, resultpane);
                 //                    LoadXMLString(resultpane, text);
 
-
-
-            }
+                drawEndPoints("in-leaf", "Right");
+                drawEndPoints("out-leaf", "Left");
+            };
             reader.readAsText(file);
         }
 
@@ -91,19 +107,31 @@ function parseFile(file, resultpane) {
         var elementname = "#load-" + resultpane.split("-")[0];
         $(elementname).slideUp();
 
-
     }
-
-
 }
+
+
+
+
+
+
+
+
 
 // file drag hover
 function fileDragHover(e) {
     e.stopPropagation();
     e.preventDefault();
     //when a file is dragged over drag-area, change the class of the div->change css
-    e.target.className = (e.type == "dragover" ? "file-drag-hover" : "file-drag");
+    e.target.className = (e.type === "dragover" ? "file-drag-hover" : "file-drag");
 }
+
+
+
+
+
+
+
 
 
 // file selection
@@ -117,7 +145,7 @@ function fileSelectHandler(e, result) {
 
     // process all File objects
     parseFile(files[0], result);
-    drawEndPoints();
+    //    drawEndPoints();
 }
 
 // initialize
