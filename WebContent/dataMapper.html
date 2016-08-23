@@ -7,28 +7,31 @@
     <script src="assets/lib/jQuery/jquery-3.1.0.js"></script>
     <script src="assets/lib/jquery-ui-1.12.0.custom/jquery-ui.js"></script>
     <script src="assets/lib/jsPlumb/jsPlumb-2.1.5.js"></script>
-    <!--    <script src="assets/lib/xmlDisplay/XMLDisplay.js"></script>-->
-
 
     <link rel="stylesheet" href="assets/lib/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="assets/application/style.css">
-    <!--    <link rel="stylesheet" href="assets/lib/xmlDisplay/XMLDisplay.css">-->
     <link rel="stylesheet" href="assets/lib/jquery-ui-1.12.0.custom/jquery-ui.css">
 
-    <style>
-        .dr {
-            position: relative;
-        }
-    </style>
+
 </head>
 
 <body>
-    <!--
-    <div class="col-md-12">
-<div style="border:1px solid red; width:60px; height:60px;" id="tem" class="in-leaf dr">in1</div>
-<div style="border:1px solid red; width:60px; height:60px; margin-left:400px;" id="temp" class="out-leaf dr">out1</div>
-</div>
--->
+
+
+
+
+
+    <div style="border:1px solid red; width:60px; height:20px; margin-left:400px;" class="in-leaf "> in11
+    </div>
+    <div style="border:1px solid red; width:60px; height:20px; " class="out-leaf ">
+        out1
+    </div>
+
+
+
+
+
+
 
 
     <div class="col-md-12" id="page-body">
@@ -49,9 +52,11 @@
 
 
                     <!--
-                    <div class="leaf in-leaf ">in-elem1</div>
-                    <div class="leaf in-leaf " id="eg1">in-elem2</div>
+                    <div class="leaf in-leaf "> in-elem1
+</div>
+<div class="leaf in-leaf " id="eg1">in-elem2</div>
 -->
+
 
 
                 </div>
@@ -70,10 +75,12 @@
 
 
 
+
                     <!--
                     <div class="leaf out-leaf ">out-elem1</div>
-                    <div class="leaf out-leaf " id="eg2">out-elem2</div>
+<div class="leaf out-leaf " id="eg2">out-elem2</div>
 -->
+
 
 
                 </div>
@@ -94,6 +101,8 @@
 
         </div>
     </div>
+
+
 
     <script src="assets/application/elementSketcher.js"></script>
     <script src="assets/application/fileHandler.js"></script>
@@ -116,13 +125,12 @@
         });
         jsPlumb.ready(function () {
             $(".scroll-box").draggable({
-                //listen for element dragged event
+                // //listen for element dragged event // 
                 drag: function () {
                     jsPlumb.repaintEverything();
                 }
             });
-            //            $('.dr').draggable({ // //listen for element dragged event // drag: function () { // jsPlumb.repaintEverything(); // } // });
-            //            drawEndPoints(in-l, "Right"); // drawEndPoints(temp, "Left");
+
 
             // call initialization file
             if (window.File && window.FileList && window.FileReader) {

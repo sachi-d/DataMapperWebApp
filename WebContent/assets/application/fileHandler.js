@@ -3,11 +3,11 @@ function setDivElement(nodeName) {
 }
 
 function setInLeaf(nodeName) {
-    return "<div class=\"node leaf\"> <div class=\"in-leaf \" id=\" " + nodeName + " \"> -" + nodeName + "</div></div>";
+    return "<div class=\"node leaf\"> <div class=\"in-leaf \" > --" + nodeName + "</div></div>";
 }
 
 function setOutLeaf(nodeName) {
-    return "<div class=\"node leaf\"> <div class=\"out-leaf \" id=\" " + nodeName + " \"> -" + nodeName + "</div></div>";
+    return "<div class=\"node leaf\"> <div class=\"out-leaf \" > --" + nodeName + "</div></div>";
 }
 
 //traverse XML tree
@@ -20,20 +20,20 @@ function traverseTree(rootNode, resultBox) {
     if (children.length == 1) {
         if (resultBox.split("-")[0] == "input") {
             nodeName = setInLeaf(rootNode.nodeName);
-            $("#" + resultBox).append(nodeName);
-            drawEndPoints("in-leaf", "Right");
+
+            //            drawEndPoints("in-leaf", "Right");
         } else {
             nodeName = setOutLeaf(rootNode.nodeName);
-            $("#" + resultBox).append(nodeName);
-            drawEndPoints("out-leaf", "Left");
+            //            $("#" + resultBox).append(nodeName);
+            //            drawEndPoints("out-leaf", "Left");
         }
 
     } else {
         nodeName = setDivElement(rootNode.nodeName);
-        $("#" + resultBox).append(nodeName);
+        //        $("#" + resultBox).append(nodeName);
     }
 
-    jsPlumb.repaintEverything();
+    $("#" + resultBox).append(nodeName);
 
     for (var i = 0; i < children.length; i++) {
         var child = children[i];
@@ -79,7 +79,9 @@ function parseFile(file, resultpane) {
                 parseXMLTree(text, resultpane);
                 //                    LoadXMLString(resultpane, text);
 
-
+                drawEndPoints("out-leaf", "Left");
+                drawEndPoints("in-leaf", "Right");
+                jsPlumb.repaintEverything();
 
             }
             reader.readAsText(file);
@@ -88,6 +90,8 @@ function parseFile(file, resultpane) {
         // hide load-file div
         var elementname = "#load-" + resultpane.split("-")[0];
         $(elementname).slideUp();
+
+
     }
 
 

@@ -57,12 +57,12 @@
     line-height: 20px;
     top: auto;
     position: relative;
-    margin-left: 10px;
+    /*    margin-left: 0;*/
 }
 
 .leaf {
     width: 80%;
-    margin-left: 10px;
+    /*    margin-left: 20px;*/
     border: 1px dotted red;
 }
 

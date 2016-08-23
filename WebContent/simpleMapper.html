@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Simple mapping tool</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsPlumb/2.0.7/jsPlumb.min.js"></script>
+
+    <style>
+        h1 {
+            text-align: center;
+        }
+        
+        .canvas {
+            width: 60%;
+            height: auto;
+            margin: 100px auto;
+            padding 10px;
+        }
+        
+        .pane {
+            border: 1px solid #c8c8c8;
+        }
+        
+        .left-pane {
+            float: left;
+        }
+        
+        .right-pane {
+            float: right;
+        }
+        
+        .element {
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <!--
+    <div class="col-md-12">
+<div style="border:1px solid red; width:60px; height:60px;" id="tem" class="in-leaf dr">in1</div>
+<div style="border:1px solid red; width:60px; height:60px; margin-left:400px;" id="temp" class="out-leaf dr">out1</div>
+</div>
+-->
+    <h1>Simple element-mapping example</h1>
+    <div class="canvas">
+        <div class="pane left-pane">
+            <div class="element left-element">Left element 1</div>
+            <div class="element left-element">Left element 2</div>
+            <div class="element left-element">Left element 3</div>
+            <div class="element left-element">Left element 4</div>
+            <div class="element left-element">Left element 5</div>
+        </div>
+        <div class="pane right-pane">
+            <div class="element right-element">Right element 1</div>
+            <div class="element right-element">Right element 2</div>
+            <div class="element right-element">Right element 3</div>
+            <div class="element right-element">Right element 4</div>
+            <div class="element right-element">Right element 5</div>
+        </div>
+    </div>
+
+
+
+    <script>
+        jsPlumb.ready(function () {
+            drawEndPoints("left-element", "Right");
+            drawEndPoints("right-element", "Left");
+
+        });
+
+        function drawEndPoints(classname, endpointposition) {
+
+            var endpointOptions = {
+                isSource: true,
+                isTarget: true,
+
+                //                set a custom icon at the endpoint
+                endpoint: ["Image", {
+                    src: "assets/application/images/arrow-head.png",
+                    cssClass: "leaf-endpoint"
+                }],
+                maxConnections: -1,
+                connector: "Straight",
+                connectorStyle: {
+                    lineWidth: 2,
+                    strokeStyle: 'black'
+                },
+                scope: "blackline",
+                dropOptions: {
+                    drop: function (e, ui) {
+                        alert('drop!');
+                    }
+                }
+            };
+
+            jsPlumb.addEndpoint($("." + classname), {
+                anchor: endpointposition
+            }, endpointOptions);
+        }
+    </script>
+</body>
+
+</html>
