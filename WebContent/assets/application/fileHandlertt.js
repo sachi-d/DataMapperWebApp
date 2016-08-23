@@ -1,20 +1,14 @@
 function setDivElement(nodeName) {
-    return "<div class=\"node\">" + nodeName + "</div>";
+    return "<div class = \"nde\">" + nodeName + "</div>";
 }
 
 function setInLeaf(nodeName) {
-    return "<div class=\"node leaf\"> <div class=\"in-leaf \" > --" + nodeName + "</div></div>";
+    return "<div class=\"nde leaf\"> <div class=\"in-leaf \" > " + nodeName + "</div></div>";
 }
 
 function setOutLeaf(nodeName) {
-    return "<div class=\"node leaf\"> <div class=\"out-leaf \" > --" + nodeName + "</div></div>";
+    return "<div class=\"nde leaf\"> <div class=\"out-leaf \" > " + nodeName + "</div></div>";
 }
-
-
-
-
-
-
 
 //traverse XML tree
 function traverseTree(rootNode, resultBox) {
@@ -43,17 +37,14 @@ function traverseTree(rootNode, resultBox) {
 
     for (var i = 0; i < children.length; i++) {
         var child = children[i];
+        $("#" + resultBox).append("<div class=\"nodee\">--s--" + i);
         traverseTree(child, resultBox);
-        if (child.nodeType == Node.ELEMENT_NODE && child.childNodes.length != 1) {
-            break;
-        }
+        $("#" + resultBox).append(i + "closed</div>");
+        //        if(child.nodeType == Node.ELEMENT_NODE && child.childNodes.length != 1) {
+        //            break;
+        //        }
     }
 }
-
-
-
-
-
 
 //parse XML tree
 function parseXMLTree(inputText, resultBox) {
@@ -68,13 +59,6 @@ function parseXMLTree(inputText, resultBox) {
     traverseTree(root, resultBox);
 
 }
-
-
-
-
-
-
-
 
 
 // get file information
@@ -97,9 +81,7 @@ function parseFile(file, resultpane) {
                 parseXMLTree(text, resultpane);
                 //                    LoadXMLString(resultpane, text);
 
-                drawEndPoints("out-leaf", "Left");
-                drawEndPoints("in-leaf", "Right");
-                jsPlumb.repaintEverything();
+
 
             }
             reader.readAsText(file);
@@ -109,16 +91,11 @@ function parseFile(file, resultpane) {
         var elementname = "#load-" + resultpane.split("-")[0];
         $(elementname).slideUp();
 
+
     }
+
+
 }
-
-
-
-
-
-
-
-
 
 // file drag hover
 function fileDragHover(e) {
@@ -127,13 +104,6 @@ function fileDragHover(e) {
     //when a file is dragged over drag-area, change the class of the div->change css
     e.target.className = (e.type == "dragover" ? "file-drag-hover" : "file-drag");
 }
-
-
-
-
-
-
-
 
 
 // file selection
@@ -149,14 +119,6 @@ function fileSelectHandler(e, result) {
     parseFile(files[0], result);
     drawEndPoints();
 }
-
-
-
-
-
-
-
-
 
 // initialize
 function init(select, drag, result) {

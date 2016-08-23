@@ -8,7 +8,7 @@
     <script src="assets/lib/jquery-ui-1.12.0.custom/jquery-ui.js"></script>
     <script src="assets/lib/jsPlumb/jsPlumb-2.1.5.js"></script>
 
-    <link rel="stylesheet" href="assets/lib/bootstrap/css/bootstrap.css">
+    <!--    <link rel="stylesheet" href="assets/lib/bootstrap/css/bootstrap.css">-->
     <link rel="stylesheet" href="assets/application/style.css">
     <link rel="stylesheet" href="assets/lib/jquery-ui-1.12.0.custom/jquery-ui.css">
 
@@ -21,11 +21,12 @@
 
 
 
-    <div style="border:1px solid red; width:60px; height:20px; margin-left:400px;" class="in-leaf "> in11
-    </div>
-    <div style="border:1px solid red; width:60px; height:20px; " class="out-leaf ">
-        out1
-    </div>
+    <!--
+<div style="border:1px solid red; width:60px; height:20px; margin-left:400px;" class="in-leaf "> in11
+</div>
+<div style="border:1px solid red; width:60px; height:20px; " class="out-leaf ">
+    out1
+</div>-->
 
 
 
@@ -34,10 +35,10 @@
 
 
 
-    <div class="col-md-12" id="page-body">
+    <div id="page-body">
 
-        <div class="container" id="canvas">
-            <div class="col-md-6 canvas-container">
+        <div id="canvas">
+            <div class="canvas-container" id="input-container">
                 <button id="load-input-btn">Load input</button>
 
                 <div class="load-file" id="load-input">
@@ -62,7 +63,7 @@
                 </div>
             </div>
 
-            <div class="col-md-6 canvas-container">
+            <div class="canvas-container" id="output-container">
                 <button id="load-output-btn">Load output</button>
 
                 <div class="load-file" id="load-output">
@@ -87,7 +88,11 @@
             </div>
 
         </div>
-        <div class="container">
+
+
+
+        <!--
+        <div class="hh">
             <div class="col-md-6 ">
                 <div class="file-content" id="input-file-content">
                     Input File information:-
@@ -100,6 +105,11 @@
             </div>
 
         </div>
+-->
+
+
+
+
     </div>
 
 
@@ -124,12 +134,7 @@
 
         });
         jsPlumb.ready(function () {
-            $(".scroll-box").draggable({
-                // //listen for element dragged event // 
-                drag: function () {
-                    jsPlumb.repaintEverything();
-                }
-            });
+            $(".scroll-box").draggable();
 
 
             // call initialization file
