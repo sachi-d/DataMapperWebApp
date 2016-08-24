@@ -39,9 +39,9 @@
     font: 16px/26px Georgia, Garamond, Serif;
     text-align: left;
     margin: 10px auto;
-        /*position: absolute;*/
+    /*position: absolute;*/
     /*    background-color: white;*/
-    /*    overflow: auto;*/
+        height: auto;
 }
 
 .scroll-box-title {
@@ -62,17 +62,17 @@
 
 /*set leaf node css*/
 
-.node {
-    display: block;
-    top: auto;
-    /*    margin-left: 0;*/
+.node-element{
+    display: inline;
+    width: auto;
+    white-space: nowrap;
 }
 
 .leaf {
     width: 80%;
-    /*    margin-left: 20px;*/
-    border: 1px dotted red;
-    /*position:absolute;*/
+        margin: auto;
+    border: 1px dotted #c9c9c9;
+    position:absolute;
 }
 
 
