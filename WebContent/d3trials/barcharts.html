@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <title>D3 bar charts</title>
+        <!--<script src="../assets/lib/d3/d3.js"></script>-->
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <style>
+
+
+            .chart div {
+                font: 10px sans-serif;
+                background-color: steelblue;
+                text-align: right;
+                padding: 3px;
+                margin: 1px;
+                color: white;
+            }
+
+
+        </style>
+    </head>
+
+    <body>
+        <!--<a href="https://bost.ocks.org/mike/bar/">Source tutorial</a><br><br><br>-->
+
+
+        <div class="chart"></div>
+        <div id="container"></div>
+//        <script src="//d3js.org/d3.v4.min.js"></script>
+        <script>
+
+            var data = [4, 8, 15, 16, 23, 42];
+
+            var x = d3.scaleLinear()
+                    .domain([0, d3.max(data)])
+                    .range([0, 420]);
+
+            d3.select(".chart")
+                    .selectAll("div")
+                    .data(data)
+                    .enter().append("div")
+                    .style("width", function (d) {
+                        return x(d) + "px";
+                    })
+                    .text(function (d) {
+                        return d;
+                    });
+
+            var svgContainer = d3.select("#container").append("svg")
+                    .attr("width", 800)
+                    .attr("height", 800);
+
+            var drag = d3.drag().on("drag", dragmove);
+
+            var svgGroup = svgContainer.append("g")
+
+            var dragrect = svgGroup.append("rect")
+                    .attr("id", "active1")
+                    .attr("x", 10)
+                    .attr("y", 40)
+                    .attr("height", 100)
+                    .attr("width", 200)
+                    .attr("fill-opacity", .5)
+                    .attr("cursor", "move")
+                    .call(drag);
+
+            var dragLine = svgGroup.append("line")
+                    .attr("id", "active2")
+                    .style("stroke", "black")
+                    .attr("x1", 10)
+                    .attr("y1", 40)
+                    .attr("x2", 300)
+                    .attr("y2", 300)
+                    .attr("fill-opacity", .5);
+
+            function dragmove(d) {
+                var xy = "translate(" + d3.event.x + " , " + d3.event.y + ")";
+                svgGroup.attr("transform", xy);
+                //dragrect.attr("x", d3.event.x);
+                //dragrect.attr("y", d3.event.y);
+            }
+
+        </script>
+
+    </body>
+
+</html>

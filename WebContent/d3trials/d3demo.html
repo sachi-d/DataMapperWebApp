@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <title>D3 trial</title>
+        <script src="../assets/lib/d3/d3.js"></script>
+
+        <style>
+
+        </style>
+    </head>
+
+    <body>
+        <ul>
+            <li>
+                <a href="barcharts.html">Bar chart tutorial</a>
+            </li>
+        </ul>
+        <h1>heading 1 h1</h1>
+        <p>paragraph1</p><br>
+        <p >paragraph2</p><br>
+        <div>
+            <a href="google.com">link google</a>
+            <p>paragraph 3</p>
+        </div>
+        <p>paragraph 4</p>
+        <p>paragraph 5</p>
+        <p>paragraph 6</p>
+        <p>paragraph 7</p>
+        <p>paragraph 8</p>
+        <p>paragraph 9</p>
+        <p id="p1">paragraph 10</p>
+
+
+
+        <script>
+            d3.select("body").transition()
+                    .style("background-color", "#eee");
+            
+            
+            
+            
+            //to get alternating colors on p elements
+            d3.selectAll("p").style("color", function (d, i) {
+                return i % 2 ? "#119" : "#191";
+            });
+
+            //to get random colors on p elements
+            d3.select("p#p1").style("color", function () {
+                return "hsl(" + Math.random() * 360 + ",100%,50%)";
+            });
+
+            //to use an array of data
+            d3.selectAll("p")
+                    .data([10, 18, 25, 45])
+                    .style("font-size", function (d1) {
+                        return d1 + "px";
+                    });
+
+
+
+
+            // Update…
+            var p = d3.select("body")
+                    .selectAll("p")
+                    .data([4, 8, 15, 16, 23, 42])
+                    .text(function (d) {
+                        return "update" + d;
+                    });
+
+            // Enter… matters only when more data than nodes
+            p.enter().append("p")
+                    .text(function (d) {
+                        return "enter-" + d;
+                    });
+
+            // Exit… matters only when less data than nodes 
+            //if update appends - exit always appends to extra nodes
+            p.exit()
+                    .text(function (d) {
+                        return "exit";
+                    });
+
+            
+        </script>
+
+    </body>
+
+</html>
