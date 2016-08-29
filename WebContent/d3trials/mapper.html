@@ -6,16 +6,80 @@
         <title>D3 Mapper</title>
         <!--<script src="../assets/lib/d3/d3.js"></script>-->
         <script src="https://d3js.org/d3.v4.min.js"></script>
-        <style>
 
-
-        </style>
+        <link rel="stylesheet" href="../assets/application/style.css">
     </head>
-
     <body>
+        <div id="page-body">
+
+            <div id="canvas">
+                <div class="canvas-container" id="input-container">
+    <!--                    <button id="load-input-btn">Load input</button>
+
+                <div class="load-file" id="load-input">
+                        <input type="file" id="input-file-select" name="input-select[]" accept=".xml" />
+                        <div class="file-drag" id="input-file-drag">or drop files here</div>
+                    </div>-->
+
+                    <div class="content-box ui-widget-content">
+                        <div class="content-box-title" id="input-structure-title">Input</div>
+                        <div id="input-structure"></div>
 
 
 
+
+
+                    </div>
+                </div>
+
+                <div class="canvas-container" id="output-container">
+                    
+    <!--                  <button id="load-output-btn">Load output</button>
+
+                  <div class="load-file" id="load-output">
+                        <input type="file" id="output-file-select" name="output-select[]" accept=".xml" />
+                        <div class="file-drag" id="output-file-drag">or drop files here</div>
+                    </div>-->
+                    <div class="content-box ui-widget-content">
+                        <div class="content-box-title" id="output-structure-title">Output</div>
+                        <div id="output-structure"></div>
+
+
+
+
+
+                    </div>
+                </div>
+
+            </div>
+
+
+
+            <!--
+            <div class="hh">
+                <div class="col-md-6 ">
+                    <div class="file-content" id="input-file-content">
+                        Input File information:-
+                    </div>
+                </div>
+                <div class="col-md-6 ">
+                    <div class="file-content" id="output-file-content">
+                        Output File information:-
+                    </div>
+                </div>
+    
+            </div>
+            -->
+
+
+
+
+        </div>
+
+        <script>
+            var drag = d3.drag();
+            d3.selectAll(".content-box").call(drag);
+        </script>
     </body>
 
 </html>

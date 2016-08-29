@@ -33,7 +33,7 @@
 
 /*where the file structure will be loaded*/
 
-.scroll-box {
+.content-box {
     height: 300px;
     width: 40%;
     font: 16px/26px Georgia, Garamond, Serif;
@@ -44,7 +44,7 @@
         height: auto;
 }
 
-.scroll-box-title {
+.content-box-title {
     text-align: center;
     font-weight: bold;
     border-bottom: 2px solid black;
