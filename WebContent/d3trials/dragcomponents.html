@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <title>D3 drag components</title>
+        <script src="../assets/lib/d3/d3.js"></script>
+        <script src="../assets/lib/jQuery/jquery-3.1.0.js"></script>
+        <script src="../assets/lib/jquery-ui-1.12.0.custom/jquery-ui.js"></script>
+
+        <style>
+            .input-container{
+                padding: 10px;
+                margin: 50px;
+                width:60%;
+                border: 1px solid black;
+            }
+            .input-container div{
+                margin: auto;
+                display: inline-block;
+            }
+            .in-icon{
+                float: right;
+
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <a href="http://bl.ocks.org/enjalot/1378144">Source tutorial</a>
+        <p>Click a smiley</p>
+
+        <div class="input-container" id="input-container">
+            <div class="in-leaf">In-leaf</div>
+            <div class="in-icon"><img src="../assets/application/images/arrow-head.png"></div>
+        </div>
+
+        <div class="circledemo">
+
+        </div>
+        
+       
+        
+        
+        <script type="text/javascript">
+
+
+
+//            var dragg = d3.drag()
+//                    .subject(Object)
+//                    .on("drag", dragmove);
+
+
+
+//////////////////////////////// circle drag ///////////////////////////
+
+            var boxWidth = 600;
+            var boxHeight = 400;
+
+            var box = d3.select('.circledemo')
+                    .append('svg')
+                    .attr('class', 'box')
+                    .attr('width', boxWidth)
+                    .attr('height', boxHeight)
+                    .style("border", "1px solid black");
+
+
+            var drag = d3.drag()
+                    .on('start', function () {
+                        // circle.style('fill', 'red');
+                    })
+                    .on("drag", function (d) {
+                        d.x += d3.event.dx;
+                        d.y += d3.event.dy;
+                        circle.attr('cx', d.x)
+                                .attr('cy', d.y);
+                    })
+                    .on('end', function () {
+                        // circle.style('fill', 'red');
+                    });
+
+            var circle = box.selectAll('.draggableCircle')
+                    .data([{x: (boxWidth / 2), y: (boxHeight / 2), r: 25}])
+                    .enter()
+                    .append('svg:circle')
+                    .attr('class', 'draggableCircle')
+                    .attr('cx', function (d) {
+                        return '300';
+                    })
+                    .attr('cy', function (d) {
+                        return '200';
+                    })
+                    .attr('r', function (d) {
+                        return d.r;
+                    })
+                    .call(drag)
+                    .style('fill', 'black');
+
+
+
+
+
+            $(document).ready(function () {
+                $("#input-container").draggable();
+                $("#input-container").resizable();
+            });
+
+
+
+        </script>
+
+
+    </body>
+
+</html>

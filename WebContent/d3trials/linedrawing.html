@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <title>D3 line drawings</title>
+        <script src="../assets/lib/d3/d3.js"></script>
+        <!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
+
+        <style>
+            .input-container{
+                padding: 10px;
+                margin: 50px;
+                width:60%;
+                border: 1px solid red;
+            }
+            .input-container div{
+                margin: auto;
+                display: inline-block;
+            }
+            .in-icon{
+                float: right;
+
+            }
+
+            .canvas{
+                border:1px solid black;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <a href="https://www.dashingd3js.com/svg-paths-and-d3js">Source tutorial</a>
+
+
+
+
+
+
+
+        <svg class="canvas" width="1000" height="500">
+        <!--<g class="input-container" id="input-container">-->
+        <rect class="input-container" x="20" y="20" height="50" width="100" stroke="blue" stroke-width="2" fill="none"/>
+        <!--        <circle class="dragme" cx="20" cy="20" r="10" fill="black" />-->
+        <!--</g>-->
+
+        </svg>
+        <p class="coors"></p>
+        <div class="linedemo"></div>
+
+
+
+
+
+        <script>
+//The data for our line
+            var lineData = [{"x": 1, "y": 5}, {"x": 150, "y": 80}];
+
+//This is the accessor function we talked about above
+            var lineFunction = d3.line()
+                    .x(function (d) {
+                        return d.x;
+                    })
+                    .y(function (d) {
+                        return d.y;
+                    });
+//                    .curve(d3.curveLinear(0.5));
+
+//The SVG Container
+            var svgContainer = d3.select(".linedemo").append("svg")
+                    .attr("width", 200)
+                    .attr("height", 200);
+
+//The line SVG Path we draw
+            var lineGraph = svgContainer.append("path")
+                    .attr("d", lineFunction(lineData))
+                    .attr("stroke", "blue")
+                    .attr("stroke-width", 2)
+                    .attr("fill", "none");
+
+            var pbox = d3.select(".coors");
+
+
+
+            var canvas = d3.select(".canvas");
+            var inputcontainer = d3.select(".input-container");
+            
+            var dragdot1 = canvas.append("svg:circle")
+                    .attr("cx", function (d) {
+                        return inputcontainer.attr("width") + inputcontainer.attr("x");
+                    })
+                    .attr("cy", function () {
+                        return inputcontainer.attr("height") / 2 + inputcontainer.attr("y");
+                    })
+                    .attr("r", function () {
+                        return inputcontainer.attr("height") / 4;
+                    })
+                    .attr("fill", "black");
+            
+            var coordinates, dragdot2, dragline, xx, yy;
+            var dragme = d3.drag()
+                    .on("start", function (d) {
+                        xx = 0;
+                        yy = 0;
+                        coordinates = [0, 0];
+                        dragdot2 = canvas.append("svg:circle")
+                                .attr("cx", dragdot1.attr("cx"))
+                                .attr("cy", dragdot1.attr("cy"))
+                                .attr("r", dragdot1.attr("r"))
+                                .attr("fill", dragdot1.attr("fill"));
+                        dragline = canvas.append("svg:line")
+                                .attr("x1", dragdot1.attr("cx"))
+                                .attr("x2", dragdot1.attr("cx"))
+                                .attr("y1", dragdot1.attr("cy"))
+                                .attr("y2", dragdot1.attr("cy"))
+                                .style("stroke", "rgb(0,150,150)")
+                                .style("stroke-width", "2");
+                    })
+                    .on("drag", function (d) {
+                        coordinates = d3.mouse(this);
+                        xx = coordinates[0];
+                        yy = coordinates[1];
+                        dragline.attr("x2", xx).attr("y2", yy);
+                        dragdot2.attr("cx", xx).attr("cy", yy);
+                    })
+                    .on("end", function (d) {
+                        d3.select(".coors").text(xx + "-" + yy);
+                    });
+
+
+            dragdot1.call(dragme);
+
+        </script>
+
+
+    </body>
+
+</html>
