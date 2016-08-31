@@ -31,29 +31,24 @@
 
     <body>
 
-        <a href="https://www.dashingd3js.com/svg-paths-and-d3js">Source tutorial</a>
-
-
-
-
+        <a href="https://www.dashingd3js.com/svg-paths-and-d3js">Source tutorial</a><br><br>
 
 
         <svg class="canvas" width="1000" height="500">
-        <g  id="input-container">
-
-        </g>
-        <g id="output-container">
-        <!--        <rect  class="output-leaf" x="420" y="20" height="50" width="100" stroke="blue" stroke-width="2" fill="none"/>
-                <rect  class="output-leaf" x="420" y="150" height="50" width="100" stroke="blue" stroke-width="2" fill="none"/>-->
-        </g>
-
+        <g  id="input-container">  </g>
+        <g id="output-container"> </g>
         </svg>
-        <p class="coors"></p>
-        <div class="linedemo"></div>
+
+
+        <div >
+
+            <button type="button" onclick="addInput()">Add input node</button>
+            <button type="button" onclick="addOutput()">Add output node</button>
+        </div>
 
 
 
-
+        <p id="trial"></p>
 
         <script>
 
@@ -75,8 +70,16 @@
             var inputcontainer = d3.select("#input-container");
             var outputcontainer = d3.select("#output-container");
 
-            function drawInputs(container, elementwidth, elementheight, startX, startY, verticalmargin, data, dotposition) {
+            canvas.append("g").attr("id", function (d) {
+                return inputcontainer.attr("id") + "-2";
+            });
+            canvas.append("g").attr("id", function (d) {
+                return outputcontainer.attr("id") + "-2";
+            })
+
+            function drawNodes(container, elementwidth, elementheight, startX, startY, verticalmargin, data, dotposition) {
                 var coordinates, dragdot2, dragline;
+                var childcontainer = d3.select("#" + (container.attr("id") + "-2"));
                 if (dotposition === "RIGHT") {
                     var dotpositionABS = startX + elementwidth;
                 } else if (dotposition === "LEFT") {
@@ -90,12 +93,12 @@
                             var xx = 0;
                             var yy = 0;
                             coordinates = [0, 0];
-                            dragdot2 = container.append("svg:circle")
+                            dragdot2 = childcontainer.append("circle")
                                     .attr("cx", thisdragX)
                                     .attr("cy", thisdragY)
                                     .attr("r", thisdragR)
                                     .attr("fill", "black");
-                            dragline = container.append("svg:line")
+                            dragline = childcontainer.append("line")
                                     .attr("x1", thisdragX)
                                     .attr("x2", thisdragX)
                                     .attr("y1", thisdragY)
@@ -138,7 +141,7 @@
                 var inputtext = container.selectAll("text")
                         .data(data)
                         .enter().append("text")
-                        .attr("x", startX + elementwidth/10)
+                        .attr("x", startX + elementwidth / 10)
                         .attr("y", function (d, i) {
                             return startY + (elementheight / 2) + ((elementheight + verticalmargin) * i);
                         })
@@ -151,8 +154,7 @@
 
                 var inputdragdot = container.selectAll("circle")
                         .data(data)
-                        .enter().append("circle")
-                        .attr("class", "dragme")
+                        .enter().append("circle").attr("r", elementheight / 4)
                         .attr("cx", function (d) {
                             return dotpositionABS;
                         })
@@ -169,9 +171,17 @@
 
 
 
-            drawInputs(inputcontainer, elementwidth, elementheight, inputstartx, inputstarty, verticalmargin, inputs,"RIGHT");
-            drawInputs(outputcontainer, elementwidth, elementheight, outputstartx, outputstarty, verticalmargin, outputs,"LEFT");
+            drawNodes(inputcontainer, elementwidth, elementheight, inputstartx, inputstarty, verticalmargin, inputs, "RIGHT");
+            drawNodes(outputcontainer, elementwidth, elementheight, outputstartx, outputstarty, verticalmargin, outputs, "LEFT");
 
+            function addInput() {
+                inputs.push({"text": "newelement", "col": "red"});
+                drawNodes(inputcontainer, elementwidth, elementheight, inputstartx, inputstarty, verticalmargin, inputs, "RIGHT");
+            }
+            function addOutput() {
+                outputs.push({"text": "newelement", "col": "red"});
+                drawNodes(outputcontainer, elementwidth, elementheight, outputstartx, outputstarty, verticalmargin, outputs, "LEFT");
+            }
             // dragdot1.call(dragme);
 
         </script>
