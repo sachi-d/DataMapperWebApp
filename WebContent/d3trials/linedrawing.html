@@ -56,149 +56,121 @@
 
 
         <script>
-//The data for our line
-            var lineData = [{"x": 1, "y": 5}, {"x": 150, "y": 80}];
-
-//This is the accessor function we talked about above
-            var lineFunction = d3.line()
-                    .x(function (d) {
-                        return d.x;
-                    })
-                    .y(function (d) {
-                        return d.y;
-                    });
-//                    .curve(d3.curveLinear(0.5));
-
-//The SVG Container
-            var svgContainer = d3.select(".linedemo").append("svg")
-                    .attr("width", 200)
-                    .attr("height", 200);
-
-//The line SVG Path we draw
-            var lineGraph = svgContainer.append("path")
-                    .attr("d", lineFunction(lineData))
-                    .attr("stroke", "blue")
-                    .attr("stroke-width", 2)
-                    .attr("fill", "none");
-
-            var pbox = d3.select(".coors");
-
-
-
-
 
 
 
             var inputs = [{"text": "inleaf1", "col": "red"}, {"text": "inleaf2", "col": "blue"}, {"text": "inleaf3", "col": "green"}];
-            var outputs = [{"text": "outleaf1", "col": "red"}, {"text": "outleaf2", "col": "blue"}, {"text": "outleaf3", "col": "green"}];
+            var outputs = [{"text": "outleaf1", "col": "blue"}, {"text": "outleaf2", "col": "red"}, {"text": "outleaf3", "col": "green"}];
 
             var elementwidth = 120;
             var elementheight = 50;
             var inputstartx = 20;
-            var inputstarty = 20; ///////////y should change for each rectangle
+            var inputstarty = 20;
+            var outputstartx = 700;
+            var outputstarty = 20;
+
             var verticalmargin = 20;
 
             var canvas = d3.select(".canvas");
             var inputcontainer = d3.select("#input-container");
+            var outputcontainer = d3.select("#output-container");
 
+            function drawInputs(container, elementwidth, elementheight, startX, startY, verticalmargin, data, dotposition) {
+                var coordinates, dragdot2, dragline;
+                if (dotposition === "RIGHT") {
+                    var dotpositionABS = startX + elementwidth;
+                } else if (dotposition === "LEFT") {
+                    var dotpositionABS = startX;
+                }
+                var dragme = d3.drag()
+                        .on("start", function (d) {
+                            var thisdragY = d3.select(this).attr("cy");
+                            var thisdragX = d3.select(this).attr("cx");
+                            var thisdragR = d3.select(this).attr("r");
+                            var xx = 0;
+                            var yy = 0;
+                            coordinates = [0, 0];
+                            dragdot2 = container.append("svg:circle")
+                                    .attr("cx", thisdragX)
+                                    .attr("cy", thisdragY)
+                                    .attr("r", thisdragR)
+                                    .attr("fill", "black");
+                            dragline = container.append("svg:line")
+                                    .attr("x1", thisdragX)
+                                    .attr("x2", thisdragX)
+                                    .attr("y1", thisdragY)
+                                    .attr("y2", thisdragY)
+                                    .style("stroke", d.col)
+                                    .style("stroke-width", "2");
+                        })
+                        .on("drag", function (d) {
+                            coordinates = d3.mouse(this);
+                            xx = coordinates[0];
+                            yy = coordinates[1];
+                            dragline.attr("x2", xx).attr("y2", yy);
+                            dragdot2.attr("cx", xx).attr("cy", yy);
 
-            var coordinates, dragdot2, dragline, xx, yy;
-            var dragme = d3.drag()
-                    .on("start", function (d) {
-                        xx = 0;
-                        yy = 0;
-                        coordinates = [0, 0];
-                        dragdot2 = canvas.append("svg:circle")
-                                .attr("cx", function (d) {
-                                    return inputstartx + elementwidth;
-                                })
-                                .attr("cy", function (d, i) {
-                                    return inputstarty + (elementheight / 2) + ((elementheight + verticalmargin) * i);
-                                })
-                                .attr("r", function () {
-                                    return elementheight / 4;
-                                })
-                                .attr("fill", "black");
-                        dragline = canvas.append("svg:line")
-                                .attr("x1", function (d) {
-                                    return inputstartx + elementwidth;
-                                })
-                                .attr("x2", function (d) {
-                                    return inputstartx + elementwidth;
-                                })
-                                .attr("y1", function (d, i) {
-                                    return inputstarty + (elementheight / 2) + ((elementheight + verticalmargin) * i);
-                                })
-                                .attr("y2", function (d, i) {
-                                    return inputstarty + (elementheight / 2) + ((elementheight + verticalmargin) * i);
-                                })
-                                .style("stroke", "rgb(0,150,150)")
-                                .style("stroke-width", "2");
-                    })
-                    .on("drag", function (d) {
-                        coordinates = d3.mouse(this);
-                        xx = coordinates[0];
-                        yy = coordinates[1];
-                        dragline.attr("x2", xx).attr("y2", yy);
-                        dragdot2.attr("cx", xx).attr("cy", yy);
-
-                        //if position is inside the outleafs - stroke color change
-                    })
-                    .on("end", function (d) {
-                        d3.select(".coors").text(xx + "-" + yy);
-                        //if position is inside the outleafs - set position to the left of the rect
-                    });
+                            //if position is inside the outleafs - stroke color change
+                        })
+                        .on("end", function (d) {
+                            // d3.select(".coors").text(xx + "-" + yy);
+                            //if position is inside the outleafs - set position to the left of the rect
+                        });
 
 
 
-            var inputleaf = inputcontainer.selectAll("rect")
-                    .data(inputs)
-                    .enter().append("rect")
-                    .attr("class", "input-leaf")
-                    .attr("width", elementwidth)
-                    .attr("height", elementheight)
-                    .attr("x", inputstartx)
-                    .attr("y", function (d, i) {
-                        return inputstarty + ((elementheight + verticalmargin) * i);
-                    })
-                    .attr("stroke-width", "2")
-                    .attr("fill", "none")
-                    .attr("stroke", function (d) {
-                        return d.col;
-                    });
+                var inputleaf = container.selectAll("rect")
+                        .data(data)
+                        .enter().append("rect")
+                        .attr("class", "input-leaf")
+                        .attr("width", elementwidth)
+                        .attr("height", elementheight)
+                        .attr("x", startX)
+                        .attr("y", function (d, i) {
+                            return startY + ((elementheight + verticalmargin) * i);
+                        })
+                        .attr("stroke-width", "2")
+                        .attr("fill", "none")
+                        .attr("stroke", function (d) {
+                            return d.col;
+                        });
 
-            var inputtext = inputcontainer.selectAll("text")
-                    .data(inputs)
-                    .enter().append("text")
-                    .attr("x", inputstartx + 5)
-                    .attr("y", function (d, i) {
-                        return inputstarty + (elementheight / 2) + ((elementheight + verticalmargin) * i);
-                    })
-                    .text(function (d) {
-                        return d.text;
-                    });
+                var inputtext = container.selectAll("text")
+                        .data(data)
+                        .enter().append("text")
+                        .attr("x", startX + elementwidth/10)
+                        .attr("y", function (d, i) {
+                            return startY + (elementheight / 2) + ((elementheight + verticalmargin) * i);
+                        })
+                        .text(function (d) {
+                            return d.text;
+                        });
 
 
 
 
-            var inputdragdot = inputcontainer.selectAll("circle")
-                    .data(inputs)
-                    .enter().append("circle")
-                    .attr("class", "dragme")
-                    .attr("cx", function (d) {
-                        return inputstartx + elementwidth;
-                    })
-                    .attr("cy", function (d, i) {
-                        return inputstarty + (elementheight / 2) + ((elementheight + verticalmargin) * i);
-                    })
-                    .attr("r", function () {
-                        return elementheight / 4;
-                    })
-                    .attr("fill", "black")
-                    .call(dragme);
+                var inputdragdot = container.selectAll("circle")
+                        .data(data)
+                        .enter().append("circle")
+                        .attr("class", "dragme")
+                        .attr("cx", function (d) {
+                            return dotpositionABS;
+                        })
+                        .attr("cy", function (d, i) {
+                            return startY + (elementheight / 2) + ((elementheight + verticalmargin) * i);
+                        })
+                        .attr("r", function () {
+                            return elementheight / 4;
+                        })
+                        .attr("fill", "black")
+                        .call(dragme);
+
+            }
 
 
 
+            drawInputs(inputcontainer, elementwidth, elementheight, inputstartx, inputstarty, verticalmargin, inputs,"RIGHT");
+            drawInputs(outputcontainer, elementwidth, elementheight, outputstartx, outputstarty, verticalmargin, outputs,"LEFT");
 
             // dragdot1.call(dragme);
 
