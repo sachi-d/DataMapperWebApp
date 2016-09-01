@@ -3,7 +3,7 @@
 
     <head>
         <meta charset="UTF-8">
-        <title>D3 line drawings</title>
+        <title>D3 mapper</title>
         <script src="../assets/lib/d3/d3.js"></script>
         <!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
 
@@ -54,44 +54,88 @@
 
 
 
-            var inputs = [{"text": "inleaf1", "col": "red"}, {"text": "inleaf2", "col": "blue"}, {"text": "inleaf3", "col": "green"}];
-            var outputs = [{"text": "outleaf1", "col": "blue"}, {"text": "outleaf2", "col": "red"}, {"text": "outleaf3", "col": "green"}];
+            var inputs = [{"text": "inleaf1", "col": "red"}, {"text": "inleaf2", "col": "blue"}, {"text": "inleaf3", "col": "green"}],
+                    outputs = [{"text": "outleaf1", "col": "blue"}, {"text": "outleaf2", "col": "red"}, {"text": "outleaf3", "col": "green"}];
 
-            var elementwidth = 120;
-            var elementheight = 50;
-            var inputstartx = 20;
-            var inputstarty = 20;
-            var outputstartx = 700;
-            var outputstarty = 20;
+            var inputNodes = [],
+                    outputNodes = [];
+
+
+            var elementwidth = 120,
+                    elementheight = 50,
+                    inputstartx = 20,
+                    inputstarty = 20,
+                    outputstartx = 700,
+                    outputstarty = 20;
 
             var verticalmargin = 20;
 
-            var canvas = d3.select(".canvas");
-            var inputcontainer = d3.select("#input-container");
-            var outputcontainer = d3.select("#output-container");
+            var canvas = d3.select(".canvas"),
+                    inputcontainer = d3.select("#input-container"),
+                    outputcontainer = d3.select("#output-container");
 
             canvas.append("g").attr("id", function (d) {
                 return inputcontainer.attr("id") + "-2";
             });
             canvas.append("g").attr("id", function (d) {
                 return outputcontainer.attr("id") + "-2";
-            })
+            });
 
-            function drawNodes(container, elementwidth, elementheight, startX, startY, verticalmargin, data, dotposition) {
-                var coordinates, dragdot2, dragline;
-                var childcontainer = d3.select("#" + (container.attr("id") + "-2"));
-                if (dotposition === "RIGHT") {
-                    var dotpositionABS = startX + elementwidth;
-                } else if (dotposition === "LEFT") {
-                    var dotpositionABS = startX;
+
+            drawNodeStack(inputcontainer, elementwidth, elementheight, inputstartx, inputstarty, verticalmargin, inputs, "RIGHT",0);
+            drawNodeStack(outputcontainer, elementwidth, elementheight, outputstartx, outputstarty, verticalmargin, outputs, "LEFT",1);
+
+
+
+            function detectDropNode(xx, yy,data) {
+                var target=[0,0];
+                if(data[0].type===0){   //if root is from input target is outputs
+                    target=outputs;
+                }else{
+                    target=inputs;
                 }
+                var i;
+                for(i=0;i<target.length;i++){
+                    var x=target[i].x,
+                            y=target[i].y,
+                            width=target[i].width,
+                            height=target[i].height;
+                    if(xx>x && xx<x+width){ //check whether horizontally in
+                        if(yy>y && yy<y+height){ //check whether vertically in
+                            return target[i].dotposition;
+                        }
+                    }
+                }
+                
+            }
+
+            function addInput() {
+                inputs.push({"text": "newelement", "col": "red"});
+                drawNodeStack(inputcontainer, elementwidth, elementheight, inputstartx, inputstarty, verticalmargin, inputs, "RIGHT");
+            }
+            function addOutput() {
+                outputs.push({"text": "newelement", "col": "red"});
+                drawNodeStack(outputcontainer, elementwidth, elementheight, outputstartx, outputstarty, verticalmargin, outputs, "LEFT");
+            }
+
+            function drawNodeStack(container, elementwidth, elementheight, startX, startY, verticalmargin, data, dotposition,type) {
+                var coordinates, dragdot2, dragline, 
+                        dotpositionABS=[0,0],
+                        childcontainer = d3.select("#" + (container.attr("id") + "-2"));
+                if (dotposition === "RIGHT") {
+                    dotpositionABS[0] = startX + elementwidth;
+                } else if (dotposition === "LEFT") {
+                    dotpositionABS[0] = startX;
+                }
+                dotpositionABS[1] = elementheight / 2 + startY;//updated later
+                
+                
+                
                 var dragme = d3.drag()
                         .on("start", function (d) {
                             var thisdragY = d3.select(this).attr("cy");
                             var thisdragX = d3.select(this).attr("cx");
                             var thisdragR = d3.select(this).attr("r");
-                            var xx = 0;
-                            var yy = 0;
                             coordinates = [0, 0];
                             dragdot2 = childcontainer.append("circle")
                                     .attr("cx", thisdragX)
@@ -116,7 +160,6 @@
                             //if position is inside the outleafs - stroke color change
                         })
                         .on("end", function (d) {
-                            // d3.select(".coors").text(xx + "-" + yy);
                             //if position is inside the outleafs - set position to the left of the rect
                         });
 
@@ -126,11 +169,28 @@
                         .data(data)
                         .enter().append("rect")
                         .attr("class", "input-leaf")
-                        .attr("width", elementwidth)
-                        .attr("height", elementheight)
-                        .attr("x", startX)
+                        .attr("width", function (d) {
+                            d.width = elementwidth;
+                            return elementwidth;
+                        })
+                        .attr("height", function (d) {
+                            d.height = elementheight;
+                            return elementheight;
+                        })
+                        .attr("x", function (d) {
+                            var myX = startX;
+                            d.x = myX;
+                            return myX;
+                        })
                         .attr("y", function (d, i) {
-                            return startY + ((elementheight + verticalmargin) * i);
+                            var myY = startY + ((elementheight + verticalmargin) * i);
+                            d.y = myY;
+                            d.dotposition=[0,0];
+                            d.dotposition[0] = dotpositionABS[0]; //set the dot position
+                            d.dotposition[1]=myY+(d.height)/2;
+                            
+                            d.type=type;
+                            return myY;
                         })
                         .attr("stroke-width", "2")
                         .attr("fill", "none")
@@ -141,9 +201,11 @@
                 var inputtext = container.selectAll("text")
                         .data(data)
                         .enter().append("text")
-                        .attr("x", startX + elementwidth / 10)
+                        .attr("x", function (d) {
+                            return d.x;
+                        })
                         .attr("y", function (d, i) {
-                            return startY + (elementheight / 2) + ((elementheight + verticalmargin) * i);
+                            return d.y + (d.height) / 2;
                         })
                         .text(function (d) {
                             return d.text;
@@ -156,34 +218,22 @@
                         .data(data)
                         .enter().append("circle").attr("r", elementheight / 4)
                         .attr("cx", function (d) {
-                            return dotpositionABS;
+                            return d.dotposition[0];
                         })
                         .attr("cy", function (d, i) {
-                            return startY + (elementheight / 2) + ((elementheight + verticalmargin) * i);
+                            return d.dotposition[1];
                         })
-                        .attr("r", function () {
-                            return elementheight / 4;
+                        .attr("r", function (d) {
+                            return (d.height)/5;
                         })
                         .attr("fill", "black")
                         .call(dragme);
 
             }
 
-
-
-            drawNodes(inputcontainer, elementwidth, elementheight, inputstartx, inputstarty, verticalmargin, inputs, "RIGHT");
-            drawNodes(outputcontainer, elementwidth, elementheight, outputstartx, outputstarty, verticalmargin, outputs, "LEFT");
-
-            function addInput() {
-                inputs.push({"text": "newelement", "col": "red"});
-                drawNodes(inputcontainer, elementwidth, elementheight, inputstartx, inputstarty, verticalmargin, inputs, "RIGHT");
+            for (var i = 0; i < inputs.length; i++) {
+                document.getElementById("trial").innerHTML = document.getElementById("trial").innerHTML + inputs[i].x + "-";
             }
-            function addOutput() {
-                outputs.push({"text": "newelement", "col": "red"});
-                drawNodes(outputcontainer, elementwidth, elementheight, outputstartx, outputstarty, verticalmargin, outputs, "LEFT");
-            }
-            // dragdot1.call(dragme);
-
         </script>
 
 

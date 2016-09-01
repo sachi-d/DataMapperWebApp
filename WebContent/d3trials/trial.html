@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <title>D3 drawing and dragging</title>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+
+        <style>
+
+            .canvas{
+                border:1px solid black;
+            }
+        </style>
+    </head>
+
+    <body>
+
+
+        <svg class="canvas" width="1000" height="500">
+        <g  id="container">  </g>  
+        </svg>
+
+
+        <script>
+
+            var data = [{
+                    "text": "inleaf1",
+                    "col": "red"
+                },
+                {
+                    "text": "inleaf2",
+                    "col": "blue"
+                },
+                {
+                    "text": "inleaf3",
+                    "col": "green"
+                }];
+
+            var elementwidth = 120,
+                    elementheight = 50,
+                    startX = 20,
+                    startY = 20;
+
+            var verticalmargin = 20;
+
+            var canvas = d3.select(".canvas"),
+                    container = d3.select("#container"),
+                    strokewidth = 2, //stroke width of lines and rectangles
+                    dotfill = "lime"; // color of the dot
+
+
+
+// d3 method to call for each dot ------------------------------------------------------------
+            var dragme = d3.drag()
+                    .on("start", function (d) {
+                        var thisdragY = d3.select(this).attr("cy"); // "this" refers to the original dot, which calls this method at line 136
+                        var thisdragX = d3.select(this).attr("cx");
+                        var thisdragR = d3.select(this).attr("r");
+                        coordinates = [0, 0];
+                        dragdot2 = container.append("circle") //initialize a copy of the existing dot
+                                .attr("cx", thisdragX)
+                                .attr("cy", thisdragY)
+                                .attr("r", thisdragR)
+                                .attr("fill", dotfill);
+                        dragline = container.append("line") //initialize a zero length line
+                                .attr("x1", thisdragX)
+                                .attr("x2", thisdragX)
+                                .attr("y1", thisdragY)
+                                .attr("y2", thisdragY)
+                                .style("stroke", d.col)
+                                .style("stroke-width", strokewidth);
+                    })
+                    .on("drag", function () {
+                        coordinates = d3.mouse(this);  //update the line and dot positions with mouse move
+                        xx = coordinates[0];
+                        yy = coordinates[1];
+                        dragline.attr("x2", xx).attr("y2", yy);
+                        dragdot2.attr("cx", xx).attr("cy", yy);
+                    })
+                    .on("end", function (d) {
+                        //code to run when the drag is released
+                    });
+
+
+// draw rectangles ---------------------------------------------------------------------------
+
+            var inputleaf = container.selectAll("rect")
+                    .data(data)
+                    .enter().append("rect")
+                    .attr("width", elementwidth)
+                    .attr("height", elementheight)
+                    .attr("x", startX)
+                    .attr("y", function (d, i) {
+                        return startY + ((elementheight + verticalmargin) * i);
+                    })
+                    .attr("stroke-width", strokewidth)
+                    .attr("fill", "none")
+                    .attr("stroke", function (d) {
+                        return d.col;
+                    });
+
+
+// draw texts -------------------------------------------------------------------------------
+
+            var inputtext = container.selectAll("text")
+                    .data(data)
+                    .enter().append("text")
+                    .attr("x", startX + elementwidth / 10)
+                    .attr("y", function (d, i) {
+                        return startY + (elementheight / 2) + ((elementheight + verticalmargin) * i);
+                    })
+                    .attr("fill", function (d) {
+                        return d.col;
+                    })
+                    .text(function (d) {
+                        return d.text;
+                    });
+
+
+// draw craggable circles ----------------------------------------------------------------------
+
+            var inputdragdot = container.selectAll("circle")
+                    .data(data)
+                    .enter().append("circle").attr("r", elementheight / 4)
+                    .attr("cx", function (d) {
+                        return startX + elementwidth;
+                    })
+                    .attr("cy", function (d, i) {
+                        return startY + (elementheight / 2) + ((elementheight + verticalmargin) * i);
+                    })
+                    .attr("r", function () {
+                        return elementheight / 5;
+                    })
+                    .attr("fill", dotfill)
+                    .call(dragme); //call the drag function 
+
+
+        </script>
+
+    </body>
+
+</html>
