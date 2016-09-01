@@ -146,7 +146,8 @@
                             if (target !== "null") {
                                 d3.select("#trial").text(target.text);
                                 dragline.attr("x2", target.dotposition[0]).attr("y2", target.dotposition[1]);
-                                dragdot2.attr("cx", target.dotposition[0]).attr("cy", target.dotposition[1]);
+                                dragdot2.remove();
+                            //    dragdot2.attr("cx", target.dotposition[0]).attr("cy", target.dotposition[1]);
                             } else {
                                 dragline.remove();
                                 dragdot2.remove();
