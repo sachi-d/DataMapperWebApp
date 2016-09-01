@@ -82,31 +82,31 @@
             });
 
 
-            drawNodeStack(inputcontainer, elementwidth, elementheight, inputstartx, inputstarty, verticalmargin, inputs, "RIGHT",0);
-            drawNodeStack(outputcontainer, elementwidth, elementheight, outputstartx, outputstarty, verticalmargin, outputs, "LEFT",1);
+            drawNodeStack(inputcontainer, elementwidth, elementheight, inputstartx, inputstarty, verticalmargin, inputs, "RIGHT", 0);
+            drawNodeStack(outputcontainer, elementwidth, elementheight, outputstartx, outputstarty, verticalmargin, outputs, "LEFT", 1);
 
 
 
-            function detectDropNode(xx, yy,data) {
-                var target=[0,0];
-                if(data[0].type===0){   //if root is from input target is outputs
-                    target=outputs;
-                }else{
-                    target=inputs;
+            function detectDropNode(xx, yy, data) {
+                var target = [0, 0];
+                if (data[0].type === 0) {   //if root is from input target is outputs
+                    target = outputs;
+                } else {
+                    target = inputs;
                 }
                 var i;
-                for(i=0;i<target.length;i++){
-                    var x=target[i].x,
-                            y=target[i].y,
-                            width=target[i].width,
-                            height=target[i].height;
-                    if(xx>x && xx<x+width){ //check whether horizontally in
-                        if(yy>y && yy<y+height){ //check whether vertically in
-                            return target[i].dotposition;
+                for (i = 0; i < target.length; i++) {
+                    var x = target[i].x,
+                            y = target[i].y,
+                            width = target[i].width,
+                            height = target[i].height;
+                    if (xx > x && xx < x + width) { //check whether horizontally in
+                        if (yy > y && yy < y + height) { //check whether vertically in
+                            return target[i];
                         }
                     }
                 }
-                
+                return "null";
             }
 
             function addInput() {
@@ -118,9 +118,9 @@
                 drawNodeStack(outputcontainer, elementwidth, elementheight, outputstartx, outputstarty, verticalmargin, outputs, "LEFT");
             }
 
-            function drawNodeStack(container, elementwidth, elementheight, startX, startY, verticalmargin, data, dotposition,type) {
-                var coordinates, dragdot2, dragline, 
-                        dotpositionABS=[0,0],
+            function drawNodeStack(container, elementwidth, elementheight, startX, startY, verticalmargin, data, dotposition, type) {
+                var coordinates, dragdot2, dragline,
+                        dotpositionABS = [0, 0],
                         childcontainer = d3.select("#" + (container.attr("id") + "-2"));
                 if (dotposition === "RIGHT") {
                     dotpositionABS[0] = startX + elementwidth;
@@ -128,9 +128,9 @@
                     dotpositionABS[0] = startX;
                 }
                 dotpositionABS[1] = elementheight / 2 + startY;//updated later
-                
-                
-                
+
+
+
                 var dragme = d3.drag()
                         .on("start", function (d) {
                             var thisdragY = d3.select(this).attr("cy");
@@ -160,6 +160,18 @@
                             //if position is inside the outleafs - stroke color change
                         })
                         .on("end", function (d) {
+                            var target = detectDropNode(xx, yy, data);
+                            if (target !== "null") {
+                                d3.select("#trial").text(target.text);
+                                dragline.attr("x2", target.dotposition[0]).attr("y2", target.dotposition[1]);
+                                dragdot2.attr("cx", target.dotposition[0]).attr("cy", target.dotposition[1]);
+                            } else {
+                                dragline.remove();
+                                dragdot2.remove();
+//                                dragline.attr("x2", dragline.attr("x1")).attr("y2", dragline.attr("y1"));
+//                                dragdot2.attr("cx", dragline.attr("x1")).attr("cy", dragline.attr("y1"));
+                            }
+
                             //if position is inside the outleafs - set position to the left of the rect
                         });
 
@@ -185,11 +197,11 @@
                         .attr("y", function (d, i) {
                             var myY = startY + ((elementheight + verticalmargin) * i);
                             d.y = myY;
-                            d.dotposition=[0,0];
+                            d.dotposition = [0, 0];
                             d.dotposition[0] = dotpositionABS[0]; //set the dot position
-                            d.dotposition[1]=myY+(d.height)/2;
-                            
-                            d.type=type;
+                            d.dotposition[1] = myY + (d.height) / 2;
+
+                            d.type = type;
                             return myY;
                         })
                         .attr("stroke-width", "2")
@@ -224,7 +236,7 @@
                             return d.dotposition[1];
                         })
                         .attr("r", function (d) {
-                            return (d.height)/5;
+                            return (d.height) / 5;
                         })
                         .attr("fill", "black")
                         .call(dragme);
