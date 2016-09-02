@@ -173,7 +173,7 @@
                                 .attr("class", "leaf")
                                 .each(function (d, i) {
                                     d.width = Number(d3.select(this).style("width").split("px")[0]);
-                                    d.height = Number(d3.select(this).style("height").split("px")[0]);
+                                    d.height = Number(d3.select(this).style("height").split("px")[0])+2; // plus 2 for the borders on top and bottom
                                     d.x = containerfo.attr("x");
                                     d.y = Number(containerfo.attr("y")) + (d.height * i);
                                     d.dotposition = [0, 0];
@@ -181,7 +181,7 @@
                                         d.dotposition[0] = Number(containerfo.attr("x") )+ d.width;
                                     } else if (dotposition === "LEFT") {
                                         d.dotposition[0] = startX;
-                                    }
+                                    }5
                                     d.dotposition[1] = d.y + (d.height) / 2;
 
                                     d.type = type;  //set the type
