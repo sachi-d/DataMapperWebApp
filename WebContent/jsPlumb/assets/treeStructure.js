@@ -36,8 +36,8 @@ function traverseTree(rootNode, resultBox, level) {
     }
     var startDIV = "<div class=\"node\" >";
     var endDIV = " </div>";
-    var joinBottom = "<img  src=\"assets/application/images/joinbottom.png\" >";
-    var empty = "<img  src=\"assets/application/images/empty.png\" >";
+    var joinBottom = "<img  src=\"../assets/application/images/joinbottom.png\" >";
+    var empty = "<img  src=\"../assets/application/images/empty.png\" >";
 
     $("#" + resultBox).append(startDIV);
     for (var j = 0; j < level; j++) {
@@ -75,3 +75,4 @@ function parseXMLTree(inputText, resultBox) {
     traverseTree(root, resultBox, 0);
 
 }
+

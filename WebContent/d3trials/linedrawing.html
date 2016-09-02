@@ -3,7 +3,7 @@
 
     <head>
         <meta charset="UTF-8">
-        <title>D3 mapper</title>
+        <title>D3 Line mapper</title>
         <script src="../assets/lib/d3/d3.js"></script>
         <!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
 
@@ -119,12 +119,12 @@
                             var thisdragX = d3.select(this).attr("cx");
                             var thisdragR = d3.select(this).attr("r");
                             coordinates = [0, 0];
-                            dragdot2 = childcontainer.append("circle")
+                            dragdot2 = childcontainer.append("circle").attr("class","dragdot")
                                     .attr("cx", thisdragX)
                                     .attr("cy", thisdragY)
                                     .attr("r", thisdragR)
                                     .attr("fill", "black");
-                            dragline = childcontainer.append("line")
+                            dragline = childcontainer.append("line").attr("class","dragline")
                                     .attr("x1", thisdragX)
                                     .attr("x2", thisdragX)
                                     .attr("y1", thisdragY)
@@ -147,7 +147,7 @@
                                 d3.select("#trial").text(target.text);
                                 dragline.attr("x2", target.dotposition[0]).attr("y2", target.dotposition[1]);
                                 dragdot2.remove();
-                            //    dragdot2.attr("cx", target.dotposition[0]).attr("cy", target.dotposition[1]);
+                                //    dragdot2.attr("cx", target.dotposition[0]).attr("cy", target.dotposition[1]);
                             } else {
                                 dragline.remove();
                                 dragdot2.remove();
@@ -183,7 +183,7 @@
                             d.type = type;  //set the type
                             return myY;
                         })
-                        .attr("stroke-width", "2")
+                        .attr("stroke-width", "1")
                         .attr("fill", "none")
                         .attr("stroke", function (d) {
                             return d.col;
@@ -205,9 +205,10 @@
 
 
 
-                var inputdragdot = container.selectAll("circle")
+                var inputnodedot = container.selectAll(".nodedot")
                         .data(data)
-                        .enter().append("circle").attr("r", elementheight / 4)
+                        .enter().append("circle").attr("class","nodedot")
+                        .attr("r", elementheight / 4)
                         .attr("cx", function (d) {
                             return d.dotposition[0];
                         })

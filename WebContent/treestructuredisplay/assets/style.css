@@ -1,0 +1,120 @@
+#page-body {
+    width: 100%;
+    margin: 0 auto;
+    /*padding: 0;*/
+}
+
+#canvas {
+    border: 2px solid black;
+    margin: 50px auto;
+    /*padding: 10px;*/
+    width: 80%;
+    overflow: auto;
+}
+
+
+/*two canvas containers for each input and output*/
+
+.canvas-container {
+    text-align: center;
+    margin: 0 auto;
+    height: 800px;
+    width: 50%;
+}
+
+#input-container {
+    float: left;
+}
+
+#output-container {
+    float: right;
+}
+
+
+/*where the file structure will be loaded*/
+
+.content-box {
+    height: 300px;
+    width: 40%;
+    font: 16px/26px Georgia, Garamond, Serif;
+    text-align: left;
+    margin: 10px auto;
+    /*position: absolute;*/
+    /*    background-color: white;*/
+        height: auto;
+}
+
+.content-box-title {
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 2px solid black;
+    /*    position: relative;*/
+}
+
+#input-structure-title {
+    background-color: #E1455A;
+}
+
+#output-structure-title {
+    background-color: #D8DD38;
+}
+
+
+/*set leaf node css*/
+
+.node-element{
+    display: inline;
+    width: auto;
+    white-space: nowrap;
+}
+
+.leaf {
+    width: 80%;
+        margin: auto;
+    border: 1px dotted #c9c9c9;
+    position:absolute;
+}
+
+
+/*
+.in-leaf.glyphicon:before {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.out-leaf.glyphicon {
+    position: relative;
+}
+*/
+
+
+/* file load options */
+
+.load-file {
+    text-align: left;
+    display: none;
+}
+
+.file-drag {
+    height: 75px;
+    font-weight: bold;
+    text-align: center;
+    color: #555;
+    border: 2px dashed #555;
+    border-radius: 7px;
+    cursor: default;
+}
+
+.file-drag-hover {
+    height: 75px;
+    color: #f00;
+    border-color: #f00;
+    border-style: solid;
+    box-shadow: inset 0 3px 4px #888;
+}
+
+.file-content {
+    /*padding: 10px;*/
+    text-align: left;
+}

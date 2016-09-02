@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Data Mapper Tool</title>
+        <script src="../assets/lib/d3/d3.js"></script>
+        <script src="../assets/lib/jQuery/jquery-3.1.0.js"></script>
+        <link rel="stylesheet" href="../assets/d3dm_style.css">
+    </head>
+
+    <body>
+
+
+        <div id="page-body">
+
+
+            <div class="canvas-container" id="input-container">
+                <button id="load-input-btn">Load input</button>
+
+                <div class="load-file" id="load-input">
+                    <input type="file" id="input-file-select" name="input-select[]" accept=".xml" />
+                    <div class="file-drag" id="input-file-drag">or drop files here</div>
+                </div>
+
+            </div>
+
+            <div class="canvas-container" id="output-container">
+                <button id="load-output-btn">Load output</button>
+
+                <div class="load-file" id="load-output">
+                    <input type="file" id="output-file-select" name="output-select[]" accept=".xml" />
+                    <div class="file-drag" id="output-file-drag">or drop files here</div>
+                </div>
+
+            </div>
+
+            <svg class="canvas">
+            <g  id="input-container">  </g>
+            <g id="output-container"> </g>
+            </svg>
+
+
+
+
+
+
+        </div>
+
+
+
+        <!--                <script src="../assets/elementSketcher.js"></script>
+                        <script src="../assets/treeStructure.js"></script>-->
+        <!--<script src="../assets/fileHandler.js"></script>-->
+
+        <script>
+            $(document).ready(function () {
+                //display or hide the load file options
+                $("#load-output-btn").click(function () {
+                    $("#load-output").slideToggle();
+                });
+
+                $("#load-input-btn").click(function () {
+                    $("#load-input").slideToggle();
+                });
+
+//                if (window.File && window.FileList && window.FileReader) {
+//                    init("input-file-select", "input-file-drag", "input-structure");
+//                    init("output-file-select", "output-file-drag", "output-structure");
+//
+//                }
+
+
+
+            });
+
+
+
+        </script>
+    </body>
+
+</html>
