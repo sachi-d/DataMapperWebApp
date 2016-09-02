@@ -3,30 +3,32 @@
     margin: 0 auto;
     /*padding: 0;*/
 }
-
-.canvas {
+#canvas-container{
     border: 2px solid black;
     margin: 50px auto;
     /*padding: 10px;*/
     width: 80%;
     overflow: auto;
 }
+.canvas {
+    
+}
 
 
 /*two canvas containers for each input and output*/
 
-.canvas-container {
+.file-load-container {
     text-align: center;
     margin: 0 auto;
     /*height: 800px;*/
-    width: 40%;
+    width: 50%;
 }
 
-#input-container {
+#input-file-load-container {
     float: left;
 }
 
-#output-container {
+#output-file-load-container {
     float: right;
 }
 
@@ -34,6 +36,10 @@
 
 
 /* file load options */
+#file-load{
+    height:150px;
+    /*border: 1px solid black;*/
+}
 
 .load-file {
     text-align: left;
@@ -48,6 +54,7 @@
     border: 2px dashed #555;
     border-radius: 7px;
     cursor: default;
+    margin: auto 10px;
 }
 
 .file-drag-hover {
