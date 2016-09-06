@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <title>D3 XML parsing</title>
+        <script src="../assets/lib/d3/d3.js"></script>
+
+    </head>
+
+    <body>
+
+
+        <script>
+
+            d3.xml("assets/simplein.xml", function (error, data) {
+                if (error)
+                    throw error;
+
+                // Convert the XML document to an array of objects.
+                // Note that querySelectorAll returns a NodeList, not a proper Array,
+                // so we must use map.call to invoke array methods.
+                data = [].map.call(data.querySelectorAll("letter"), function (letter) {
+                    return {
+                        letter: letter.getAttribute("id"),
+                        frequency: +letter.querySelector("frequency").textContent
+                    };
+                });
+
+                x.domain(data.map(function (d) {
+                    return d.letter;
+                }));
+                y.domain([0, d3.max(data, function (d) {
+                        return d.frequency;
+                    })]);
+
+                svg.append("g")
+                        .attr("class", "x axis")
+                        .attr("transform", "translate(0," + height + ")")
+                        .call(xAxis);
+
+                svg.append("g")
+                        .attr("class", "y axis")
+                        .call(yAxis)
+                        .append("text")
+                        .attr("transform", "rotate(-90)")
+                        .attr("y", 6)
+                        .attr("dy", ".71em")
+                        .style("text-anchor", "end")
+                        .text("Frequency");
+
+                svg.selectAll(".bar")
+                        .data(data)
+                        .enter().append("rect")
+                        .attr("class", "bar")
+                        .attr("x", function (d) {
+                            return x(d.letter);
+                        })
+                        .attr("width", x.rangeBand())
+                        .attr("y", function (d) {
+                            return y(d.frequency);
+                        })
+                        .attr("height", function (d) {
+                            return height - y(d.frequency);
+                        });
+            });
+        </script>
+    </body>
+
+</html>

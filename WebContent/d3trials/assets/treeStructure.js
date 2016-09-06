@@ -1,20 +1,3 @@
-function setDivElement(nodeName) {
-    return "<div class=\"node-element\" >" + nodeName + "</div>";
-}
-
-function setInLeaf(nodeName) {
-    return " <div class=\"node-element leaf in-leaf \" > " + nodeName + "</div>";
-}
-
-function setOutLeaf(nodeName) {
-    return " <div class=\"node-element leaf out-leaf \" > " + nodeName + "</div>";
-}
-
-
-
-
-
-
 
 //traverse XML tree
 function traverseTree(rootNode, resultBox, level) {
@@ -22,30 +5,31 @@ function traverseTree(rootNode, resultBox, level) {
         return;
     }
     var children = rootNode.childNodes;
-    var nodeName = "";
-    if (children.length === 1) {
+ 
+    
+    var node=d3.select("div#"+resultBox).append("div").attr("class","node");
+    
+    
+
+    for (var j = 0; j < level; j++) {
+        node.append("img").attr("src","../assets/application/images/empty.png");
+    }
+    node.append("img").attr("src","../assets/application/images/joinbottom.png");
+    
+    
+      if (children.length === 1) {
         if (resultBox.split("-")[0] === "input") {
-            nodeName = setInLeaf(rootNode.nodeName);
+            node.append("div").attr("class","leaf node-element").text(rootNode.nodeName);
 
         } else {
-            nodeName = setOutLeaf(rootNode.nodeName);
+            node.append("div").attr("class","leaf node-element").text(rootNode.nodeName);
         }
 
     } else {
-        nodeName = setDivElement(rootNode.nodeName);
+        node.append("div").attr("class","node-element").text(rootNode.nodeName);
     }
-    var startDIV = "<div class=\"node\" >";
-    var endDIV = " </div>";
-    var joinBottom = "<img  src=\"../assets/application/images/joinbottom.png\" >";
-    var empty = "<img  src=\"../assets/application/images/empty.png\" >";
-
-    $("#" + resultBox).append(startDIV);
-    for (var j = 0; j < level; j++) {
-        $("#" + resultBox).append(empty);
-    }
-    $("#" + resultBox).append(joinBottom);
-    $("#" + resultBox).append(nodeName);
-    $("#" + resultBox).append(endDIV);
+    
+    
     for (var i = 0; i < children.length; i++) {
 
         var child = children[i];
@@ -64,7 +48,8 @@ function traverseTree(rootNode, resultBox, level) {
 
 //parse XML tree
 function parseXMLTree(inputText, resultBox) {
-    $("#" + resultBox).empty();
+//    $("#" + resultBox).empty();
+    d3.select("div#"+resultBox).selectAll("div.node").remove();
     parser = new DOMParser();
 
 

@@ -24,33 +24,33 @@
 
         <a href="https://www.dashingd3js.com/svg-paths-and-d3js">Source tutorial</a><br><br>
 
+                <div>
+                    <svg class="canvas" width="1000" height="500">
+                        <g  id="input-container">  
+                            <foreignObject x="10" y="10" width="200" height="400" id="input-container-fo" class="container-fo">
+                                <div xmlns="http://www.w3.org/1999/xhtml" id="input-container-div" class="container-div">
 
-                <svg class="canvas" width="1000" height="500">
-                    <g  id="input-container">  
-                        <foreignObject x="10" y="10" width="200" height="400" id="input-container-fo" class="container-fo">
-                            <div xmlns="http://www.w3.org/1999/xhtml" id="input-container-div" class="container-div">
+                                </div>
+                            </foreignObject>
+                        </g>
+                        <g id="output-container">
+                            <foreignObject x="700" y="10" width="200" height="400" id="output-container-fo" class="container-fo">
+                                <div xmlns="http://www.w3.org/1999/xhtml" id="output-container-div" class="container-div">
 
-                            </div>
-                        </foreignObject>
-                    </g>
-                    <g id="output-container">
-                        <foreignObject x="700" y="10" width="200" height="400" id="output-container-fo" class="container-fo">
-                            <div xmlns="http://www.w3.org/1999/xhtml" id="output-container-div" class="container-div">
+                                </div>
+                            </foreignObject>
 
-                            </div>
-                        </foreignObject>
-
-                    </g>
-                </svg>
+                        </g>
+                    </svg>
 
 
-                <div >
+                    <div >
 
-                    <button type="button" onclick="addInput()">Add input node</button>
-                    <button type="button" onclick="addOutput()">Add output node</button>
+                        <button type="button" onclick="addInput()">Add input node</button>
+                        <button type="button" onclick="addOutput()">Add output node</button>
+                    </div>
+
                 </div>
-
-
 
                 <p id="trial"></p>
 
@@ -173,15 +173,16 @@
                                 .attr("class", "leaf")
                                 .each(function (d, i) {
                                     d.width = Number(d3.select(this).style("width").split("px")[0]);
-                                    d.height = Number(d3.select(this).style("height").split("px")[0])+2; // plus 2 for the borders on top and bottom
+                                    d.height = Number(d3.select(this).style("height").split("px")[0]) + 2; // plus 2 for the borders on top and bottom
                                     d.x = containerfo.attr("x");
                                     d.y = Number(containerfo.attr("y")) + (d.height * i);
                                     d.dotposition = [0, 0];
                                     if (dotposition === "RIGHT") {
-                                        d.dotposition[0] = Number(containerfo.attr("x") )+ d.width;
+                                        d.dotposition[0] = Number(containerfo.attr("x")) + d.width;
                                     } else if (dotposition === "LEFT") {
                                         d.dotposition[0] = startX;
-                                    }5
+                                    }
+                                    5
                                     d.dotposition[1] = d.y + (d.height) / 2;
 
                                     d.type = type;  //set the type

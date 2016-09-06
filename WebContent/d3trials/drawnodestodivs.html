@@ -8,6 +8,7 @@
             <script src="../assets/lib/jQuery/jquery-3.1.0.js"></script>
             <script src="../assets/lib/jquery-ui-1.12.0.custom/jquery-ui.js"></script>
             <link rel="stylesheet" href="assets/d3dm_style.css">
+
                 </head>
 
                 <body>
@@ -49,7 +50,7 @@
                                     </foreignObject>
                                 </g>
                                 <g id="output-container">
-                                    <foreignObject  x="700" y="10" width="200" height="400" id="output-container-fo" class="container-fo">
+                                    <foreignObject  x="700"  y="10" width="200" height="400" id="output-container-fo" class="container-fo">
                                         <div xmlns="http://www.w3.org/1999/xhtml" id="output-container-div" class="container-div">
                                             <div class="container-div-title" id="output-container-div-title">Output</div>
 
@@ -66,14 +67,70 @@
 
 
                     </div>
-
+                    <p id="trial" onclick="getPos()"></p>
 
 
                     <!--<script src="assets/elementSketcher.js"></script>-->
-                    <script src="assets/treeStructure.js"></script>
+                    <script src="assets/d3TreeStructure.js"></script>
                     <script src="assets/fileHandler.js"></script>
 
                     <script>
+
+                        var colorcode = ["rgb(128,0,255)", "rgb(0,0,255)", "rgb(25,255,0)", "rgb(255,0,25)"];
+                        var inputs = [{"text": "inleaf1", "col": "red"}, {"text": "inleaf2", "col": "blue"}, {"text": "inleaf3", "col": "green"}],
+                                outputs = [{"text": "outleaf1", "col": "blue"}, {"text": "outleaf2", "col": "red"}, {"text": "outleaf3", "col": "green"}];
+
+
+                        var elementwidth = 120,
+                                elementheight = 30,
+                                inputstartx = 30,
+                                inputstarty = 50,
+                                outputstartx = inputstartx + 500,
+                                outputstarty = inputstarty;
+
+                        var verticalmargin = 2;
+
+                        var canvas = d3.select(".canvas"),
+                                inputcontainer = d3.select("#input-container"),
+                                outputcontainer = d3.select("#output-container");
+
+                        inputcontainer.append("g").attr("id", function (d) {
+                            return inputcontainer.attr("id") + "-1";
+                        });
+                        outputcontainer.append("g").attr("id", function (d) {
+                            return outputcontainer.attr("id") + "-1";
+                        });
+                        canvas.append("g").attr("id", function (d) {
+                            return inputcontainer.attr("id") + "-2";
+                        });
+                        canvas.append("g").attr("id", function (d) {
+                            return outputcontainer.attr("id") + "-2";
+                        });
+
+                        //update input output containers
+                        d3.select("#output-container-fo").attr("x", outputstartx);
+
+                        d3.select("#input-container-fo").attr("x", inputstartx);
+                        
+                        var inputoutline=canvas.append("rect")
+                                .attr("x" ,inputstartx)
+                                .attr("y",inputstarty)
+                                .attr("width",elementwidth+100)
+                                .attr("height",200)
+                                .attr("stroke","black")
+                                .attr("fill","none")
+                                .attr("stroke-width","1");
+                        
+                        var outputoutline=canvas.append("rect")
+                                .attr("x" ,outputstartx)
+                                .attr("y",outputstarty)
+                                .attr("width",elementwidth+100)
+                                .attr("height",200)
+                                .attr("stroke","black")
+                                .attr("fill","none")
+                                .attr("stroke-width","1");
+
+
                         $(document).ready(function () {
                             //display or hide the load file options
                             $("#load-output-btn").click(function () {
@@ -86,22 +143,17 @@
                             //$(".canvas").draggable();
 
                             if (window.File && window.FileList && window.FileReader) {
-                                init("input-file-select", "input-file-drag", "input-container-div");
-                                init("output-file-select", "output-file-drag", "output-container-div");
-
+                                init("input-file-select", "input-file-drag", inputcontainer);
+                                init("output-file-select", "output-file-drag", outputcontainer);
                             }
-
-
 
                         });
 
 
 
+
+
                     </script>
-
-                    <p id="trial"></p>
-
-                
                 </body>
 
                 </html>

@@ -4,14 +4,36 @@
     /*padding: 0;*/
 }
 #canvas-container{
-    border: 2px solid black;
-    margin: 50px auto;
-    /*padding: 10px;*/
-    width: 80%;
-    overflow: auto;
+    /*    border: 2px solid black;
+        margin: 50px auto;
+        padding: 10px;
+        width: 80%;
+        overflow: auto;*/
 }
-.canvas {
-    
+
+.canvas{
+    border:1px solid black;
+    width: 1000px;
+    height:500px;
+    margin: 0 auto;
+}
+
+.container-div{
+    border:1px solid black;
+}
+.container-div-title{
+    text-align: center;
+    background-color: #c9c9c9;
+}
+.leaf{
+    display:block;
+    /*     /////////////////////////////width and height are used in drawing svg circles*/
+    width:150px; 
+    height:30px;
+    position: relative;
+}
+.node-element{
+    display: inline;
 }
 
 
