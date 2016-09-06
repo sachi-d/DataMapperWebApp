@@ -40,11 +40,11 @@
 
 
                         <div id="canvas-container">
-                            <svg class="canvas" >
+                            <svg class="canvas" width="1500" height="500">
                                 <g  id="input-container">  
 
                                     <foreignObject x="10" y="10" width="200" height="400" id="input-container-fo" class="container-fo">
-                                        <div xmlns="http://www.w3.org/1999/xhtml" id="output-container-div" class="container-div">
+                                        <div xmlns="http://www.w3.org/1999/xhtml" id="input-container-div" class="container-div">
                                             <div class="container-div-title" id="input-container-div-title">Input</div>
 
                                         </div>
@@ -53,7 +53,7 @@
 
 
                                 <g id="output-container">
-                                    <foreignObject  x="700"  y="10" width="200" height="400" id="output-container-fo" class="container-fo">
+                                    <foreignObject  x="1000"  y="10" width="200" height="400" id="output-container-fo" class="container-fo">
                                         <div xmlns="http://www.w3.org/1999/xhtml" id="output-container-div" class="container-div">
                                             <div class="container-div-title" id="output-container-div-title">Output</div>
 
@@ -70,137 +70,165 @@
 
 
                     </div>
-                    <p id="trial" onclick="getPos()"></p>
+                    <div >
+                        <br><br>
+                                <div id="inputnode" style="border:1px dashed #9c9c9c;padding:5px;display:inline">Input</div> 
+                                - connected to - 
+                                <div id="outputnode" style="border:1px dashed #9c9c9c;padding:5px;display:inline">Output</div>
+                                </div>
+                                <p id="trial" onclick="getPos()"></p>
 
 
-                    <!--<script src="assets/elementSketcher.js"></script>-->
-                    <script src="assets/d3TreeStructure.js"></script>
-                    <script src="assets/fileHandler.js"></script>
+                                <!--<script src="assets/elementSketcher.js"></script>-->
+                                <script src="assets/d3TreeStructure.js"></script>
+                                <script src="assets/fileHandler.js"></script>
 
-                    <script>
+                                <script>
 
-                        var colorcode = ["#cccccc", "#999999", "#666666", "#000000"];
-                        var inputs = [],
-                                outputs = [],
-                                inputleaves = [],
-                                outputleaves = [];
-
-
-                        var elementwidth = 120,
-                                elementheight = 30,
-                                inputstartx = 30,
-                                inputstarty = 50,
-                                outputstartx = inputstartx + 500,
-                                outputstarty = inputstarty;
-
-                        var verticalmargin = 2;
-
-                        var canvas = d3.select(".canvas"),
-                                inputcontainer = d3.select("#input-container"),
-                                outputcontainer = d3.select("#output-container");
-
-                        inputcontainer.append("g").attr("id", function (d) {
-                            return inputcontainer.attr("id") + "-1";
-                        });
-                        outputcontainer.append("g").attr("id", function (d) {
-                            return outputcontainer.attr("id") + "-1";
-                        });
-                        canvas.append("g").attr("id", function (d) {
-                            return inputcontainer.attr("id") + "-2";
-                        });
-                        canvas.append("g").attr("id", function (d) {
-                            return outputcontainer.attr("id") + "-2";
-                        });
-
-                        //update input output containers
-                        var inputfo = d3.select("#input-container-fo")
-                                .attr("x", inputstartx)
-                                .attr("y", inputstarty)
-                                .attr("width", elementwidth + 100);
-
-                        var outputfo = d3.select("#output-container-fo")
-                                .attr("x", outputstartx)
-                                .attr("y", outputstarty)
-                                .attr("width", elementwidth + 100);
+                                    //var colorcode = ["#cccccc", "#999999", "#666666", "#000000"];
+                                    var colorcode = ["#ffffff"];
+                                    var inputs = [],
+                                            outputs = [],
+                                            inputleaves = [],
+                                            outputleaves = [],
+                                            connections = [];
 
 
-                        var inputoutline = inputcontainer.append("rect")
-                                .attr("x", inputstartx)
-                                .attr("y", inputstarty)
-                                .attr("width", elementwidth + 100)
-                                .attr("height", 200)
-                                .attr("stroke", "black")
-                                .attr("fill", "none")
-                                .attr("stroke-width", "1");
+                                    var elementwidth = 120,
+                                            elementheight = 30,
+                                            inputstartx = 30,
+                                            inputstarty = 50,
+                                            outputstartx = inputstartx + 700,
+                                            outputstarty = inputstarty;
 
-                        var outputoutline = outputcontainer.append("rect")
-                                .attr("x", outputstartx)
-                                .attr("y", outputstarty)
-                                .attr("width", elementwidth + 100)
-                                .attr("height", 200)
-                                .attr("stroke", "black")
-                                .attr("fill", "none")
-                                .attr("stroke-width", "1");
+                                    var verticalmargin = 2;
 
-                        function updateContainers() {
-                            var maxinlev = 0, maxoutlev = 0;
-                            for (var i = 0; i < inputs.length; i++) {
-                                if (maxinlev < inputs[i].level) {
-                                    maxinlev = inputs[i].level;
-                                }
-                            }
-                            for (var i = 0; i < outputs.length; i++) {
-                                if (maxoutlev < outputs[i].level) {
-                                    maxoutlev = outputs[i].level;
-                                }
-                            }
-                            var inw = elementwidth + 20 + (maxinlev * 20);
-                            var inh = 50 + (elementheight * inputs.length);
-                            var outw = elementwidth + 20 + (maxoutlev * 20);
-                            var outh = 50 + (elementheight * outputs.length);
+                                    var canvas = d3.select(".canvas"),
+                                            inputcontainer = d3.select("#input-container"),
+                                            outputcontainer = d3.select("#output-container");
 
-                            if (inputs.length !== 0) {
-                                inputfo.attr("width", inw)
-                                        .attr("height", inh)
-                                        .attr("x", inputs[0].x - 5);
-                                inputoutline.attr("width", inw)
-                                        .attr("height", inh)
-                                        .attr("x", inputs[0].x - 5);
-                            }
-                            if (outputs.length !== 0) {
-                                outputfo.attr("width", outw)
-                                        .attr("height", outh)
-                                        .attr("x", outputs[0].x - 5);
-                                outputoutline.attr("width", outw)
-                                        .attr("height", outh)
-                                        .attr("x", outputs[0].x - 5);
-                            }
+                                    inputcontainer.append("g").attr("id", function (d) {
+                                        return inputcontainer.attr("id") + "-1";
+                                    });
+                                    outputcontainer.append("g").attr("id", function (d) {
+                                        return outputcontainer.attr("id") + "-1";
+                                    });
+                                    canvas.append("g").attr("id", function (d) {
+                                        return inputcontainer.attr("id") + "-2";
+                                    });
+                                    canvas.append("g").attr("id", function (d) {
+                                        return outputcontainer.attr("id") + "-2";
+                                    });
 
-                        }
+                                    //update input output containers
+                                    var inputfo = d3.select("#input-container-fo")
+                                            .attr("x", inputstartx)
+                                            .attr("y", inputstarty)
+                                            .attr("width", elementwidth + 100);
 
-                        $(document).ready(function () {
-                            //display or hide the load file options
-                            $("#load-output-btn").click(function () {
-                                $("#load-output").slideToggle();
-                            });
-
-                            $("#load-input-btn").click(function () {
-                                $("#load-input").slideToggle();
-                            });
+                                    var outputfo = d3.select("#output-container-fo")
+                                            .attr("x", outputstartx)
+                                            .attr("y", outputstarty)
+                                            .attr("width", elementwidth + 100);
 
 
-                            if (window.File && window.FileList && window.FileReader) {
-                                init("input-file-select", "input-file-drag", inputcontainer);
-                                init("output-file-select", "output-file-drag", outputcontainer);
-                            }
+                                    var inputoutline = inputcontainer.append("rect")
+                                            .attr("x", inputstartx)
+                                            .attr("y", inputstarty)
+                                            .attr("width", elementwidth + 100)
+                                            .attr("height", 200)
+                                            .attr("stroke", "black")
+                                            .attr("fill", "none")
+                                            .attr("stroke-width", "1");
 
-                        });
+                                    var outputoutline = outputcontainer.append("rect")
+                                            .attr("x", outputstartx)
+                                            .attr("y", outputstarty)
+                                            .attr("width", elementwidth + 100)
+                                            .attr("height", 200)
+                                            .attr("stroke", "black")
+                                            .attr("fill", "none")
+                                            .attr("stroke-width", "1");
+
+                                    //make the containers draggable
+                                    var dragcontainer = d3.drag()
+                                            .on("start", function () {
+
+                                            })
+                                            .on("drag", function (d, i) {
+                                                var coordi = d3.mouse(this);
+                                                var x = coordi[0];
+                                                var y = coordi[1];
+                                                d3.select(this.parentNode.parentNode).attr("transform", "translate(" + x + "," + y + ")");
+                                                updateConnections();
+                                            })
+                                            .on("end", function () {
+
+//                                            d3.select("#inputnode").text(x);
+                                            });
+                                    d3.select("#output-container-div").call(dragcontainer);
+
+                                    $(document).ready(function () {
+                                        //display or hide the load file options
+                                        $("#load-output-btn").click(function () {
+                                            $("#load-output").slideToggle();
+                                        });
+
+                                        $("#load-input-btn").click(function () {
+                                            $("#load-input").slideToggle();
+                                        });
 
 
+                                        if (window.File && window.FileList && window.FileReader) {
+                                            init("input-file-select", "input-file-drag", inputcontainer);
+                                            init("output-file-select", "output-file-drag", outputcontainer);
+                                        }
+
+                                    });
+
+                                    function updateContainers() {
+                                        var maxinlev = 0, maxoutlev = 0;
+                                        for (var i = 0; i < inputs.length; i++) {
+                                            if (maxinlev < inputs[i].level) {
+                                                maxinlev = inputs[i].level;
+                                            }
+                                        }
+                                        for (var i = 0; i < outputs.length; i++) {
+                                            if (maxoutlev < outputs[i].level) {
+                                                maxoutlev = outputs[i].level;
+                                            }
+                                        }
+                                        var inw = elementwidth + 20 + (maxinlev * 20);
+                                        var inh = 50 + ((elementheight + 2) * inputs.length); //plus two for the border
+                                        var outw = elementwidth + 20 + (maxoutlev * 20);
+                                        var outh = 50 + ((elementheight + 2) * outputs.length);
+
+                                        if (inputs.length !== 0) {
+                                            inputfo.attr("width", inw)
+                                                    .attr("height", inh)
+                                                    .attr("x", inputs[0].x - 5);
+                                            inputoutline.attr("width", inw)
+                                                    .attr("height", inh)
+                                                    .attr("x", inputs[0].x - 5);
+                                        }
+                                        if (outputs.length !== 0) {
+                                            outputfo.attr("width", outw)
+                                                    .attr("height", outh)
+                                                    .attr("x", outputs[0].x - 5);
+                                            outputoutline.attr("width", outw)
+                                                    .attr("height", outh)
+                                                    .attr("x", outputs[0].x - 5);
+                                        }
+
+                                        //update the canvas height
+                                        canvas.attr("height", (d3.max([inputs.length, outputs.length]) * elementheight) + 200);
+                                    }
+                                    function updateConnections() {
+
+                                    }
 
 
+                                </script>
+                                </body>
 
-                    </script>
-                </body>
-
-                </html>
+                                </html>

@@ -31,8 +31,13 @@ function traverseTree(rootNode, level, targetarray) {
 
 //parse XML tree
 function parseXMLTree(inputText, resultBox) {
-//    $("#" + resultBox).empty();
-    resultBox.selectAll(".input-leaf").remove();
+
+//remove elements of the inputs and outputs
+    resultBox.selectAll(".node-element-rect").remove();
+    resultBox.selectAll(".node-element-text").remove();
+    resultBox.selectAll(".nodedot").remove();
+    resultBox.selectAll(".dragdot").remove();
+    canvas.selectAll(".dragline").remove();
     parser = new DOMParser();
 
 
@@ -45,7 +50,8 @@ function parseXMLTree(inputText, resultBox) {
     traverseTree(root, 0, targetarray);
 
     if (resultBox.attr("id").split("-")[0] === "input") {
-
+        inputs = [];
+        inputleaves = [];
         //define inputs array
         inputs = targetarray;
         //generate input leaves array
@@ -57,6 +63,8 @@ function parseXMLTree(inputText, resultBox) {
         drawNodeStack(inputcontainer, elementwidth, elementheight, inputstartx, inputstarty, verticalmargin, inputs, inputleaves, "RIGHT", "INPUT");
 
     } else if (resultBox.attr("id").split("-")[0] === "output") {
+        outputs = [];
+        outputleaves = [];
         outputs = targetarray;
         for (var i = 0; i < outputs.length; i++) {
             if (outputs[i].leaf) {
@@ -102,7 +110,7 @@ function detectDropNode(xx, yy, data) {
 
 function drawNodeStack(container, elementwidth, elementheight, startX, startY, verticalmargin, data, leafdata, dotposition, type) {
 
-    startY += 30;
+    startY += 30;// skip space for title
 
     var coordinates, dragdot2, dragline,
             childcontainer = d3.select("#" + (container.attr("id") + "-2")),
@@ -112,16 +120,17 @@ function drawNodeStack(container, elementwidth, elementheight, startX, startY, v
 
     var dragme = d3.drag()
             .on("start", function (d) {
+                d3.select("#inputnode").text(d.text);
                 var thisdragY = d3.select(this).attr("cy");
                 var thisdragX = d3.select(this).attr("cx");
                 var thisdragR = d3.select(this).attr("r");
                 coordinates = [0, 0];
-                dragdot2 = childcontainer.append("circle").attr("class", "dragdot")
+                dragdot2 = container.append("circle").attr("class", "dragdot")
                         .attr("cx", thisdragX)
                         .attr("cy", thisdragY)
                         .attr("r", thisdragR)
                         .attr("fill", "red");
-                dragline = childcontainer.append("line").attr("class", "dragline")
+                dragline = container.append("line").attr("class", "dragline")
                         .attr("x1", thisdragX)
                         .attr("x2", thisdragX)
                         .attr("y1", thisdragY)
@@ -135,15 +144,17 @@ function drawNodeStack(container, elementwidth, elementheight, startX, startY, v
                 yy = coordinates[1];
                 dragline.attr("x2", xx).attr("y2", yy);
                 dragdot2.attr("cx", xx).attr("cy", yy);
+                //dragdot2.attr("transform","translate("+xx+","+yy+")");
 
-                //if position is inside the outleafs - stroke color change
+                //TODO if position is inside the outleafs - text color change
             })
             .on("end", function (d) {
                 var target = detectDropNode(xx, yy, data);
                 if (target !== "null") {
-                    d3.select("#trial").text(target.text);
+                    d3.select("#outputnode").text(target.text);
                     dragline.attr("x2", target.dotposition[0]).attr("y2", target.dotposition[1]);
                     dragdot2.remove();
+                    connections.push({"source": d, "target": target});
                     //    dragdot2.attr("cx", target.dotposition[0]).attr("cy", target.dotposition[1]);
                 } else {
                     dragline.remove();
@@ -153,10 +164,10 @@ function drawNodeStack(container, elementwidth, elementheight, startX, startY, v
 
 
 
-    var inputleaf = container.selectAll(".input-leaf")
+    var inputleaf = container.selectAll(".node-element-rect")
             .data(data)
             .enter().append("rect")
-            .attr("class", "input-leaf")
+            .attr("class", "node-element-rect")
             .attr("width", function (d) {
                 d.width = elementwidth;
                 return elementwidth;
@@ -194,7 +205,7 @@ function drawNodeStack(container, elementwidth, elementheight, startX, startY, v
 
     var inputtext = container.selectAll("text")
             .data(data)
-            .enter().append("text")
+            .enter().append("text").attr("class", "node-element-text")
             .attr("x", function (d) {
                 return d.x;
             })
@@ -208,7 +219,7 @@ function drawNodeStack(container, elementwidth, elementheight, startX, startY, v
 
 
 
-    var inputnodedot = leafcontainer.selectAll(".nodedot")
+    var inputnodedot = container.selectAll(".nodedot")
             .data(leafdata)
             .enter().append("circle").attr("class", "nodedot")
             .attr("r", elementheight / 4)
