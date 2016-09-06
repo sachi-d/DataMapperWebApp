@@ -42,13 +42,16 @@
                         <div id="canvas-container">
                             <svg class="canvas" >
                                 <g  id="input-container">  
+
                                     <foreignObject x="10" y="10" width="200" height="400" id="input-container-fo" class="container-fo">
-                                        <div xmlns="http://www.w3.org/1999/xhtml" id="input-container-div" class="container-div">
+                                        <div xmlns="http://www.w3.org/1999/xhtml" id="output-container-div" class="container-div">
                                             <div class="container-div-title" id="input-container-div-title">Input</div>
 
                                         </div>
                                     </foreignObject>
                                 </g>
+
+
                                 <g id="output-container">
                                     <foreignObject  x="700"  y="10" width="200" height="400" id="output-container-fo" class="container-fo">
                                         <div xmlns="http://www.w3.org/1999/xhtml" id="output-container-div" class="container-div">
@@ -76,9 +79,11 @@
 
                     <script>
 
-                        var colorcode = ["rgb(128,0,255)", "rgb(0,0,255)", "rgb(25,255,0)", "rgb(255,0,25)"];
-                        var inputs = [{"text": "inleaf1", "col": "red"}, {"text": "inleaf2", "col": "blue"}, {"text": "inleaf3", "col": "green"}],
-                                outputs = [{"text": "outleaf1", "col": "blue"}, {"text": "outleaf2", "col": "red"}, {"text": "outleaf3", "col": "green"}];
+                        var colorcode = ["#cccccc", "#999999", "#666666", "#000000"];
+                        var inputs = [],
+                                outputs = [],
+                                inputleaves = [],
+                                outputleaves = [];
 
 
                         var elementwidth = 120,
@@ -108,28 +113,70 @@
                         });
 
                         //update input output containers
-                        d3.select("#output-container-fo").attr("x", outputstartx);
+                        var inputfo = d3.select("#input-container-fo")
+                                .attr("x", inputstartx)
+                                .attr("y", inputstarty)
+                                .attr("width", elementwidth + 100);
 
-                        d3.select("#input-container-fo").attr("x", inputstartx);
-                        
-                        var inputoutline=canvas.append("rect")
-                                .attr("x" ,inputstartx)
-                                .attr("y",inputstarty)
-                                .attr("width",elementwidth+100)
-                                .attr("height",200)
-                                .attr("stroke","black")
-                                .attr("fill","none")
-                                .attr("stroke-width","1");
-                        
-                        var outputoutline=canvas.append("rect")
-                                .attr("x" ,outputstartx)
-                                .attr("y",outputstarty)
-                                .attr("width",elementwidth+100)
-                                .attr("height",200)
-                                .attr("stroke","black")
-                                .attr("fill","none")
-                                .attr("stroke-width","1");
+                        var outputfo = d3.select("#output-container-fo")
+                                .attr("x", outputstartx)
+                                .attr("y", outputstarty)
+                                .attr("width", elementwidth + 100);
 
+
+                        var inputoutline = inputcontainer.append("rect")
+                                .attr("x", inputstartx)
+                                .attr("y", inputstarty)
+                                .attr("width", elementwidth + 100)
+                                .attr("height", 200)
+                                .attr("stroke", "black")
+                                .attr("fill", "none")
+                                .attr("stroke-width", "1");
+
+                        var outputoutline = outputcontainer.append("rect")
+                                .attr("x", outputstartx)
+                                .attr("y", outputstarty)
+                                .attr("width", elementwidth + 100)
+                                .attr("height", 200)
+                                .attr("stroke", "black")
+                                .attr("fill", "none")
+                                .attr("stroke-width", "1");
+
+                        function updateContainers() {
+                            var maxinlev = 0, maxoutlev = 0;
+                            for (var i = 0; i < inputs.length; i++) {
+                                if (maxinlev < inputs[i].level) {
+                                    maxinlev = inputs[i].level;
+                                }
+                            }
+                            for (var i = 0; i < outputs.length; i++) {
+                                if (maxoutlev < outputs[i].level) {
+                                    maxoutlev = outputs[i].level;
+                                }
+                            }
+                            var inw = elementwidth + 20 + (maxinlev * 20);
+                            var inh = 50 + (elementheight * inputs.length);
+                            var outw = elementwidth + 20 + (maxoutlev * 20);
+                            var outh = 50 + (elementheight * outputs.length);
+
+                            if (inputs.length !== 0) {
+                                inputfo.attr("width", inw)
+                                        .attr("height", inh)
+                                        .attr("x", inputs[0].x - 5);
+                                inputoutline.attr("width", inw)
+                                        .attr("height", inh)
+                                        .attr("x", inputs[0].x - 5);
+                            }
+                            if (outputs.length !== 0) {
+                                outputfo.attr("width", outw)
+                                        .attr("height", outh)
+                                        .attr("x", outputs[0].x - 5);
+                                outputoutline.attr("width", outw)
+                                        .attr("height", outh)
+                                        .attr("x", outputs[0].x - 5);
+                            }
+
+                        }
 
                         $(document).ready(function () {
                             //display or hide the load file options
@@ -140,7 +187,7 @@
                             $("#load-input-btn").click(function () {
                                 $("#load-input").slideToggle();
                             });
-                            //$(".canvas").draggable();
+
 
                             if (window.File && window.FileList && window.FileReader) {
                                 init("input-file-select", "input-file-drag", inputcontainer);

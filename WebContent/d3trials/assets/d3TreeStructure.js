@@ -32,7 +32,7 @@ function traverseTree(rootNode, level, targetarray) {
 //parse XML tree
 function parseXMLTree(inputText, resultBox) {
 //    $("#" + resultBox).empty();
-    resultBox.selectAll("rect").remove();
+    resultBox.selectAll(".input-leaf").remove();
     parser = new DOMParser();
 
 
@@ -45,11 +45,25 @@ function parseXMLTree(inputText, resultBox) {
     traverseTree(root, 0, targetarray);
 
     if (resultBox.attr("id").split("-")[0] === "input") {
+
+        //define inputs array
         inputs = targetarray;
-        drawNodeStack(inputcontainer, elementwidth, elementheight, inputstartx, inputstarty, verticalmargin, inputs, "RIGHT", "INPUT");
+        //generate input leaves array
+        for (var i = 0; i < inputs.length; i++) {
+            if (inputs[i].leaf) {
+                inputleaves.push(inputs[i]);
+            }
+        }
+        drawNodeStack(inputcontainer, elementwidth, elementheight, inputstartx, inputstarty, verticalmargin, inputs, inputleaves, "RIGHT", "INPUT");
+
     } else if (resultBox.attr("id").split("-")[0] === "output") {
         outputs = targetarray;
-        drawNodeStack(outputcontainer, elementwidth, elementheight, outputstartx, outputstarty, verticalmargin, outputs, "LEFT", "OUTPUT");
+        for (var i = 0; i < outputs.length; i++) {
+            if (outputs[i].leaf) {
+                outputleaves.push(outputs[i]);
+            }
+        }
+        drawNodeStack(outputcontainer, elementwidth, elementheight, outputstartx, outputstarty, verticalmargin, outputs, outputleaves, "LEFT", "OUTPUT");
     }
 }
 
@@ -58,9 +72,9 @@ function parseXMLTree(inputText, resultBox) {
 function detectDropNode(xx, yy, data) {
     var target = [0, 0];
     if (data[0].type === "INPUT") {   //if root is from input target is outputs
-        target = outputs;
+        target = outputleaves;
     } else {
-        target = inputs;
+        target = inputleaves;
     }
     var i;
     for (i = 0; i < target.length; i++) {
@@ -77,23 +91,18 @@ function detectDropNode(xx, yy, data) {
     return "null";
 }
 
-function addInput() {
-    inputs.push({"text": "newelement", "col": "red"});
-    drawNodeStack(inputcontainer, elementwidth, elementheight, inputstartx, inputstarty, verticalmargin, inputs, "RIGHT", "INPUT");
-}
-function addOutput() {
-    outputs.push({"text": "newelement", "col": "red"});
-    drawNodeStack(outputcontainer, elementwidth, elementheight, outputstartx, outputstarty, verticalmargin, outputs, "LEFT", "OUTPUT");
-}
+//function addInput() {
+//    inputs.push({"text": "newelement", "col": "red"});
+//    drawNodeStack(inputcontainer, elementwidth, elementheight, inputstartx, inputstarty, verticalmargin, inputs, "RIGHT", "INPUT");
+//}
+//function addOutput() {
+//    outputs.push({"text": "newelement", "col": "red"});
+//    drawNodeStack(outputcontainer, elementwidth, elementheight, outputstartx, outputstarty, verticalmargin, outputs, "LEFT", "OUTPUT");
+//}
 
-function drawNodeStack(container, elementwidth, elementheight, startX, startY, verticalmargin, data, dotposition, type) {
+function drawNodeStack(container, elementwidth, elementheight, startX, startY, verticalmargin, data, leafdata, dotposition, type) {
 
-var leafdata=[];
-for(var i=0;i<data.length;i++){
-    if(data[i].leaf){
-        leafdata.push(data[i]);
-    }
-}
+    startY += 30;
 
     var coordinates, dragdot2, dragline,
             childcontainer = d3.select("#" + (container.attr("id") + "-2")),
@@ -144,7 +153,7 @@ for(var i=0;i<data.length;i++){
 
 
 
-    var inputleaf = container.selectAll("rect").attr("class", "input-leaf")
+    var inputleaf = container.selectAll(".input-leaf")
             .data(data)
             .enter().append("rect")
             .attr("class", "input-leaf")
@@ -165,12 +174,12 @@ for(var i=0;i<data.length;i++){
                 var myY = startY + ((elementheight + verticalmargin) * i);
                 d.y = myY;
                 d.dotposition = [0, 0];
-                if(dotposition==="RIGHT"){
-                    d.dotposition[0]=d.x+d.width;
-                }else if(dotposition==="LEFT"){
-                    d.dotposition[0]=d.x;
+                if (dotposition === "RIGHT") {
+                    d.dotposition[0] = d.x + d.width;
+                } else if (dotposition === "LEFT") {
+                    d.dotposition[0] = d.x;
                 }
-                
+
                 d.dotposition[1] = myY + (d.height) / 2;
 
                 d.type = type;  //set the type
@@ -215,6 +224,8 @@ for(var i=0;i<data.length;i++){
             .attr("fill", "black")
             .call(dragme);
 
-    d3.select("#trial").text(JSON.stringify(leafdata));
+
+    updateContainers();
+    //d3.select("#trial").text(JSON.stringify(leafdata));
 
 }
