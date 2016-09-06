@@ -156,17 +156,19 @@
 
                                             })
                                             .on("drag", function (d, i) {
-                                                var coordi = d3.mouse(this);
-                                                var x = coordi[0];
-                                                var y = coordi[1];
-                                                d3.select(this.parentNode.parentNode).attr("transform", "translate(" + x + "," + y + ")");
+                                                this.x = this.x || 0;
+                                                this.y = this.y || 0;
+
+                                                this.x += d3.event.dx;
+                                                this.y += d3.event.dy;
+                                                d3.select(this).attr("transform", "translate(" + this.x + "," + this.y + ")");
                                                 updateConnections();
                                             })
                                             .on("end", function () {
 
 //                                            d3.select("#inputnode").text(x);
                                             });
-                                    d3.select("#output-container-div").call(dragcontainer);
+                                   d3.select(d3.select("#input-container-div").node().parentNode.parentNode).call(dragcontainer);
 
                                     $(document).ready(function () {
                                         //display or hide the load file options
@@ -206,18 +208,18 @@
                                         if (inputs.length !== 0) {
                                             inputfo.attr("width", inw)
                                                     .attr("height", inh)
-                                                    .attr("x", inputs[0].x - 5);
+                                                    .attr("x", inputs[0].textnode.attr("x") - 5);
                                             inputoutline.attr("width", inw)
                                                     .attr("height", inh)
-                                                    .attr("x", inputs[0].x - 5);
+                                                    .attr("x", inputs[0].textnode.attr("x") - 5);
                                         }
                                         if (outputs.length !== 0) {
                                             outputfo.attr("width", outw)
                                                     .attr("height", outh)
-                                                    .attr("x", outputs[0].x - 5);
+                                                    .attr("x", outputs[0].textnode.attr("x") - 5);
                                             outputoutline.attr("width", outw)
                                                     .attr("height", outh)
-                                                    .attr("x", outputs[0].x - 5);
+                                                    .attr("x", outputs[0].textnode.attr("x") - 5);
                                         }
 
                                         //update the canvas height

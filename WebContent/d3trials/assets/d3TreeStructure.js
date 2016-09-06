@@ -10,7 +10,7 @@ function traverseTree(rootNode, level, targetarray) {
     if (children.length === 1) {
         isleaf = true;
     }
-    targetarray.push({"text": rootNode.nodeName, "level": level, "x": 0, "y": 0, "height": 0, "width": 0, "dotposition": [0, 0], "leaf": isleaf, "type": ""});
+    targetarray.push({"text": rootNode.nodeName, "level": level, "leaf": isleaf, "type": "", "width": elementwidth, "height": elementheight});
 
 
     for (var i = 0; i < children.length; i++) {
@@ -56,22 +56,24 @@ function parseXMLTree(inputText, resultBox) {
         inputs = targetarray;
         //generate input leaves array
         for (var i = 0; i < inputs.length; i++) {
+            inputs[i].id=i;
             if (inputs[i].leaf) {
                 inputleaves.push(inputs[i]);
             }
         }
-        drawNodeStack(inputcontainer, elementwidth, elementheight, inputstartx, inputstarty, verticalmargin, inputs, inputleaves, "RIGHT", "INPUT");
+        drawNodeStack(inputcontainer, inputstartx, inputstarty, verticalmargin, inputs, inputleaves, "RIGHT", "INPUT");
 
     } else if (resultBox.attr("id").split("-")[0] === "output") {
         outputs = [];
         outputleaves = [];
         outputs = targetarray;
         for (var i = 0; i < outputs.length; i++) {
+            outputs[i].id=i;
             if (outputs[i].leaf) {
                 outputleaves.push(outputs[i]);
             }
         }
-        drawNodeStack(outputcontainer, elementwidth, elementheight, outputstartx, outputstarty, verticalmargin, outputs, outputleaves, "LEFT", "OUTPUT");
+        drawNodeStack(outputcontainer, outputstartx, outputstarty, verticalmargin, outputs, outputleaves, "LEFT", "OUTPUT");
     }
 }
 
@@ -86,8 +88,8 @@ function detectDropNode(xx, yy, data) {
     }
     var i;
     for (i = 0; i < target.length; i++) {
-        var x = target[i].x,
-                y = target[i].y,
+        var x = target[i].dot.cx,
+                y = target[i].dot.cy,
                 width = target[i].width,
                 height = target[i].height;
         if (xx > x && xx < x + width) { //check whether horizontally in
@@ -108,7 +110,7 @@ function detectDropNode(xx, yy, data) {
 //    drawNodeStack(outputcontainer, elementwidth, elementheight, outputstartx, outputstarty, verticalmargin, outputs, "LEFT", "OUTPUT");
 //}
 
-function drawNodeStack(container, elementwidth, elementheight, startX, startY, verticalmargin, data, leafdata, dotposition, type) {
+function drawNodeStack(container, startX, startY, verticalmargin, data, leafdata, dotposition, type) {
 
     startY += 30;// skip space for title
 
@@ -154,7 +156,7 @@ function drawNodeStack(container, elementwidth, elementheight, startX, startY, v
                     d3.select("#outputnode").text(target.text);
                     dragline.attr("x2", target.dotposition[0]).attr("y2", target.dotposition[1]);
                     dragdot2.remove();
-                    connections.push({"source": d, "target": target});
+                    connections.push({"source": d, "target": target, "line": dragline});
                     //    dragdot2.attr("cx", target.dotposition[0]).attr("cy", target.dotposition[1]);
                 } else {
                     dragline.remove();
@@ -164,53 +166,55 @@ function drawNodeStack(container, elementwidth, elementheight, startX, startY, v
 
 
 
-    var inputleaf = container.selectAll(".node-element-rect")
-            .data(data)
-            .enter().append("rect")
-            .attr("class", "node-element-rect")
-            .attr("width", function (d) {
-                d.width = elementwidth;
-                return elementwidth;
-            })
-            .attr("height", function (d) {
-                d.height = elementheight;
-                return elementheight;
-            })
-            .attr("x", function (d) {
-                var myX = startX + (d.level * 20);
-                d.x = myX;
-                return myX;
-            })
-            .attr("y", function (d, i) {
-                var myY = startY + ((elementheight + verticalmargin) * i);
-                d.y = myY;
-                d.dotposition = [0, 0];
-                if (dotposition === "RIGHT") {
-                    d.dotposition[0] = d.x + d.width;
-                } else if (dotposition === "LEFT") {
-                    d.dotposition[0] = d.x;
-                }
-
-                d.dotposition[1] = myY + (d.height) / 2;
-
-                d.type = type;  //set the type
-                return myY;
-            })
-            .attr("stroke-width", "1")
-            .attr("fill", "none")
-            .attr("stroke", function (d) {
-                var index = d.level % (colorcode.length);
-                return colorcode[index];
-            });
+//    var inputleaf = container.selectAll(".node-element-rect")
+//            .data(data)
+//            .enter().append("rect")
+//            .attr("class", "node-element-rect")
+//            .attr("width", function (d) {
+//                return d.width;
+//            })
+//            .attr("height", function (d) {
+//                return d.height;
+//            })
+//            .attr("x", function (d) {
+//                var myX = startX + (d.level * 20);
+//                d.x = myX;
+//                return myX;
+//            })
+//            .attr("y", function (d, i) {
+//                var myY = startY + ((d.height + verticalmargin) * i);
+//                d.y = myY;
+//                d.dotposition = [0, 0];
+//                if (dotposition === "RIGHT") {
+//                    d.dotposition[0] = d.x + d.width;
+//                } else if (dotposition === "LEFT") {
+//                    d.dotposition[0] = d.x;
+//                }
+//
+//                d.dotposition[1] = myY + (d.height) / 2;
+//
+//              
+//                return myY;
+//            })
+//            .attr("stroke-width", "1")
+//            .attr("fill", "none")
+//            .attr("stroke", function (d) {
+//                var index = d.level % (colorcode.length);
+//                return colorcode[index];
+//            });
 
     var inputtext = container.selectAll("text")
             .data(data)
             .enter().append("text").attr("class", "node-element-text")
             .attr("x", function (d) {
-                return d.x;
+                d.type = type;  //set the type
+                return startX + (d.level * 20);
             })
             .attr("y", function (d, i) {
-                return d.y + (d.height) / 2;
+                return  startY + ((d.height + verticalmargin) * i) + (d.height) / 2;
+            })
+            .each(function (d) {
+                d.textnode = d3.select(this);
             })
             .text(function (d) {
                 return d.text;
@@ -222,17 +226,28 @@ function drawNodeStack(container, elementwidth, elementheight, startX, startY, v
     var inputnodedot = container.selectAll(".nodedot")
             .data(leafdata)
             .enter().append("circle").attr("class", "nodedot")
-            .attr("r", elementheight / 4)
+            .attr("r", function (d) {
+                return d.height / 4;
+            })
             .attr("cx", function (d) {
-                return d.dotposition[0];
+                if (dotposition === "RIGHT") {
+                    return startX + (d.level * 20) + d.width;
+                } else if (dotposition === "LEFT") {
+                    return startX + (d.level * 20);
+                }
+                return 0;
+
             })
             .attr("cy", function (d, i) {
-                return d.dotposition[1];
+                return startY + ((d.height + verticalmargin) * d.id) + (d.height) / 2;
             })
             .attr("r", function (d) {
                 return (d.height) / 5;
             })
             .attr("fill", "black")
+            .each(function (d) {
+                d.dot = d3.select(this);
+            })
             .call(dragme);
 
 
