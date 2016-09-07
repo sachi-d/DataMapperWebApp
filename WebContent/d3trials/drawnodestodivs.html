@@ -3,234 +3,242 @@
 
     <head>
         <meta charset="UTF-8">
-            <title>Data Mapper Tool</title>
-            <script src="../assets/lib/d3/d3.js"></script>
-            <script src="../assets/lib/jQuery/jquery-3.1.0.js"></script>
-            <script src="../assets/lib/jquery-ui-1.12.0.custom/jquery-ui.js"></script>
-            <link rel="stylesheet" href="assets/d3dm_style.css">
+        <title>Data Mapper Tool</title>
+        <script src="../assets/lib/d3/d3.js"></script>
+        <script src="../assets/lib/jQuery/jquery-3.1.0.js"></script>
+        <script src="../assets/lib/jquery-ui-1.12.0.custom/jquery-ui.js"></script>
+        <link rel="stylesheet" href="assets/d3dm_style.css">
 
-                </head>
+    </head>
 
-                <body>
-
-
-                    <div id="page-body">
-
-                        <div  id="file-load">
-                            <div class="file-load-container" id="input-file-load-container">
-                                <button id="load-input-btn">Load input</button>
-
-                                <div class="load-file" id="load-input">
-                                    <input type="file" id="input-file-select" name="input-select[]" accept=".xml" />
-                                    <div class="file-drag" id="input-file-drag">or drop files here</div>
-                                </div>
-
-                            </div>
-
-                            <div class="file-load-container" id="output-file-load-container">
-                                <button id="load-output-btn">Load output</button>
-
-                                <div class="load-file" id="load-output">
-                                    <input type="file" id="output-file-select" name="output-select[]" accept=".xml" />
-                                    <div class="file-drag" id="output-file-drag">or drop files here</div>
-                                </div>
-
-                            </div>
-                        </div>
+    <body>
 
 
-                        <div id="canvas-container">
-                            <svg class="canvas" width="1500" height="500">
-                                <g  id="input-container">  
+        <div id="page-body">
 
-                                    <foreignObject x="10" y="10" width="200" height="400" id="input-container-fo" class="container-fo">
-                                        <div xmlns="http://www.w3.org/1999/xhtml" id="input-container-div" class="container-div">
-                                            <div class="container-div-title" id="input-container-div-title">Input</div>
+            <div  id="file-load">
+                <div class="file-load-container" id="input-file-load-container">
+                    <button id="load-input-btn">Load input</button>
 
-                                        </div>
-                                    </foreignObject>
-                                </g>
-
-
-                                <g id="output-container">
-                                    <foreignObject  x="1000"  y="10" width="200" height="400" id="output-container-fo" class="container-fo">
-                                        <div xmlns="http://www.w3.org/1999/xhtml" id="output-container-div" class="container-div">
-                                            <div class="container-div-title" id="output-container-div-title">Output</div>
-
-                                        </div>
-                                    </foreignObject>
-
-                                </g>
-                            </svg>
-
-                        </div>
-
-
-
-
-
+                    <div class="load-file" id="load-input">
+                        <input type="file" id="input-file-select" name="input-select[]" accept=".xml" />
+                        <div class="file-drag" id="input-file-drag">or drop files here</div>
                     </div>
-                    <div >
-                        <br><br>
-                                <div id="inputnode" style="border:1px dashed #9c9c9c;padding:5px;display:inline">Input</div> 
-                                - connected to - 
-                                <div id="outputnode" style="border:1px dashed #9c9c9c;padding:5px;display:inline">Output</div>
-                                </div>
-                                <p id="trial" onclick="getPos()"></p>
+
+                </div>
+
+                <div class="file-load-container" id="output-file-load-container">
+                    <button id="load-output-btn">Load output</button>
+
+                    <div class="load-file" id="load-output">
+                        <input type="file" id="output-file-select" name="output-select[]" accept=".xml" />
+                        <div class="file-drag" id="output-file-drag">or drop files here</div>
+                    </div>
+
+                </div>
+            </div>
 
 
-                                <!--<script src="assets/elementSketcher.js"></script>-->
-                                <script src="assets/d3TreeStructure.js"></script>
-                                <script src="assets/fileHandler.js"></script>
+            <div id="canvas-container">
+                <svg class="canvas" width="1500" height="500">
+                <g  id="input-container">  
 
-                                <script>
-
-                                    //var colorcode = ["#cccccc", "#999999", "#666666", "#000000"];
-                                    var colorcode = ["#ffffff"];
-                                    var inputs = [],
-                                            outputs = [],
-                                            inputleaves = [],
-                                            outputleaves = [],
-                                            connections = [];
+                <g id="input-container-fo" class="container-fo">
+                <rect class="container-title-outline" id="input-container-title-outline" height="20" fill="yellow" stroke="black"></rect>
+                <text class="container-title" id="input-container-title">Input</text>
+                </g>
+                </g>
 
 
-                                    var elementwidth = 120,
-                                            elementheight = 30,
-                                            inputstartx = 30,
-                                            inputstarty = 50,
-                                            outputstartx = inputstartx + 700,
-                                            outputstarty = inputstarty;
+                <g id="output-container">
+                <g   id="output-container-fo" class="container-fo">
+                <rect class="container-title-outline" id="output-container-title-outline" height="20" fill="yellow" stroke="black"></rect>
+                <text class="container-title" id="output-container-title">Output</text>
+                </g>
 
-                                    var verticalmargin = 2;
+                </g>
+                </svg>
 
-                                    var canvas = d3.select(".canvas"),
-                                            inputcontainer = d3.select("#input-container"),
-                                            outputcontainer = d3.select("#output-container");
-
-                                    inputcontainer.append("g").attr("id", function (d) {
-                                        return inputcontainer.attr("id") + "-1";
-                                    });
-                                    outputcontainer.append("g").attr("id", function (d) {
-                                        return outputcontainer.attr("id") + "-1";
-                                    });
-                                    canvas.append("g").attr("id", function (d) {
-                                        return inputcontainer.attr("id") + "-2";
-                                    });
-                                    canvas.append("g").attr("id", function (d) {
-                                        return outputcontainer.attr("id") + "-2";
-                                    });
-
-                                    //update input output containers
-                                    var inputfo = d3.select("#input-container-fo")
-                                            .attr("x", inputstartx)
-                                            .attr("y", inputstarty)
-                                            .attr("width", elementwidth + 100);
-
-                                    var outputfo = d3.select("#output-container-fo")
-                                            .attr("x", outputstartx)
-                                            .attr("y", outputstarty)
-                                            .attr("width", elementwidth + 100);
+            </div>
 
 
-                                    var inputoutline = inputcontainer.append("rect")
-                                            .attr("x", inputstartx)
-                                            .attr("y", inputstarty)
-                                            .attr("width", elementwidth + 100)
-                                            .attr("height", 200)
-                                            .attr("stroke", "black")
-                                            .attr("fill", "none")
-                                            .attr("stroke-width", "1");
 
-                                    var outputoutline = outputcontainer.append("rect")
-                                            .attr("x", outputstartx)
-                                            .attr("y", outputstarty)
-                                            .attr("width", elementwidth + 100)
-                                            .attr("height", 200)
-                                            .attr("stroke", "black")
-                                            .attr("fill", "none")
-                                            .attr("stroke-width", "1");
 
-                                    //make the containers draggable
-                                    var dragcontainer = d3.drag()
-                                            .on("start", function () {
 
-                                            })
-                                            .on("drag", function (d, i) {
-                                                this.x = this.x || 0;
-                                                this.y = this.y || 0;
+        </div>
+        <div >
+            <br><br>
+            <div id="inputnode" style="border:1px dashed #9c9c9c;padding:5px;display:inline">Input</div> 
+            - connected to - 
+            <div id="outputnode" style="border:1px dashed #9c9c9c;padding:5px;display:inline">Output</div>
+        </div>
+        <p id="trial" onclick="getPos()"></p>
 
-                                                this.x += d3.event.dx;
-                                                this.y += d3.event.dy;
-                                                d3.select(this).attr("transform", "translate(" + this.x + "," + this.y + ")");
-                                                updateConnections();
-                                            })
-                                            .on("end", function () {
+
+        <!--<script src="assets/elementSketcher.js"></script>-->
+        <script src="assets/d3TreeStructure.js"></script>
+        <script src="assets/fileHandler.js"></script>
+
+        <script>
+
+            //var colorcode = ["#cccccc", "#999999", "#666666", "#000000"];
+            var colorcode = ["#ffffff"];
+            var inputs = [],
+                    outputs = [],
+                    inputleaves = [],
+                    outputleaves = [],
+                    connections = [];
+
+
+            var elementwidth = 120,
+                    elementheight = 30,
+                    inputstartx = 30,
+                    inputstarty = 50,
+                    outputstartx = inputstartx + 700,
+                    outputstarty = inputstarty;
+
+            var verticalmargin = 2;
+
+            var canvas = d3.select(".canvas"),
+                    inputcontainer = d3.select("#input-container"),
+                    outputcontainer = d3.select("#output-container");
+
+            inputcontainer.append("g").attr("id", function (d) {
+                return inputcontainer.attr("id") + "-1";
+            });
+            outputcontainer.append("g").attr("id", function (d) {
+                return outputcontainer.attr("id") + "-1";
+            });
+            canvas.append("g").attr("id", function (d) {
+                return inputcontainer.attr("id") + "-2";
+            });
+            canvas.append("g").attr("id", function (d) {
+                return outputcontainer.attr("id") + "-2";
+            });
+
+            //update input output containers
+            var inputfo = d3.select("#input-container-fo");
+            var inputtitle = inputfo.select("#input-container-title")
+                    .attr("x", inputstartx)
+                    .attr("y", inputstarty + 15)
+                    .attr("width", elementwidth + 100);
+            var inputtitleoutline = inputfo.select("#input-container-title-outline")
+                    .attr("x", inputstartx)
+                    .attr("y", inputstarty)
+                    .attr("width", elementwidth + 100);
+
+
+            var outputfo = d3.select("#output-container-fo");
+            var outputtitle = outputfo.select("#output-container-title")
+                    .attr("x", outputstartx)
+                    .attr("y", outputstarty + 15)
+                    .attr("width", elementwidth + 100);
+            var outputtitleoutline = outputfo.select("#output-container-title-outline")
+                    .attr("x", outputstartx)
+                    .attr("y", outputstarty)
+                    .attr("width", elementwidth + 100);
+
+
+            var inputoutline = inputcontainer.append("rect")
+                    .attr("x", inputstartx)
+                    .attr("y", inputstarty)
+                    .attr("width", elementwidth + 100)
+                    .attr("height", 200)
+                    .attr("stroke", "black")
+                    .attr("fill", "none")
+                    .attr("stroke-width", "1");
+
+            var outputoutline = outputcontainer.append("rect")
+                    .attr("x", outputstartx)
+                    .attr("y", outputstarty)
+                    .attr("width", elementwidth + 100)
+                    .attr("height", 200)
+                    .attr("stroke", "black")
+                    .attr("fill", "none")
+                    .attr("stroke-width", "1");
+
+            //make the containers draggable
+            var dragcontainer = d3.drag()
+                    .on("start", function () {
+
+                    })
+                    .on("drag", function (d, i) {
+                        this.x = this.x || 0;
+                        this.y = this.y || 0;
+
+                        this.x += d3.event.dx;
+                        this.y += d3.event.dy;
+                        d3.select(this).attr("transform", "translate(" + this.x + "," + this.y + ")");
+                        updateConnections();
+                    })
+                    .on("end", function () {
 
 //                                            d3.select("#inputnode").text(x);
-                                            });
-                                   d3.select(d3.select("#input-container-div").node().parentNode.parentNode).call(dragcontainer);
+                    });
+            d3.select(d3.select("#input-container-fo").node().parentNode).call(dragcontainer);
+            d3.select(d3.select("#output-container-fo").node().parentNode).call(dragcontainer);
 
-                                    $(document).ready(function () {
-                                        //display or hide the load file options
-                                        $("#load-output-btn").click(function () {
-                                            $("#load-output").slideToggle();
-                                        });
+            $(document).ready(function () {
+                //display or hide the load file options
+                $("#load-output-btn").click(function () {
+                    $("#load-output").slideToggle();
+                });
 
-                                        $("#load-input-btn").click(function () {
-                                            $("#load-input").slideToggle();
-                                        });
-
-
-                                        if (window.File && window.FileList && window.FileReader) {
-                                            init("input-file-select", "input-file-drag", inputcontainer);
-                                            init("output-file-select", "output-file-drag", outputcontainer);
-                                        }
-
-                                    });
-
-                                    function updateContainers() {
-                                        var maxinlev = 0, maxoutlev = 0;
-                                        for (var i = 0; i < inputs.length; i++) {
-                                            if (maxinlev < inputs[i].level) {
-                                                maxinlev = inputs[i].level;
-                                            }
-                                        }
-                                        for (var i = 0; i < outputs.length; i++) {
-                                            if (maxoutlev < outputs[i].level) {
-                                                maxoutlev = outputs[i].level;
-                                            }
-                                        }
-                                        var inw = elementwidth + 20 + (maxinlev * 20);
-                                        var inh = 50 + ((elementheight + 2) * inputs.length); //plus two for the border
-                                        var outw = elementwidth + 20 + (maxoutlev * 20);
-                                        var outh = 50 + ((elementheight + 2) * outputs.length);
-
-                                        if (inputs.length !== 0) {
-                                            inputfo.attr("width", inw)
-                                                    .attr("height", inh)
-                                                    .attr("x", inputs[0].textnode.attr("x") - 5);
-                                            inputoutline.attr("width", inw)
-                                                    .attr("height", inh)
-                                                    .attr("x", inputs[0].textnode.attr("x") - 5);
-                                        }
-                                        if (outputs.length !== 0) {
-                                            outputfo.attr("width", outw)
-                                                    .attr("height", outh)
-                                                    .attr("x", outputs[0].textnode.attr("x") - 5);
-                                            outputoutline.attr("width", outw)
-                                                    .attr("height", outh)
-                                                    .attr("x", outputs[0].textnode.attr("x") - 5);
-                                        }
-
-                                        //update the canvas height
-                                        canvas.attr("height", (d3.max([inputs.length, outputs.length]) * elementheight) + 200);
-                                    }
-                                    function updateConnections() {
-
-                                    }
+                $("#load-input-btn").click(function () {
+                    $("#load-input").slideToggle();
+                });
 
 
-                                </script>
-                                </body>
+                if (window.File && window.FileList && window.FileReader) {
+                    init("input-file-select", "input-file-drag", inputcontainer);
+                    init("output-file-select", "output-file-drag", outputcontainer);
+                }
 
-                                </html>
+            });
+
+            function updateContainers() {
+                var maxinlev = 0, maxoutlev = 0;
+                for (var i = 0; i < inputs.length; i++) {
+                    if (maxinlev < inputs[i].level) {
+                        maxinlev = inputs[i].level;
+                    }
+                }
+                for (var i = 0; i < outputs.length; i++) {
+                    if (maxoutlev < outputs[i].level) {
+                        maxoutlev = outputs[i].level;
+                    }
+                }
+                var inw = elementwidth + 20 + (maxinlev * 20);
+                var inh = 50 + ((elementheight + 2) * inputs.length); //plus two for the border
+                var outw = elementwidth + 20 + (maxoutlev * 20);
+                var outh = 50 + ((elementheight + 2) * outputs.length);
+
+                if (inputs.length !== 0) {
+                    inputfo.attr("width", inw)
+                            .attr("height", inh)
+                            .attr("x", inputs[0].textnode.attr("x") - 5);
+                    inputoutline.attr("width", inw)
+                            .attr("height", inh)
+                            .attr("x", inputs[0].textnode.attr("x") - 5);
+                }
+                if (outputs.length !== 0) {
+                    outputfo.attr("width", outw)
+                            .attr("height", outh)
+                            .attr("x", outputs[0].textnode.attr("x") - 5);
+                    outputoutline.attr("width", outw)
+                            .attr("height", outh)
+                            .attr("x", outputs[0].textnode.attr("x") - 5);
+                }
+
+                //update the canvas height
+                canvas.attr("height", (d3.max([inputs.length, outputs.length]) * elementheight) + 200);
+            }
+            function updateConnections() {
+
+            }
+
+
+        </script>
+    </body>
+
+</html>
