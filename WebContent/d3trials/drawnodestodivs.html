@@ -41,19 +41,19 @@
 
             <div id="canvas-container">
                 <svg class="canvas" width="1500" height="500">
-                <g  id="input-container">  
+                <g  id="input-container" transform="translate(0,0)">  
 
                 <g id="input-container-fo" class="container-fo">
                 <rect class="container-title-outline" id="input-container-title-outline" height="20" fill="yellow" stroke="black"></rect>
-                <text class="container-title" id="input-container-title">Input</text>
+                <text class="container-title" id="input-container-title" font-weight="bold">Input</text>
                 </g>
                 </g>
 
 
-                <g id="output-container">
+                <g id="output-container" transform="translate(0,0)">
                 <g   id="output-container-fo" class="container-fo">
                 <rect class="container-title-outline" id="output-container-title-outline" height="20" fill="yellow" stroke="black"></rect>
-                <text class="container-title" id="output-container-title">Output</text>
+                <text class="container-title" id="output-container-title" font-weight="bold">Output</text>
                 </g>
 
                 </g>
@@ -169,6 +169,17 @@
                         this.x += d3.event.dx;
                         this.y += d3.event.dy;
                         d3.select(this).attr("transform", "translate(" + this.x + "," + this.y + ")");
+               
+                      
+                        var typedragged = this.id.split("-")[0];
+                        if (typedragged === "input") {
+                            inputstartx = this.x;
+                            inputstarty = this.y;
+                        } else if (typedragged === "output") {
+                            outputstartx = this.x;
+                            outputstarty = this.y;
+                        }
+                
                         updateConnections();
                     })
                     .on("end", function () {
@@ -208,26 +219,32 @@
                         maxoutlev = outputs[i].level;
                     }
                 }
-                var inw = elementwidth + 20 + (maxinlev * 20);
-                var inh = 50 + ((elementheight + 2) * inputs.length); //plus two for the border
-                var outw = elementwidth + 20 + (maxoutlev * 20);
-                var outh = 50 + ((elementheight + 2) * outputs.length);
+
+
 
                 if (inputs.length !== 0) {
-                    inputfo.attr("width", inw)
+                    var instart = inputs[0].textnode.attr("x") - 5;
+                    var inw = elementwidth + 20 + (maxinlev * 20);
+                    var inh = 50 + ((elementheight + 2) * inputs.length); //plus two for the border
+                    inputtitleoutline
+                            .attr("width", inw)
+                            .attr("x", instart);
+                    inputoutline
+                            .attr("width", inw)
                             .attr("height", inh)
-                            .attr("x", inputs[0].textnode.attr("x") - 5);
-                    inputoutline.attr("width", inw)
-                            .attr("height", inh)
-                            .attr("x", inputs[0].textnode.attr("x") - 5);
+                            .attr("x", instart);
                 }
                 if (outputs.length !== 0) {
-                    outputfo.attr("width", outw)
+                    var outstart = outputs[0].textnode.attr("x") - 5;
+                    var outw = elementwidth + 20 + (maxoutlev * 20);
+                    var outh = 50 + ((elementheight + 2) * outputs.length);
+                    outputtitleoutline
+                            .attr("width", outw)
+                            .attr("x", outstart);
+                    outputoutline
+                            .attr("width", outw)
                             .attr("height", outh)
-                            .attr("x", outputs[0].textnode.attr("x") - 5);
-                    outputoutline.attr("width", outw)
-                            .attr("height", outh)
-                            .attr("x", outputs[0].textnode.attr("x") - 5);
+                            .attr("x", outstart);
                 }
 
                 //update the canvas height

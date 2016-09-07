@@ -56,7 +56,7 @@ function parseXMLTree(inputText, resultBox) {
         inputs = targetarray;
         //generate input leaves array
         for (var i = 0; i < inputs.length; i++) {
-            inputs[i].id=i;
+            inputs[i].id = i;
             if (inputs[i].leaf) {
                 inputleaves.push(inputs[i]);
             }
@@ -68,7 +68,7 @@ function parseXMLTree(inputText, resultBox) {
         outputleaves = [];
         outputs = targetarray;
         for (var i = 0; i < outputs.length; i++) {
-            outputs[i].id=i;
+            outputs[i].id = i;
             if (outputs[i].leaf) {
                 outputleaves.push(outputs[i]);
             }
@@ -82,19 +82,27 @@ function parseXMLTree(inputText, resultBox) {
 function detectDropNode(xx, yy, data) {
     var target = [0, 0];
     if (data[0].type === "INPUT") {   //if root is from input target is outputs
-        target = outputleaves;
+        target = outputs;
     } else {
-        target = inputleaves;
+        target = inputs;
     }
     var i;
     for (i = 0; i < target.length; i++) {
-        var x = target[i].dot.cx,
-                y = target[i].dot.cy,
-                width = target[i].width,
-                height = target[i].height;
-        if (xx > x && xx < x + width) { //check whether horizontally in
-            if (yy > y && yy < y + height) { //check whether vertically in
-                return target[i];
+        if (target[i].leaf) {   //filter leaves
+
+
+            var box = d3.select(target[i].textnode["_groups"][0][0]);
+            var translatex = getTranslation(getParentTransform(target[i].textnode))[0];
+            var translatey = getTranslation(getParentTransform(target[i].textnode))[1];
+            var x = Number(box.attr("x")) + Number(translatex),
+                    y = Number(box.attr("y")) + Number(translatey),
+                    width = elementwidth,
+                    height = elementheight;
+            console.log(x + "--" + xx);
+            if (xx > x && xx < x + width) { //check whether horizontally in
+                if (yy > (y - height / 2) && yy < (y + height / 2)) { //check whether vertically in
+                    return target[i];
+                }
             }
         }
     }
@@ -144,6 +152,7 @@ function drawNodeStack(container, startX, startY, verticalmargin, data, leafdata
                 coordinates = d3.mouse(this);
                 xx = coordinates[0];
                 yy = coordinates[1];
+                //console.log(yy);
                 dragline.attr("x2", xx).attr("y2", yy);
                 dragdot2.attr("cx", xx).attr("cy", yy);
                 //dragdot2.attr("transform","translate("+xx+","+yy+")");
@@ -152,11 +161,16 @@ function drawNodeStack(container, startX, startY, verticalmargin, data, leafdata
             })
             .on("end", function (d) {
                 var target = detectDropNode(xx, yy, data);
+                console.log(target);
+                //console.log(getTranslation(d3.select(d.dot["_groups"][0][0].parentNode).attr("transform"))[0]); //get the parent node
                 if (target !== "null") {
                     d3.select("#outputnode").text(target.text);
-                    dragline.attr("x2", target.dotposition[0]).attr("y2", target.dotposition[1]);
+                    var dotx = Number(target.dot.attr("cx")) + getTranslation(getParentTransform(target.dot))[0];
+                    var doty = Number(target.dot.attr("cy")) + getTranslation(getParentTransform(target.dot))[1];
+                    console.log(dotx);
+                    dragline.attr("x2", dotx).attr("y2", doty);
                     dragdot2.remove();
-                    connections.push({"source": d, "target": target, "line": dragline});
+                    // connections.push({"source": d, "target": target, "line": dragline});
                     //    dragdot2.attr("cx", target.dotposition[0]).attr("cy", target.dotposition[1]);
                 } else {
                     dragline.remove();
@@ -166,44 +180,7 @@ function drawNodeStack(container, startX, startY, verticalmargin, data, leafdata
 
 
 
-//    var inputleaf = container.selectAll(".node-element-rect")
-//            .data(data)
-//            .enter().append("rect")
-//            .attr("class", "node-element-rect")
-//            .attr("width", function (d) {
-//                return d.width;
-//            })
-//            .attr("height", function (d) {
-//                return d.height;
-//            })
-//            .attr("x", function (d) {
-//                var myX = startX + (d.level * 20);
-//                d.x = myX;
-//                return myX;
-//            })
-//            .attr("y", function (d, i) {
-//                var myY = startY + ((d.height + verticalmargin) * i);
-//                d.y = myY;
-//                d.dotposition = [0, 0];
-//                if (dotposition === "RIGHT") {
-//                    d.dotposition[0] = d.x + d.width;
-//                } else if (dotposition === "LEFT") {
-//                    d.dotposition[0] = d.x;
-//                }
-//
-//                d.dotposition[1] = myY + (d.height) / 2;
-//
-//              
-//                return myY;
-//            })
-//            .attr("stroke-width", "1")
-//            .attr("fill", "none")
-//            .attr("stroke", function (d) {
-//                var index = d.level % (colorcode.length);
-//                return colorcode[index];
-//            });
-
-    var inputtext = container.selectAll("text")
+    var inputtext = container.selectAll(".node-element-text")
             .data(data)
             .enter().append("text").attr("class", "node-element-text")
             .attr("x", function (d) {
@@ -252,6 +229,28 @@ function drawNodeStack(container, startX, startY, verticalmargin, data, leafdata
 
 
     updateContainers();
-    //d3.select("#trial").text(JSON.stringify(leafdata));
 
+}
+
+function getTranslation(transform) {
+    // Create a dummy g for calculation purposes only. This will never
+    // be appended to the DOM and will be discarded once this function 
+    // returns.
+    var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+    // Set the transform attribute to the provided string value.
+    g.setAttributeNS(null, "transform", transform);
+
+    // consolidate the SVGTransformList containing all transformations
+    // to a single SVGTransform of type SVG_TRANSFORM_MATRIX and get
+    // its SVGMatrix. 
+    var matrix = g.transform.baseVal.consolidate().matrix;
+
+    // As per definition values e and f are the ones for the translation.
+    return [matrix.e, matrix.f];
+}
+
+function getParentTransform(elementobject) {    //parameter is an element in an object - inputs or outputs array
+    var transform = d3.select(elementobject["_groups"][0][0].parentNode).attr("transform");
+    return transform;
 }
