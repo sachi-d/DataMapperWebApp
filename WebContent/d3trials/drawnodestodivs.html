@@ -178,7 +178,7 @@
                             targetcontainer = d3.select("#input-container");
                         }
 
-                          updateConnections(d3.event.dx, d3.event.dy, this);
+                        updateConnections(d3.event.dx, d3.event.dy, d3.select(this));
                     })
                     .on("end", function () {
 
@@ -251,25 +251,29 @@
 
             function updateConnections(newx, newy, sourcecontainer) {
 
-                for (var i = 0; i < connections.length; i++) {
-                    if (connections[i].source.type === sourcecontainer.id.split("-")[0]) {
-                        d3.select(connections[i].line)
-                                .attr("x1", function () {
-                                    return  d3.select(this).attr("x1") + newx;
-                                })
-                                .attr("y1", function () {
-                                    return d3.select(this).attr("y1") + newy;
-                                });
-                    } else {
-                        d3.select(connections[i].line)
-                                .attr("x2", function () {
-                                    return  d3.select(this).attr("x2") + newx;
-                                })
-                                .attr("y2", function () {
-                                    return d3.select(this).attr("y2") + newy;
-                                });
-                    }
+
+                if (sourcecontainer.attr("id") === inputcontainer.attr("id")) {
+
+                    canvas.selectAll(".dragline")
+                            .attr("x2", function () {
+                                 
+                                return  d3.select(this).attr("x2") - newx;
+                            })
+                            .attr("y2", function () {
+                                return d3.select(this).attr("y2") - newy;
+                            });
+                } else if (sourcecontainer.attr("id") === outputcontainer.attr("id")) {
+                    canvas.selectAll(".dragline")
+                            .attr("x2", function () {
+                               //console.log(newx);
+                                return   Number(d3.select(this).attr("x2"))+ newx;
+                            })
+                            .attr("y2", function () {
+                                return Number(d3.select(this).attr("y2") )+ newy;
+                            });
+
                 }
+
 //                canvas.selectAll(".dragline")
 //                        .attr("x2", function () {
 //                            return  d3.select(this).attr("x2") - newx;
