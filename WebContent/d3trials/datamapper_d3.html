@@ -44,7 +44,7 @@
                 <g  id="input-container" transform="translate(0,0)">  
 
                 <g id="input-container-fo" class="container-fo">
-                <rect class="container-title-outline" id="input-container-title-outline" height="20" fill="yellow" stroke="black"></rect>
+                <rect class="container-title-outline" id="input-container-title-outline" height="20" fill="#77C1C0" stroke="black"></rect>
                 <text class="container-title" id="input-container-title" font-weight="bold">Input</text>
                 </g>
                 </g>
@@ -52,7 +52,7 @@
 
                 <g id="output-container" transform="translate(0,0)">
                 <g   id="output-container-fo" class="container-fo">
-                <rect class="container-title-outline" id="output-container-title-outline" height="20" fill="yellow" stroke="black"></rect>
+                <rect class="container-title-outline" id="output-container-title-outline" height="20" fill="#E59CA5" stroke="black"></rect>
                 <text class="container-title" id="output-container-title" font-weight="bold">Output</text>
                 </g>
 
@@ -246,7 +246,10 @@
                 }
 
                 //update the canvas height
-                canvas.attr("height", (d3.max([inputs.length, outputs.length]) * elementheight) + 200);
+                var newh = (d3.max([inputs.length, outputs.length]) * elementheight) + 200+(d3.max([inputTranslateY(), outputTranslateY()])) ;
+                if (Number(canvas.attr("height")) < newh) {
+                    canvas.attr("height", newh);
+                }
             }
 
             function updateConnections(newx, newy, sourcecontainer) {
@@ -256,7 +259,7 @@
 
                     canvas.selectAll(".dragline")
                             .attr("x2", function () {
-                                 
+
                                 return  d3.select(this).attr("x2") - newx;
                             })
                             .attr("y2", function () {
@@ -265,11 +268,11 @@
                 } else if (sourcecontainer.attr("id") === outputcontainer.attr("id")) {
                     canvas.selectAll(".dragline")
                             .attr("x2", function () {
-                               //console.log(newx);
-                                return   Number(d3.select(this).attr("x2"))+ newx;
+                                //console.log(newx);
+                                return   Number(d3.select(this).attr("x2")) + newx;
                             })
                             .attr("y2", function () {
-                                return Number(d3.select(this).attr("y2") )+ newy;
+                                return Number(d3.select(this).attr("y2")) + newy;
                             });
 
                 }

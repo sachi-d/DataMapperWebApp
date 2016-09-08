@@ -20,7 +20,6 @@ function traverseTree(rootNode, level, targetarray) {
             traverseTree(child, level + 1, targetarray);
 
         }
-
     }
 }
 
@@ -102,9 +101,6 @@ function detectDropNode(xx, yy, data) {
             }
             var width = elementwidth,
                     height = elementheight;
-//            console.log(x + "--" + xx);
-//            console.log(y + "--" + yy);
-//            console.log("---------");
             if (xx > x && xx < x + width) { //check whether horizontally in
                 if (yy > (y - height / 2) && yy < (y + height / 2)) { //check whether vertically in
                     return target[i];
@@ -174,17 +170,16 @@ function drawNodeStack(container, startX, startY, verticalmargin, data, leafdata
                     dragline.attr("x2", xx).attr("y2", yy);
                 } else {
                     // console.log(inputTranslateX());
-                    dragline.attr("x1", xx - inputTranslateX() + outputTranslateX()).attr("y1", yy - inputTranslateY() + outputTranslateY());
+                    dragline
+                            .attr("x1", xx - inputTranslateX() + outputTranslateX())
+                            .attr("y1", yy - inputTranslateY() + outputTranslateY());
                 }
                 dragdot2.attr("cx", xx).attr("cy", yy);
-                //dragdot2.attr("transform","translate("+xx+","+yy+")");
-
                 //TODO if position is inside the outleafs - text color change
             })
             .on("end", function (d) {
                 var target = detectDropNode(xx, yy, data);
 
-                //console.log(getTranslation(d3.select(d.dot["_groups"][0][0].parentNode).attr("transform"))[0]); //get the parent node
                 if (target !== "null") {
                     d3.select("#outputnode").text(target.text);
 
@@ -201,8 +196,7 @@ function drawNodeStack(container, startX, startY, verticalmargin, data, leafdata
                                 .attr("y1", doty);
                     }
                     dragdot2.remove();
-                    connections.push({"source": d, "target": target, "line": dragline});
-                    //    dragdot2.attr("cx", target.dotposition[0]).attr("cy", target.dotposition[1]);
+                    connections.push({"source": d, "target": target, "line": dragline});    //NOT USED
                 } else {
                     dragline.remove();
                     dragdot2.remove();
