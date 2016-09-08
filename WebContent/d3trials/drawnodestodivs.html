@@ -169,18 +169,16 @@
                         this.x += d3.event.dx;
                         this.y += d3.event.dy;
                         d3.select(this).attr("transform", "translate(" + this.x + "," + this.y + ")");
-               
-                      
+
+                        var targetcontainer;
                         var typedragged = this.id.split("-")[0];
                         if (typedragged === "input") {
-                            inputstartx = this.x;
-                            inputstarty = this.y;
+                            targetcontainer = d3.select("#output-container");
                         } else if (typedragged === "output") {
-                            outputstartx = this.x;
-                            outputstarty = this.y;
+                            targetcontainer = d3.select("#input-container");
                         }
-                
-                        updateConnections();
+
+                          updateConnections(d3.event.dx, d3.event.dy, this);
                     })
                     .on("end", function () {
 
@@ -250,8 +248,60 @@
                 //update the canvas height
                 canvas.attr("height", (d3.max([inputs.length, outputs.length]) * elementheight) + 200);
             }
-            function updateConnections() {
 
+            function updateConnections(newx, newy, sourcecontainer) {
+
+                for (var i = 0; i < connections.length; i++) {
+                    if (connections[i].source.type === sourcecontainer.id.split("-")[0]) {
+                        d3.select(connections[i].line)
+                                .attr("x1", function () {
+                                    return  d3.select(this).attr("x1") + newx;
+                                })
+                                .attr("y1", function () {
+                                    return d3.select(this).attr("y1") + newy;
+                                });
+                    } else {
+                        d3.select(connections[i].line)
+                                .attr("x2", function () {
+                                    return  d3.select(this).attr("x2") + newx;
+                                })
+                                .attr("y2", function () {
+                                    return d3.select(this).attr("y2") + newy;
+                                });
+                    }
+                }
+//                canvas.selectAll(".dragline")
+//                        .attr("x2", function () {
+//                            return  d3.select(this).attr("x2") - newx;
+//                        })
+//                        .attr("y2", function () {
+//                            return d3.select(this).attr("y2") - newy;
+//                        });
+//
+//                d3.select("#" + sourcecontainer.id).selectAll(".dragline")
+//                        .attr("x2", function () {
+//                            return  d3.select(this).attr("x2") - newx;
+//                        })
+//                        .attr("y2", function () {
+//                            return d3.select(this).attr("y2") - newy;
+//                        });
+//
+//                d3.select("#" + targetcontainer.id).selectAll(".dragline")
+//                        .attr("x2", function () {
+//                            return  d3.select(this).attr("x2") + newx;
+//                        })
+//                        .attr("y2", function () {
+//                            return d3.select(this).attr("y2") + newy;
+//                        });
+//                        
+//                        
+//                        
+//                for (var i = 0; i < connections.length; i++) {
+//                    connections[i].line.attr("x2", connections[i].line.attr("x2") - newx);
+//                    connections[i].line.attr("y2", connections[i].line.attr("y2") - newy);
+                //console.log(connections[i].line.attr("x2"));
+                //  console.log(connections[i].target.dot);
+//                }
             }
 
 

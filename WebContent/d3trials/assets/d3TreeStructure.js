@@ -61,7 +61,7 @@ function parseXMLTree(inputText, resultBox) {
                 inputleaves.push(inputs[i]);
             }
         }
-        drawNodeStack(inputcontainer, inputstartx, inputstarty, verticalmargin, inputs, inputleaves, "RIGHT", "INPUT");
+        drawNodeStack(inputcontainer, inputstartx, inputstarty, verticalmargin, inputs, inputleaves, "RIGHT", "input");
 
     } else if (resultBox.attr("id").split("-")[0] === "output") {
         outputs = [];
@@ -73,7 +73,7 @@ function parseXMLTree(inputText, resultBox) {
                 outputleaves.push(outputs[i]);
             }
         }
-        drawNodeStack(outputcontainer, outputstartx, outputstarty, verticalmargin, outputs, outputleaves, "LEFT", "OUTPUT");
+        drawNodeStack(outputcontainer, outputstartx, outputstarty, verticalmargin, outputs, outputleaves, "LEFT", "output");
     }
 }
 
@@ -81,7 +81,7 @@ function parseXMLTree(inputText, resultBox) {
 
 function detectDropNode(xx, yy, data) {
     var target = [0, 0];
-    if (data[0].type === "INPUT") {   //if root is from input target is outputs
+    if (data[0].type === "input") {   //if root is from input target is outputs
         target = outputs;
     } else {
         target = inputs;
@@ -91,7 +91,7 @@ function detectDropNode(xx, yy, data) {
         if (target[i].leaf) {   //filter leaves
 
 
-            var box = d3.select(target[i].textnode["_groups"][0][0]);
+            var box = target[i].textnode;
             var translatex = getTranslation(getParentTransform(target[i].textnode))[0];
             var translatey = getTranslation(getParentTransform(target[i].textnode))[1];
             var x = Number(box.attr("x")) + Number(translatex),
@@ -140,7 +140,7 @@ function drawNodeStack(container, startX, startY, verticalmargin, data, leafdata
                         .attr("cy", thisdragY)
                         .attr("r", thisdragR)
                         .attr("fill", "red");
-                dragline = container.append("line").attr("class", "dragline")
+                dragline = inputcontainer.append("line").attr("class", "dragline")
                         .attr("x1", thisdragX)
                         .attr("x2", thisdragX)
                         .attr("y1", thisdragY)
@@ -153,7 +153,11 @@ function drawNodeStack(container, startX, startY, verticalmargin, data, leafdata
                 xx = coordinates[0];
                 yy = coordinates[1];
                 //console.log(yy);
-                dragline.attr("x2", xx).attr("y2", yy);
+                if (inputcontainer == container) {
+                    dragline.attr("x2", xx).attr("y2", yy);
+                } else {
+                    dragline.attr("x1", xx).attr("y1", yy);
+                }
                 dragdot2.attr("cx", xx).attr("cy", yy);
                 //dragdot2.attr("transform","translate("+xx+","+yy+")");
 
@@ -161,16 +165,20 @@ function drawNodeStack(container, startX, startY, verticalmargin, data, leafdata
             })
             .on("end", function (d) {
                 var target = detectDropNode(xx, yy, data);
-                console.log(target);
+
                 //console.log(getTranslation(d3.select(d.dot["_groups"][0][0].parentNode).attr("transform"))[0]); //get the parent node
                 if (target !== "null") {
                     d3.select("#outputnode").text(target.text);
                     var dotx = Number(target.dot.attr("cx")) + getTranslation(getParentTransform(target.dot))[0];
                     var doty = Number(target.dot.attr("cy")) + getTranslation(getParentTransform(target.dot))[1];
-                    console.log(dotx);
-                    dragline.attr("x2", dotx).attr("y2", doty);
+
+                    if (inputcontainer == container) {
+                        dragline.attr("x2", dotx).attr("y2", doty);
+                    } else {
+                        dragline.attr("x1", dotx).attr("y1", doty);
+                    }
                     dragdot2.remove();
-                    // connections.push({"source": d, "target": target, "line": dragline});
+                    connections.push({"source": d, "target": target, "line": dragline});
                     //    dragdot2.attr("cx", target.dotposition[0]).attr("cy", target.dotposition[1]);
                 } else {
                     dragline.remove();
