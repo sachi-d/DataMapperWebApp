@@ -92,13 +92,19 @@ function detectDropNode(xx, yy, data) {
 
 
             var box = target[i].textnode;
-            var translatex = getTranslation(getParentTransform(target[i].textnode))[0];
-            var translatey = getTranslation(getParentTransform(target[i].textnode))[1];
-            var x = Number(box.attr("x")) + Number(translatex),
-                    y = Number(box.attr("y")) + Number(translatey),
-                    width = elementwidth,
+
+            if (target[i].type === "output") {
+                var x = Number(box.attr("x")) - inputTranslateX() + outputTranslateX(),
+                        y = Number(box.attr("y")) - inputTranslateY() + outputTranslateY();
+            } else {
+                var x = Number(box.attr("x")) + inputTranslateX() - outputTranslateX(),
+                        y = Number(box.attr("y")) + inputTranslateY() - outputTranslateY();
+            }
+            var width = elementwidth,
                     height = elementheight;
-            console.log(x + "--" + xx);
+//            console.log(x + "--" + xx);
+//            console.log(y + "--" + yy);
+//            console.log("---------");
             if (xx > x && xx < x + width) { //check whether horizontally in
                 if (yy > (y - height / 2) && yy < (y + height / 2)) { //check whether vertically in
                     return target[i];
@@ -135,28 +141,40 @@ function drawNodeStack(container, startX, startY, verticalmargin, data, leafdata
                 var thisdragX = d3.select(this).attr("cx");
                 var thisdragR = d3.select(this).attr("r");
                 coordinates = [0, 0];
+
                 dragdot2 = container.append("circle").attr("class", "dragdot")
                         .attr("cx", thisdragX)
                         .attr("cy", thisdragY)
                         .attr("r", thisdragR)
                         .attr("fill", "red");
                 dragline = inputcontainer.append("line").attr("class", "dragline")
-                        .attr("x1", thisdragX)
-                        .attr("x2", thisdragX)
-                        .attr("y1", thisdragY)
-                        .attr("y2", thisdragY)
                         .style("stroke", "black")
                         .style("stroke-width", "2");
+                if (inputcontainer === container) {
+                    dragline.attr("x1", thisdragX)
+                            .attr("x2", thisdragX)
+                            .attr("y1", thisdragY)
+                            .attr("y2", thisdragY);
+                } else {
+                 
+                    dragline.attr("x1", thisdragX - inputTranslateX() + outputTranslateX())
+                            .attr("x2", thisdragX - inputTranslateX() + outputTranslateX())
+                            .attr("y1", thisdragY - inputTranslateY() + outputTranslateY())
+                            .attr("y2", thisdragY - inputTranslateY() + outputTranslateY());
+                }
             })
             .on("drag", function (d) {
                 coordinates = d3.mouse(this);
                 xx = coordinates[0];
                 yy = coordinates[1];
                 //console.log(yy);
-                if (inputcontainer == container) {
+
+
+                if (inputcontainer === container) {
                     dragline.attr("x2", xx).attr("y2", yy);
                 } else {
-                    dragline.attr("x1", xx).attr("y1", yy);
+                    // console.log(inputTranslateX());
+                    dragline.attr("x1", xx - inputTranslateX() + outputTranslateX()).attr("y1", yy - inputTranslateY() + outputTranslateY());
                 }
                 dragdot2.attr("cx", xx).attr("cy", yy);
                 //dragdot2.attr("transform","translate("+xx+","+yy+")");
@@ -169,13 +187,18 @@ function drawNodeStack(container, startX, startY, verticalmargin, data, leafdata
                 //console.log(getTranslation(d3.select(d.dot["_groups"][0][0].parentNode).attr("transform"))[0]); //get the parent node
                 if (target !== "null") {
                     d3.select("#outputnode").text(target.text);
-                    var dotx = Number(target.dot.attr("cx")) + getTranslation(getParentTransform(target.dot))[0];
-                    var doty = Number(target.dot.attr("cy")) + getTranslation(getParentTransform(target.dot))[1];
+
+                    var dotx = Number(target.dot.attr("cx"));
+                    var doty = Number(target.dot.attr("cy"));
 
                     if (inputcontainer == container) {
-                        dragline.attr("x2", dotx).attr("y2", doty);
+                        dragline
+                                .attr("x2", dotx - inputTranslateX() + outputTranslateX())
+                                .attr("y2", doty - inputTranslateY() + outputTranslateY());
                     } else {
-                        dragline.attr("x1", dotx).attr("y1", doty);
+                        dragline
+                                .attr("x1", dotx)
+                                .attr("y1", doty);
                     }
                     dragdot2.remove();
                     connections.push({"source": d, "target": target, "line": dragline});
@@ -261,4 +284,18 @@ function getTranslation(transform) {
 function getParentTransform(elementobject) {    //parameter is an element in an object - inputs or outputs array
     var transform = d3.select(elementobject["_groups"][0][0].parentNode).attr("transform");
     return transform;
+}
+
+function inputTranslateX() {
+    return Number(getTranslation(inputcontainer.attr("transform"))[0]);
+}
+
+function inputTranslateY() {
+    return Number(getTranslation(inputcontainer.attr("transform"))[1]);
+}
+function outputTranslateX() {
+    return Number(getTranslation(outputcontainer.attr("transform"))[0]);
+}
+function outputTranslateY() {
+    return Number(getTranslation(outputcontainer.attr("transform"))[1]);
 }
