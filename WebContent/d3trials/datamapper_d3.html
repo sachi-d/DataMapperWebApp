@@ -19,6 +19,7 @@
             <div  id="file-load">
                 <div class="file-load-container" id="input-file-load-container">
                     <button id="load-input-btn">Load input</button>
+                    <button id="clear-input-btn" >Clear input</button>
 
                     <div class="load-file" id="load-input">
                         <input type="file" id="input-file-select" name="input-select[]" accept=".xml" />
@@ -29,6 +30,7 @@
 
                 <div class="file-load-container" id="output-file-load-container">
                     <button id="load-output-btn">Load output</button>
+                    <button id="clear-output-btn" >Clear output</button>
 
                     <div class="load-file" id="load-output">
                         <input type="file" id="output-file-select" name="output-select[]" accept=".xml" />
@@ -37,10 +39,16 @@
 
                 </div>
             </div>
+            <div style="padding:20px;">
 
+                <div id="inputnode" style="border:1px dashed #9c9c9c;padding:5px;display:inline">Input</div> 
+                - connected to - 
+                <div id="outputnode" style="border:1px dashed #9c9c9c;padding:5px;display:inline">Output</div>
+
+            </div>
 
             <div id="canvas-container">
-                <svg class="canvas" width="1500" height="500">
+                <svg class="canvas" width="1800" height="500">
                 <g  id="input-container" transform="translate(0,0)">  
 
                 <g id="input-container-fo" class="container-fo">
@@ -66,23 +74,53 @@
 
 
         </div>
-        <div >
-            <br><br>
-            <div id="inputnode" style="border:1px dashed #9c9c9c;padding:5px;display:inline">Input</div> 
-            - connected to - 
-            <div id="outputnode" style="border:1px dashed #9c9c9c;padding:5px;display:inline">Output</div>
-        </div>
-        <p id="trial" onclick="getPos()"></p>
 
 
-        <!--<script src="assets/elementSketcher.js"></script>-->
-        <script src="assets/d3TreeStructure.js"></script>
         <script src="assets/fileHandler.js"></script>
 
         <script>
+            $(document).ready(function () {
 
-            //var colorcode = ["#cccccc", "#999999", "#666666", "#000000"];
-            var colorcode = ["#ffffff"];
+                //display or hide the load file options
+                d3.select("#load-output-btn").on("click", function () {
+                    $("#load-output").slideToggle();
+                });
+                d3.select("#load-input-btn").on("click", function () {
+                    $("#load-input").slideToggle();
+                });
+
+                //clear the container 
+                d3.select("#clear-output-btn").on("click", function () {
+                    outputcontainer.selectAll(".node-element-rect").remove();
+                    outputcontainer.selectAll(".node-element-text").remove();
+                    outputcontainer.selectAll(".nodedot").remove();
+                    outputcontainer.selectAll(".dragdot").remove();
+                    canvas.selectAll(".dragline").remove();
+                });
+                d3.select("#clear-input-btn").on("click", function () {
+                    inputcontainer.selectAll(".node-element-rect").remove();
+                    inputcontainer.selectAll(".node-element-text").remove();
+                    inputcontainer.selectAll(".nodedot").remove();
+                    inputcontainer.selectAll(".dragdot").remove();
+                    canvas.selectAll(".dragline").remove();
+                });
+
+
+                //make the containers draggable
+                d3.select(d3.select("#input-container-fo").node().parentNode).call(dragcontainer);
+                d3.select(d3.select("#output-container-fo").node().parentNode).call(dragcontainer);
+
+                if (window.File && window.FileList && window.FileReader) {
+                    init("input-file-select", "input-file-drag", inputcontainer);
+                    init("output-file-select", "output-file-drag", outputcontainer);
+                }
+
+            });
+
+
+
+
+            //initialize the global variables 
             var inputs = [],
                     outputs = [],
                     inputleaves = [],
@@ -94,7 +132,7 @@
                     elementheight = 30,
                     inputstartx = 30,
                     inputstarty = 50,
-                    outputstartx = inputstartx + 700,
+                    outputstartx = inputstartx + 900,
                     outputstarty = inputstarty;
 
             var verticalmargin = 2;
@@ -103,18 +141,7 @@
                     inputcontainer = d3.select("#input-container"),
                     outputcontainer = d3.select("#output-container");
 
-            inputcontainer.append("g").attr("id", function (d) {
-                return inputcontainer.attr("id") + "-1";
-            });
-            outputcontainer.append("g").attr("id", function (d) {
-                return outputcontainer.attr("id") + "-1";
-            });
-            canvas.append("g").attr("id", function (d) {
-                return inputcontainer.attr("id") + "-2";
-            });
-            canvas.append("g").attr("id", function (d) {
-                return outputcontainer.attr("id") + "-2";
-            });
+          
 
             //update input output containers
             var inputfo = d3.select("#input-container-fo");
@@ -156,12 +183,12 @@
                     .attr("stroke", "black")
                     .attr("fill", "none")
                     .attr("stroke-width", "1");
+            
+            
 
             //make the containers draggable
             var dragcontainer = d3.drag()
-                    .on("start", function () {
-
-                    })
+                    .on("start", function () { })
                     .on("drag", function (d, i) {
                         this.x = this.x || 0;
                         this.y = this.y || 0;
@@ -180,30 +207,10 @@
 
                         updateConnections(d3.event.dx, d3.event.dy, d3.select(this));
                     })
-                    .on("end", function () {
-
-//                                            d3.select("#inputnode").text(x);
-                    });
-            d3.select(d3.select("#input-container-fo").node().parentNode).call(dragcontainer);
-            d3.select(d3.select("#output-container-fo").node().parentNode).call(dragcontainer);
-
-            $(document).ready(function () {
-                //display or hide the load file options
-                $("#load-output-btn").click(function () {
-                    $("#load-output").slideToggle();
-                });
-
-                $("#load-input-btn").click(function () {
-                    $("#load-input").slideToggle();
-                });
+                    .on("end", function () { });
 
 
-                if (window.File && window.FileList && window.FileReader) {
-                    init("input-file-select", "input-file-drag", inputcontainer);
-                    init("output-file-select", "output-file-drag", outputcontainer);
-                }
 
-            });
 
             function updateContainers() {
                 var maxinlev = 0, maxoutlev = 0;
@@ -218,8 +225,6 @@
                     }
                 }
 
-
-
                 if (inputs.length !== 0) {
                     var instart = inputs[0].textnode.attr("x") - 5;
                     var inw = elementwidth + 20 + (maxinlev * 20);
@@ -232,6 +237,7 @@
                             .attr("height", inh)
                             .attr("x", instart);
                 }
+                
                 if (outputs.length !== 0) {
                     var outstart = outputs[0].textnode.attr("x") - 5;
                     var outw = elementwidth + 20 + (maxoutlev * 20);
@@ -245,15 +251,16 @@
                             .attr("x", outstart);
                 }
 
+
                 //update the canvas height
-                var newh = (d3.max([inputs.length, outputs.length]) * elementheight) + 200+(d3.max([inputTranslateY(), outputTranslateY()])) ;
+                var newh = (d3.max([inputs.length, outputs.length]) * elementheight) + 200 + (d3.max([inputTranslateY(), outputTranslateY()]));
                 if (Number(canvas.attr("height")) < newh) {
                     canvas.attr("height", newh);
                 }
             }
 
-            function updateConnections(newx, newy, sourcecontainer) {
 
+            function updateConnections(newx, newy, sourcecontainer) {
 
                 if (sourcecontainer.attr("id") === inputcontainer.attr("id")) {
 
@@ -276,39 +283,289 @@
                             });
 
                 }
+            }
 
-//                canvas.selectAll(".dragline")
-//                        .attr("x2", function () {
-//                            return  d3.select(this).attr("x2") - newx;
-//                        })
-//                        .attr("y2", function () {
-//                            return d3.select(this).attr("y2") - newy;
-//                        });
-//
-//                d3.select("#" + sourcecontainer.id).selectAll(".dragline")
-//                        .attr("x2", function () {
-//                            return  d3.select(this).attr("x2") - newx;
-//                        })
-//                        .attr("y2", function () {
-//                            return d3.select(this).attr("y2") - newy;
-//                        });
-//
-//                d3.select("#" + targetcontainer.id).selectAll(".dragline")
-//                        .attr("x2", function () {
-//                            return  d3.select(this).attr("x2") + newx;
-//                        })
-//                        .attr("y2", function () {
-//                            return d3.select(this).attr("y2") + newy;
-//                        });
-//                        
-//                        
-//                        
-//                for (var i = 0; i < connections.length; i++) {
-//                    connections[i].line.attr("x2", connections[i].line.attr("x2") - newx);
-//                    connections[i].line.attr("y2", connections[i].line.attr("y2") - newy);
-                //console.log(connections[i].line.attr("x2"));
-                //  console.log(connections[i].target.dot);
-//                }
+
+            //traverse XML tree
+            function traverseTree(rootNode, level, targetarray) {
+                if (rootNode.nodeType !== Node.ELEMENT_NODE) {
+
+                    return;
+                }
+                var children = rootNode.childNodes;
+                var isleaf = false;
+                if (children.length === 1) {
+                    isleaf = true;
+                }
+                targetarray.push({"text": rootNode.nodeName, "level": level, "leaf": isleaf, "type": "", "width": elementwidth, "height": elementheight});
+
+
+                for (var i = 0; i < children.length; i++) {
+
+                    var child = children[i];
+                    if (child.nodeType === Node.ELEMENT_NODE) {
+                        traverseTree(child, level + 1, targetarray);
+                    }
+
+                }
+            }
+
+
+            //parse XML tree
+            function parseXMLTree(inputText, resultBox) {
+
+                //remove elements of the inputs and outputs
+                resultBox.selectAll(".node-element-rect").remove();
+                resultBox.selectAll(".node-element-text").remove();
+                resultBox.selectAll(".nodedot").remove();
+                resultBox.selectAll(".dragdot").remove();
+                canvas.selectAll(".dragline").remove();
+                parser = new DOMParser();
+
+
+                var xmlDoc = parser.parseFromString(inputText, "text/xml");
+
+                // documentElement always represents the root node
+                var root = xmlDoc.documentElement;
+                var targetarray = [];
+
+                traverseTree(root, 0, targetarray);
+
+                if (resultBox.attr("id").split("-")[0] === "input") {
+                    inputs = [];
+                    inputleaves = [];
+                    //define inputs array
+                    inputs = targetarray;
+                    //generate input leaves array
+                    for (var i = 0; i < inputs.length; i++) {
+                        inputs[i].id = i;
+                        if (inputs[i].leaf) {
+                            inputleaves.push(inputs[i]);
+                        }
+                    }
+                    drawNodeStack(inputcontainer, inputstartx, inputstarty, verticalmargin, inputs, inputleaves, "RIGHT", "input");
+
+                } else if (resultBox.attr("id").split("-")[0] === "output") {
+                    outputs = [];
+                    outputleaves = [];
+                    outputs = targetarray;
+                    for (var i = 0; i < outputs.length; i++) {
+                        outputs[i].id = i;
+                        if (outputs[i].leaf) {
+                            outputleaves.push(outputs[i]);
+                        }
+                    }
+                    drawNodeStack(outputcontainer, outputstartx, outputstarty, verticalmargin, outputs, outputleaves, "LEFT", "output");
+                }
+            }
+
+
+
+            function detectDropNode(xx, yy, data) {
+                var target = [0, 0];
+                if (data[0].type === "input") {   //if root is from input target is outputs
+                    target = outputs;
+                } else {
+                    target = inputs;
+                }
+                var i;
+                for (i = 0; i < target.length; i++) {
+                    if (target[i].leaf) {   //filter leaves
+
+                        var box = target[i].textnode;
+
+                        if (target[i].type === "output") {
+                            var x = Number(box.attr("x")) - inputTranslateX() + outputTranslateX(),
+                                    y = Number(box.attr("y")) - inputTranslateY() + outputTranslateY();
+                        } else {
+                            var x = Number(box.attr("x")) + inputTranslateX() - outputTranslateX(),
+                                    y = Number(box.attr("y")) + inputTranslateY() - outputTranslateY();
+                        }
+                        var width = elementwidth,
+                                height = elementheight;
+                        if (xx > x && xx < x + width) { //check whether horizontally in
+                            if (yy > (y - height / 2) && yy < (y + height / 2)) { //check whether vertically in
+                                return target[i];
+                            }
+                        }
+                    }
+                }
+                return "null";
+            }
+
+
+            function drawNodeStack(container, startX, startY, verticalmargin, data, leafdata, dotposition, type) {
+
+                startY += 30;// skip space for title
+
+                var coordinates, dragdot2, dragline,
+                        childcontainer = d3.select("#" + (container.attr("id") + "-2")),
+                        leafcontainer = d3.select("#" + (container.attr("id") + "-1"));
+
+
+
+                var dragme = d3.drag()
+                        .on("start", function (d) {
+                            d3.select("#inputnode").text(d.text);
+                            d3.select("#outputnode").text("");
+                            var thisdragY = d3.select(this).attr("cy");
+                            var thisdragX = d3.select(this).attr("cx");
+                            var thisdragR = d3.select(this).attr("r");
+                            coordinates = [0, 0];
+
+                            dragdot2 = container.append("circle").attr("class", "dragdot")
+                                    .attr("cx", thisdragX)
+                                    .attr("cy", thisdragY)
+                                    .attr("r", thisdragR)
+                                    .attr("fill", "red");
+                            dragline = inputcontainer.append("line").attr("class", "dragline")
+                                    .style("stroke", "black")
+                                    .style("stroke-width", "2");
+                            if (inputcontainer === container) {
+                                dragline.attr("x1", thisdragX)
+                                        .attr("x2", thisdragX)
+                                        .attr("y1", thisdragY)
+                                        .attr("y2", thisdragY);
+                            } else {
+
+                                dragline.attr("x1", thisdragX - inputTranslateX() + outputTranslateX())
+                                        .attr("x2", thisdragX - inputTranslateX() + outputTranslateX())
+                                        .attr("y1", thisdragY - inputTranslateY() + outputTranslateY())
+                                        .attr("y2", thisdragY - inputTranslateY() + outputTranslateY());
+                            }
+                        })
+                        .on("drag", function (d) {
+                            coordinates = d3.mouse(this);
+                            xx = coordinates[0];
+                            yy = coordinates[1];
+
+                            if (inputcontainer === container) {
+                                dragline.attr("x2", xx).attr("y2", yy);
+                            } else {
+
+                                dragline
+                                        .attr("x1", xx - inputTranslateX() + outputTranslateX())
+                                        .attr("y1", yy - inputTranslateY() + outputTranslateY());
+                            }
+                            dragdot2.attr("cx", xx).attr("cy", yy);
+                            //TODO if position is inside the outleafs - text color change
+                        })
+                        .on("end", function (d) {
+                            var target = detectDropNode(xx, yy, data);
+
+                            if (target !== "null") {
+                                d3.select("#outputnode").text(target.text);
+
+                                var dotx = Number(target.dot.attr("cx"));
+                                var doty = Number(target.dot.attr("cy"));
+
+                                if (inputcontainer === container) {
+                                    dragline
+                                            .attr("x2", dotx - inputTranslateX() + outputTranslateX())
+                                            .attr("y2", doty - inputTranslateY() + outputTranslateY());
+                                } else {
+                                    dragline
+                                            .attr("x1", dotx)
+                                            .attr("y1", doty);
+                                }
+                                dragdot2.remove();
+                                connections.push({"source": d, "target": target, "line": dragline});    //NOT USED
+                            } else {
+                                d3.select("#inputnode").text("");
+                                dragline.remove();
+                                dragdot2.remove();
+                            }
+                        });
+
+
+
+                var inputtext = container.selectAll(".node-element-text")
+                        .data(data)
+                        .enter().append("text").attr("class", "node-element-text")
+                        .attr("x", function (d) {
+                            d.type = type;  //set the type
+                            return startX + (d.level * 20);
+                        })
+                        .attr("y", function (d, i) {
+                            return  startY + ((d.height + verticalmargin) * i) + (d.height) / 2;
+                        })
+                        .each(function (d) {
+                            d.textnode = d3.select(this);
+                        })
+                        .text(function (d) {
+                            return d.text;
+                        });
+
+
+
+
+                var inputnodedot = container.selectAll(".nodedot")
+                        .data(leafdata)
+                        .enter().append("circle").attr("class", "nodedot")
+                        .attr("r", function (d) {
+                            return d.height / 4;
+                        })
+                        .attr("cx", function (d) {
+                            if (dotposition === "RIGHT") {
+                                return startX + (d.level * 20) + d.width;
+                            } else if (dotposition === "LEFT") {
+                                return startX + (d.level * 20);
+                            }
+                            return 0;
+
+                        })
+                        .attr("cy", function (d, i) {
+                            return startY + ((d.height + verticalmargin) * d.id) + (d.height) / 2;
+                        })
+                        .attr("r", function (d) {
+                            return (d.height) / 5;
+                        })
+                        .attr("fill", "black")
+                        .each(function (d) {
+                            d.dot = d3.select(this);
+                        })
+                        .call(dragme);
+
+
+                updateContainers();
+
+            }
+
+            function getTranslation(transform) {
+                // Create a dummy g for calculation purposes only. This will never
+                // be appended to the DOM and will be discarded once this function 
+                // returns.
+                var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+                // Set the transform attribute to the provided string value.
+                g.setAttributeNS(null, "transform", transform);
+
+                // consolidate the SVGTransformList containing all transformations
+                // to a single SVGTransform of type SVG_TRANSFORM_MATRIX and get
+                // its SVGMatrix. 
+                var matrix = g.transform.baseVal.consolidate().matrix;
+
+                // As per definition values e and f are the ones for the translation.
+                return [matrix.e, matrix.f];
+            }
+
+            function getParentTransform(elementobject) {    //parameter is an element in an object - inputs or outputs array
+                var transform = d3.select(elementobject["_groups"][0][0].parentNode).attr("transform");
+                return transform;
+            }
+
+            function inputTranslateX() {
+                return Number(getTranslation(inputcontainer.attr("transform"))[0]);
+            }
+
+            function inputTranslateY() {
+                return Number(getTranslation(inputcontainer.attr("transform"))[1]);
+            }
+            function outputTranslateX() {
+                return Number(getTranslation(outputcontainer.attr("transform"))[0]);
+            }
+            function outputTranslateY() {
+                return Number(getTranslation(outputcontainer.attr("transform"))[1]);
             }
 
 

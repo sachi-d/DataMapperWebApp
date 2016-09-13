@@ -9,7 +9,7 @@
         <!-- ========= -->
         <!-- Your HTML -->
         <!-- ========= -->
-
+        <div id="container"> </div>
         <section id="todoapp">
             <header id="header">
                 <h1>Todos</h1>
@@ -19,6 +19,12 @@
                 <ul id="todo-list"></ul>
             </section>
         </section>
+        <script type="text/template" id="item-template">
+            <div class="view">
+            <input class="toggle" type="checkbox">
+            <label><%- title %></label>
+            </div>
+        </script>
 
         <!-- ========= -->
         <!-- Libraries -->
@@ -33,6 +39,24 @@
         <!-- Javascript code -->
         <!-- =============== -->
         <script type="text/javascript">
+//backbone.view 
+            var AppView = Backbone.View.extend({
+                // el - stands for element. Every view has a element associate in with HTML
+                //      content will be rendered.
+                el: '#container',
+                // It's the first function called when this view it's instantiated.
+                initialize: function () {
+                    this.render();
+                },
+                // $el - it's a cached jQuery object (el), in which you can use jQuery functions
+                //       to push content. Like the Hello World in this case.
+                render: function () {
+                    this.$el.html("Content rendered from backbone.view");
+                }
+            });
+
+            var appView = new AppView();
+
             var app = {}; // create namespace for our app
             app.Todo = Backbone.Model.extend({
                 defaults: {
@@ -40,10 +64,40 @@
                     completed: false
                 }
             });
-            var ppb = new app.Todo({title: 'mytitle', completed: false});
-            console.log(ppb.get('title'));
-            ppb.set("created", Date());
-            console.log(ppb.get("created"));
+
+//test the model
+            var todo = new app.Todo({title: 'mytitle', completed: false});
+            console.log(todo.get('title'));
+            todo.set("created", Date());
+            console.log(todo.get("created"));
+
+//incorporate local storage to save data
+            app.TodoList = Backbone.Collection.extend({
+                model: app.Todo,
+                localStorage: new Store("backbone-todo")
+            });
+
+            var todoList = new app.TodoList();
+
+//test the collection
+            todoList.create({title: 'Learn Backbone\'s Collection'}); // notice: that `completed` will be set to false by default.
+            var lmodel = new app.Todo({title: 'Learn Models', completed: true});
+            todoList.add(lmodel);
+            console.log(todoList.pluck('title'));     // ["Learn Backbone's Collection", "Learn Models"]
+            todoList.pluck('completed'); // [false, true]
+            console.log(JSON.stringify(todoList));    // "[{"title":"Learn Backbone's Collection","completed":false,"id":"d9763e99-2267-75f5-62c3-9d7e40742aa6"},{"title":"Learn Models","completed":true}]"
+
+
+//todo view
+            app.TodoView = Backbone.View.extend({
+                tagname: 'li',
+                template:_.template($('#item-template').html()),
+                render:function(){
+                    this.$el.html(this.template(this.model.toJSON()));
+                    return this;
+                }
+            });
+            var view = new app.TodoView({model: todo});
 
         </script>
 

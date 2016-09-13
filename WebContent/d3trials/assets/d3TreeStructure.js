@@ -2,11 +2,11 @@
 //traverse XML tree
 function traverseTree(rootNode, level, targetarray) {
     if (rootNode.nodeType !== Node.ELEMENT_NODE) {
+
         return;
     }
     var children = rootNode.childNodes;
     var isleaf = false;
-
     if (children.length === 1) {
         isleaf = true;
     }
@@ -18,8 +18,8 @@ function traverseTree(rootNode, level, targetarray) {
         var child = children[i];
         if (child.nodeType === Node.ELEMENT_NODE) {
             traverseTree(child, level + 1, targetarray);
-
         }
+
     }
 }
 
@@ -133,6 +133,7 @@ function drawNodeStack(container, startX, startY, verticalmargin, data, leafdata
     var dragme = d3.drag()
             .on("start", function (d) {
                 d3.select("#inputnode").text(d.text);
+                d3.select("#outputnode").text("");
                 var thisdragY = d3.select(this).attr("cy");
                 var thisdragX = d3.select(this).attr("cx");
                 var thisdragR = d3.select(this).attr("r");
@@ -152,7 +153,7 @@ function drawNodeStack(container, startX, startY, verticalmargin, data, leafdata
                             .attr("y1", thisdragY)
                             .attr("y2", thisdragY);
                 } else {
-                 
+
                     dragline.attr("x1", thisdragX - inputTranslateX() + outputTranslateX())
                             .attr("x2", thisdragX - inputTranslateX() + outputTranslateX())
                             .attr("y1", thisdragY - inputTranslateY() + outputTranslateY())
@@ -198,6 +199,7 @@ function drawNodeStack(container, startX, startY, verticalmargin, data, leafdata
                     dragdot2.remove();
                     connections.push({"source": d, "target": target, "line": dragline});    //NOT USED
                 } else {
+                    d3.select("#inputnode").text("");
                     dragline.remove();
                     dragdot2.remove();
                 }
