@@ -8,7 +8,18 @@
         <script src="../assets/lib/jQuery/jquery-3.1.0.js"></script>
         <script src="../assets/lib/jquery-ui-1.12.0.custom/jquery-ui.js"></script>
         <script src="assets/fileHandler.js"></script>
-
+      
+        <style>
+            .structure,.structure ul {
+                list-style-type: none;
+                text-indent: 5px;
+            }
+            li{
+                border-bottom: 1px solid #c9c9c9;
+                border-left: 1px solid #c9c9c9;
+                width: max-content;
+            }
+        </style>
 
     </head>
 
@@ -27,9 +38,12 @@
 
         </div>
         <hr>
-        <div id="input-structure" style="display:block">
+        <div style="display:inline-block;">
+            <ul id="input-structure" class="structure"  >
 
+            </ul>
         </div>
+
 
         <script>
             $(document).ready(function () {
@@ -46,35 +60,33 @@
             function parseJSONTree(text, resultpane) {
                 var data = JSON.parse(text);
                 var title = data.title || "Root";
-                var result = $("#input-structure");
-
-
-                traverseJSONSchema(data, title,result);
+                var result = d3.select("#input-structure");
+                traverseJSONSchema(data, title, result);
 
             }
 
-            function traverseJSONSchema(root, rootname,resultpane) { //root is a object with key and value
-                if (root.type === "array") {
-                    resultpane.append("[]" + rootname + "<br>");
-                    var items = root.items;
-                    if (items.type === "object") {
+            function traverseJSONSchema(root, rootname, resultpane) { 
+                if (root.type === "object") {
+                    var listitem = resultpane.append("li").text(rootname + ":<obj>");
+                    var newlist = listitem.append("ul");
 
-                    }
-                    traverseJSONSchema(items, "itemname", resultpane);
-
-
-                } else if (root.type === "object") {
-                    resultpane.append("<>" + rootname + "<br>");
                     var items = root.properties;
                     for (var i = 0; i < Object.keys(items).length; i++) {
                         var itemname = Object.keys(items)[i];
                         var item = items[itemname];
-                        var title =  itemname;
-                        resultpane.append(title);
-                        traverseJSONSchema(item, itemname, resultpane);
+                        var title = itemname;
+
+                        traverseJSONSchema(item, itemname, newlist);
                     }
+
+                } else if (root.type === "array") {
+                    resultpane.append("li").text(rootname + ":[arr]");
+                    var items = root.items;
+                    traverseJSONSchema(items, "", resultpane);
+
+
                 } else {
-                   resultpane.append(":" + root.type + "<br>");
+                    resultpane.append("li").text(rootname + ":" + root.type);
                 }
             }
 
