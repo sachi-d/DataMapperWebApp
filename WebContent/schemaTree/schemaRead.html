@@ -1,19 +1,87 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta charset="UTF-8">
-    <title>Schema to tree</title>
-    <script src="../assets/lib/d3/d3.js"></script>
-    <script src="../assets/lib/jQuery/jquery-3.1.0.js"></script>
-    <script src="../assets/lib/jquery-ui-1.12.0.custom/jquery-ui.js"></script>
-    <link rel="stylesheet" href="assets/d3dm_style.css">
-
-</head>
-
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <title>Schema to tree</title>
+        <script src="../assets/lib/d3/d3.js"></script>
+        <script src="../assets/lib/jQuery/jquery-3.1.0.js"></script>
+        <script src="../assets/lib/jquery-ui-1.12.0.custom/jquery-ui.js"></script>
+        <script src="assets/fileHandler.js"></script>
 
 
-</body>
+    </head>
+
+    <body>
+        <div id="file-load">
+            <div class="file-load-container" id="input-file-load-container">
+                <button id="load-input-btn">Load input</button>
+                <button id="clear-input-btn">Clear input</button>
+
+                <div class="load-file" id="load-input">
+                    <input type="file" id="input-file-select" name="input-select[]" accept=".json" />
+                    <div class="file-drag" id="input-file-drag">or drop files here</div>
+                </div>
+
+            </div>
+
+        </div>
+        <hr>
+        <div id="input-structure" style="display:block">
+
+        </div>
+
+        <script>
+            $(document).ready(function () {
+
+
+                if (window.File && window.FileList && window.FileReader) {
+                    init("input-file-select", "input-file-drag", inputcontainer);
+                }
+
+            });
+
+            var inputcontainer;
+
+            function parseJSONTree(text, resultpane) {
+                var data = JSON.parse(text);
+                var title = data.title || "Root";
+                var result = $("#input-structure");
+
+
+                traverseJSONSchema(data, title,result);
+
+            }
+
+            function traverseJSONSchema(root, rootname,resultpane) { //root is a object with key and value
+                if (root.type === "array") {
+                    resultpane.append("[]" + rootname + "<br>");
+                    var items = root.items;
+                    if (items.type === "object") {
+
+                    }
+                    traverseJSONSchema(items, "itemname", resultpane);
+
+
+                } else if (root.type === "object") {
+                    resultpane.append("<>" + rootname + "<br>");
+                    var items = root.properties;
+                    for (var i = 0; i < Object.keys(items).length; i++) {
+                        var itemname = Object.keys(items)[i];
+                        var item = items[itemname];
+                        var title =  itemname;
+                        resultpane.append(title);
+                        traverseJSONSchema(item, itemname, resultpane);
+                    }
+                } else {
+                   resultpane.append(":" + root.type + "<br>");
+                }
+            }
+
+
+        </script>
+
+
+    </body>
 
 </html>
