@@ -12,6 +12,7 @@ function parseFile(file, resultpane) {
                 //parseXML
                 var text = e.target.result;
                 //                console.log("______________" + text);
+         
                 parseJSONTree(text, resultpane);
 
             };

@@ -7,8 +7,10 @@
         <script src="../assets/lib/d3/d3.js"></script>
         <script src="../assets/lib/jQuery/jquery-3.1.0.js"></script>
         <script src="../assets/lib/jquery-ui-1.12.0.custom/jquery-ui.js"></script>
+        <!--        <script src="../d3trials/assets/fileHandler.js"></script>-->
         <script src="assets/fileHandler.js"></script>
-      
+        <link rel="stylesheet" href="assets/d3dm_style.css">
+
         <style>
             .structure,.structure ul {
                 list-style-type: none;
@@ -24,36 +26,55 @@
     </head>
 
     <body>
+
+
         <div id="file-load">
             <div class="file-load-container" id="input-file-load-container">
                 <button id="load-input-btn">Load input</button>
                 <button id="clear-input-btn">Clear input</button>
 
                 <div class="load-file" id="load-input">
-                    <input type="file" id="input-file-select" name="input-select[]" accept=".json" />
+                    <input type="file" id="input-file-select" name="input-select[]" accept=".xml" />
                     <div class="file-drag" id="input-file-drag">or drop files here</div>
                 </div>
 
             </div>
 
+
         </div>
-        <hr>
+
+
+        <svg>
+        <foreignObject>
         <div style="display:inline-block;">
             <ul id="input-structure" class="structure"  >
 
             </ul>
         </div>
+        </foreignObject>
+        </svg>
+
 
 
         <script>
             $(document).ready(function () {
 
+                //display or hide the load file options
+                d3.select("#load-output-btn").on("click", function () {
+                    $("#load-output").slideToggle();
+                });
+                d3.select("#load-input-btn").on("click", function () {
+                    $("#load-input").slideToggle();
+                });
+
 
                 if (window.File && window.FileList && window.FileReader) {
                     init("input-file-select", "input-file-drag", inputcontainer);
+                    //init("output-file-select", "output-file-drag", outputcontainer);
                 }
 
             });
+
 
             var inputcontainer;
 
@@ -65,27 +86,31 @@
 
             }
 
-            function traverseJSONSchema(root, rootname, resultpane) { 
-                if (root.type === "object") {
-                    var listitem = resultpane.append("li").text(rootname + ":<obj>");
-                    var newlist = listitem.append("ul");
+            function traverseJSONSchema(root, rootname, resultpane) {
 
-                    var items = root.properties;
-                    for (var i = 0; i < Object.keys(items).length; i++) {
+                if (root.type === "object") {
+                    var listitem = resultpane.append("li").text(rootname + ":" + root.type);
+                    var newlist = listitem.append("ul");
+                    var items = root.properties; //select PROPERTIES
+                    for (var i = 0; i < Object.keys(items).length; i++) {   //traverse through each property of the object
                         var itemname = Object.keys(items)[i];
                         var item = items[itemname];
-                        var title = itemname;
-
                         traverseJSONSchema(item, itemname, newlist);
                     }
 
                 } else if (root.type === "array") {
-                    resultpane.append("li").text(rootname + ":[arr]");
-                    var items = root.items;
-                    traverseJSONSchema(items, "", resultpane);
 
+                    var items = root.items; //select ITEMS
+                    var listitem = resultpane.append("li").text(rootname + ":" + root.type + ":" + items.type);
+                    traverseJSONSchema(items, "", listitem);  //traverse through the items of array
 
-                } else {
+//                    for (var i = 0; i < Object.keys(items).length; i++) {   //traverse through each property of the object
+//                        var itemname = Object.keys(items)[i];
+//                        var item = items[itemname];
+//
+//                        traverseJSONSchema(item, itemname, listitem);
+//                    }
+                } else {    //when the type is a primitive
                     resultpane.append("li").text(rootname + ":" + root.type);
                 }
             }
