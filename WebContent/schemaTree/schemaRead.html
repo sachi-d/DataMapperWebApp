@@ -50,8 +50,7 @@
 
             </ul>
         </div>
-        <div id="orig-file"></div>
-
+   
 
 
 
@@ -80,7 +79,6 @@
             function parseJSONTree(text, resultpane) {
 
                 var data = JSON.parse(text);
-               // d3.select("#orig-file").text(JSON.stringify(data));
                 var title = data.title || "Root";
                 var result = d3.select("#input-structure");
                 traverseJSONSchema(data, title, result);
