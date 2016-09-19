@@ -50,7 +50,29 @@
 
             </ul>
         </div>
-   
+
+        <div id="canvas-container">
+            <svg class="canvas" width="1800" height="500">
+            <g id="input-container" transform="translate(0,0)">
+
+            <g id="input-container-fo" class="container-fo">
+            <rect class="container-title-outline" id="input-container-title-outline" height="20" fill="#77C1C0" stroke="black"></rect>
+            <text class="container-title" id="input-container-title" font-weight="bold">Input</text>
+            </g>
+            </g>
+
+
+            <g id="output-container" transform="translate(0,0)">
+            <g id="output-container-fo" class="container-fo">
+            <rect class="container-title-outline" id="output-container-title-outline" height="20" fill="#E59CA5" stroke="black"></rect>
+            <text class="container-title" id="output-container-title" font-weight="bold">Output</text>
+            </g>
+
+            </g>
+            <g id="trial-container"></g>
+            </svg>
+
+        </div>
 
 
 
@@ -80,16 +102,17 @@
 
                 var data = JSON.parse(text);
                 var title = data.title || "Root";
-                var result = d3.select("#input-structure");
-                traverseJSONSchema(data, title, result);
-
+                var result = d3.select("#trial-container");
+                var result1 = d3.select("#input-structure");
+                traverseJSONSchema1(data, title, result1, 0, 0);
+                //    traverseJSONSchema(data, title, result);
             }
-
             function traverseJSONSchema(root, rootname, resultpane) {
-
+                console.log(resultpane.attr("x"));
                 if (root.type === "object") {
-                    var listitem = resultpane.append("li").text(rootname + ":" + root.type);
-                    var newlist = listitem.append("ul");
+                    var listitem = resultpane.append("g");
+                    listitem.append("text").text(rootname + ":" + root.type);
+                    var newlist = listitem.append("g");
                     var items = root.properties; //select PROPERTIES
                     for (var i = 0; i < Object.keys(items).length; i++) {   //traverse through each PROPERTY of the object
                         var itemname = Object.keys(items)[i];
@@ -100,16 +123,70 @@
                 } else if (root.type === "array") {
 
                     var items = root.items; //select ITEMS
-                    var listitem = resultpane.append("li").text(rootname + ":" + root.type + "[" + items.type + "]");
+                    var listitem = resultpane.append("g");
+                    listitem.append("text").text(rootname + ":" + root.type + "[" + items.type + "]");
                     traverseJSONSchema(items, "", listitem);  //recurse through the items of array
 
-                } else if (["string","integer","number","boolean"].indexOf(root.type) > -1){    //when the type is a primitive
+                } else if (["string", "integer", "number", "boolean"].indexOf(root.type) > -1) {    //when the type is a primitive
 
-                    resultpane.append("li").text(rootname + ":" + root.type);
+                    resultpane.append("text").text(rootname + ":" + root.type);
+                }
+            }
+
+
+            function traverseJSONSchema1(root, rootname, resultpane, lev, rank) {
+
+                if (root.type === "object") {
+                    var listitem = resultpane.append("li");
+                    if (rootname !== "") {
+                        listitem.text(rootname + ":" + root.type + "-" + lev + "-" + rank);
+                        rank++;
+                        lev++;
+                    }
+                    var newlist = listitem.append("ul");
+                    var items = root.properties; //select PROPERTIES
+                    for (var i = 0; i < Object.keys(items).length; i++) {   //traverse through each PROPERTY of the object
+                        var itemname = Object.keys(items)[i];
+                        var item = items[itemname];
+                        traverseJSONSchema1(item, itemname, newlist, lev + i, rank);
+                    }
+                } else if (root.type === "array") {
+                    var items = root.items; //select ITEMS
+                    var listitem = resultpane.append("li");
+                    if (rootname !== "") {
+                        listitem.text(rootname + ":" + root.type + "[" + items.type + "]" + "-" + lev + "-" + rank);
+                        rank++;
+                        lev++;
+                    }
+
+                    traverseJSONSchema1(items, "", listitem, lev + 1, rank);  //recurse through the items of array
+                } else if (["string", "integer", "number", "boolean"].indexOf(root.type) > -1) {    //when the type is a primitive
+                    var listitem = resultpane.append("li");
+                    if (rootname !== "") {
+                        listitem.text(rootname + ":" + root.type + "-" + lev + "-" + rank);
+                        rank++;
+                        lev++;
+                    }
                 }
 
             }
 
+            function drawNode(parent, text, dotposition, x, y, height, width) {
+                var parent1 = parent.append("g").attr("class", "node-element")
+                        .attr("height", height)
+                        .attr("width", width);
+                parent1.append("text").attr("class", "node-element-text")
+                        .attr("x", x)
+                        .attr("y", y + (3 * height / 4))
+                        .text(text);
+                parent1.append("circle").attr("class", "drag-dot")
+                        .attr("r", height / 4)
+                        .attr("cx", function () {
+                            return (dotposition === "LEFT" ? x : x + width);
+                        })
+                        .attr("cy", y + (height / 2))
+                        .attr("fill", "rgb(0,0,0)");
+            }
 
         </script>
 
