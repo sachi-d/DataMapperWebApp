@@ -44,15 +44,14 @@
         </div>
 
 
-        <svg>
-        <foreignObject>
+
         <div style="display:inline-block;">
             <ul id="input-structure" class="structure"  >
 
             </ul>
         </div>
-        </foreignObject>
-        </svg>
+        <div id="orig-file"></div>
+
 
 
 
@@ -79,7 +78,9 @@
             var inputcontainer;
 
             function parseJSONTree(text, resultpane) {
+
                 var data = JSON.parse(text);
+               // d3.select("#orig-file").text(JSON.stringify(data));
                 var title = data.title || "Root";
                 var result = d3.select("#input-structure");
                 traverseJSONSchema(data, title, result);
@@ -92,7 +93,7 @@
                     var listitem = resultpane.append("li").text(rootname + ":" + root.type);
                     var newlist = listitem.append("ul");
                     var items = root.properties; //select PROPERTIES
-                    for (var i = 0; i < Object.keys(items).length; i++) {   //traverse through each property of the object
+                    for (var i = 0; i < Object.keys(items).length; i++) {   //traverse through each PROPERTY of the object
                         var itemname = Object.keys(items)[i];
                         var item = items[itemname];
                         traverseJSONSchema(item, itemname, newlist);
@@ -101,18 +102,14 @@
                 } else if (root.type === "array") {
 
                     var items = root.items; //select ITEMS
-                    var listitem = resultpane.append("li").text(rootname + ":" + root.type + ":" + items.type);
-                    traverseJSONSchema(items, "", listitem);  //traverse through the items of array
+                    var listitem = resultpane.append("li").text(rootname + ":" + root.type + "[" + items.type + "]");
+                    traverseJSONSchema(items, "", listitem);  //recurse through the items of array
 
-//                    for (var i = 0; i < Object.keys(items).length; i++) {   //traverse through each property of the object
-//                        var itemname = Object.keys(items)[i];
-//                        var item = items[itemname];
-//
-//                        traverseJSONSchema(item, itemname, listitem);
-//                    }
-                } else {    //when the type is a primitive
+                } else if (["string","integer","number","boolean"].indexOf(root.type) > -1){    //when the type is a primitive
+
                     resultpane.append("li").text(rootname + ":" + root.type);
                 }
+
             }
 
 
