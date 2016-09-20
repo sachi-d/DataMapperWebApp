@@ -92,6 +92,7 @@
                     init("input-file-select", "input-file-drag", inputcontainer);
                     //init("output-file-select", "output-file-drag", outputcontainer);
                 }
+                parseJSONTree("ddd", "ddd");
 
             });
 
@@ -100,11 +101,85 @@
 
             function parseJSONTree(text, resultpane) {
 
-                var data = JSON.parse(text);
+//                var data = JSON.parse(text);
+                var data = {
+                    "title": "person",
+                    "type": "object",
+                    "properties": {
+                        "first name": {
+                            "type": "string"
+                        },
+                        "last name": {
+                            "type": "string"
+                        },
+                        "age": {
+                            "type": "number"
+                        },
+                        "birthday": {
+                            "type": "string",
+                            "format": "date-time"
+                        },
+                        "address": {
+                            "type": "object",
+                            "properties": {
+                                "street address": {
+                                    "type": "object",
+                                    "properties": {
+                                        "house number": {
+                                            "type": "number"
+                                        },
+                                        "lane": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "city": {
+                                    "type": "string"
+                                },
+                                "state": {
+                                    "type": "string"
+                                },
+                                "country": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "phone number": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "location": {
+                                        "type": "string"
+                                    },
+                                    "code": {
+                                        "type": "number"
+                                    }
+                                },
+                                "required": [
+                                    "location",
+                                    "code"
+                                ]
+                            }
+                        },
+                        "children": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "nickname": {
+                            "type": "string"
+                        }
+                    }
+                };
+
                 var title = data.title || "Root";
                 var result = d3.select("#trial-container");
                 var result1 = d3.select("#input-structure");
-                traverseJSONSchema1(data, title, result1, 0, 0);
+
+                var elementcount=traverseJSONSchema1(data, title, result1, 0, 0);
+                console.log(elementcount);
                 //    traverseJSONSchema(data, title, result);
             }
             function traverseJSONSchema(root, rootname, resultpane) {
@@ -134,41 +209,44 @@
             }
 
 
-            function traverseJSONSchema1(root, rootname, resultpane, lev, rank) {
+            function traverseJSONSchema1(root, rootname, resultpane, ccc, rank) {
 
                 if (root.type === "object") {
                     var listitem = resultpane.append("li");
                     if (rootname !== "") {
-                        listitem.text(rootname + ":" + root.type + "-" + lev + "-" + rank);
+                        listitem.text(rootname + ":" + root.type + "-" + ccc + "-" + rank);
                         rank++;
-                        lev++;
+                        ccc++;
                     }
                     var newlist = listitem.append("ul");
                     var items = root.properties; //select PROPERTIES
+                    var templev = 0;
                     for (var i = 0; i < Object.keys(items).length; i++) {   //traverse through each PROPERTY of the object
                         var itemname = Object.keys(items)[i];
                         var item = items[itemname];
-                        traverseJSONSchema1(item, itemname, newlist, lev + i, rank);
+                        ccc = traverseJSONSchema1(item, itemname, newlist, ccc, rank);
                     }
+
                 } else if (root.type === "array") {
                     var items = root.items; //select ITEMS
                     var listitem = resultpane.append("li");
                     if (rootname !== "") {
-                        listitem.text(rootname + ":" + root.type + "[" + items.type + "]" + "-" + lev + "-" + rank);
+                        listitem.text(rootname + ":" + root.type + "[" + items.type + "]" + "-" + ccc + "-" + rank);
                         rank++;
-                        lev++;
+                        ccc++;
                     }
 
-                    traverseJSONSchema1(items, "", listitem, lev + 1, rank);  //recurse through the items of array
+                    ccc=traverseJSONSchema1(items, "", listitem, ccc, rank);  //recurse through the items of array
                 } else if (["string", "integer", "number", "boolean"].indexOf(root.type) > -1) {    //when the type is a primitive
                     var listitem = resultpane.append("li");
                     if (rootname !== "") {
-                        listitem.text(rootname + ":" + root.type + "-" + lev + "-" + rank);
+                        listitem.text(rootname + ":" + root.type + "-" + ccc + "-" + rank);
                         rank++;
-                        lev++;
+                        ccc++;
                     }
                 }
 
+                return ccc;
             }
 
             function drawNode(parent, text, dotposition, x, y, height, width) {
