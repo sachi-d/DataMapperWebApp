@@ -1,5 +1,5 @@
 // get file information
-function parseFile(file, resultpane) {
+function parseFile(file, container) {
 
     if (file.name.endsWith(".json")) {
 
@@ -9,19 +9,18 @@ function parseFile(file, resultpane) {
             var reader = new FileReader();
             reader.onload = function (e) {
 
-                //parseXML
+                //parseJSON
                 var text = e.target.result;
-                //                console.log("______________" + text);
-         
-                parseJSONTree(text, resultpane);
+
+                parseJSONTree(text, container);
 
             };
             reader.readAsText(file);
         }
 
         // hide load-file div
-        //        var elementname = "#load-" + resultpane.attr("id").split("-")[0];
-        //        $(elementname).slideUp('fast');
+        var elementname = container.loadfile;
+        $("#"+elementname).slideUp('fast');
 
     }
 }
@@ -44,7 +43,7 @@ function fileDragHover(e) {
 
 
 // file selection
-function fileSelectHandler(e, result) {
+function fileSelectHandler(e, container) {
 
     // cancel event and hover styling
     fileDragHover(e);
@@ -53,21 +52,20 @@ function fileSelectHandler(e, result) {
     var files = e.target.files || e.dataTransfer.files;
 
     // process all File objects
-    parseFile(files[0], result);
-    //    drawEndPoints();
+    parseFile(files[0], container);
 }
 
 
 
 // initialize
-function init(select, drag, result) {
-
-    var fileselect = document.getElementById(select);
-    var filedrag = document.getElementById(drag);
+function init(container) {
+ 
+    var fileselect = document.getElementById(container.fileselect);
+    var filedrag = document.getElementById(container.filedrag);
 
     // file select
     fileselect.addEventListener("change", function (e) {
-        fileSelectHandler(e, result)
+        fileSelectHandler(e, container)
     }, false);
 
     // is XHR2 available?
@@ -78,7 +76,7 @@ function init(select, drag, result) {
         filedrag.addEventListener("dragover", fileDragHover, false);
         filedrag.addEventListener("dragleave", fileDragHover, false);
         filedrag.addEventListener("drop", function (e) {
-            fileSelectHandler(e, result)
+            fileSelectHandler(e, container)
         }, false);
         //  filedrag.style.display = "block";
 
