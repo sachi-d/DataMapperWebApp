@@ -165,12 +165,6 @@
                             this.y += d3.event.dy;
                             d3.select(this).attr("transform", "translate(" + this.x + "," + this.y + ")");
 
-//                            console.log((this).id);
-//                            console.log(inputcontainer.attr("id"));
-//                            if ( (this) === inputcontainer) {
-//                                console.log("YYYYYYYYYYYYYYY");
-//                            }
-//                            console.log("dddddddddddd");
                             updateConnections(d3.event.dx, d3.event.dy, d3.select(this));
                         })
                         .on("end", function () {});
@@ -224,9 +218,6 @@
                     $("#load-input").slideToggle();
                 });
 
-                //make the containers draggable
-//                d3.select(inputgroup.node().parentNode).call(dragcontainer);
-//                d3.select(outputgroup.node().parentNode).call(dragcontainer);
                 inputcontainer.call(dragcontainer);
                 outputcontainer.call(dragcontainer);
 
@@ -238,12 +229,10 @@
 
             function updateContainer(container) {
 
-//                var oldY = container.titleoutline.attr("y");
                 var newY = Number(container.titleoutline.attr("height"));
                 container.title.attr("y", Number(container.title.attr("y")) - newY);
                 container.titleoutline.attr("y", Number(container.titleoutline.attr("y")) - newY);
                 container.containeroutline.attr("y", Number(container.containeroutline.attr("y")) - newY);
-//                container.parentcontainer.attr("transform","translate("+getTranslateX(container.parentcontainer)+",-"+newY+")");
                 var leaves = container.leaves;
                 var maxinlev = 0;
                 for (var i = 0; i < leaves.length; i++) {
@@ -413,23 +402,11 @@
                                 var dotx = Number(target.dotposition[0]) + target.x + opposite.startX + getTranslateX(opposite.parentcontainer) - getTranslateX(container.parentcontainer);
                                 var doty = Number(target.dotposition[1]) + target.y + opposite.startY + getTranslateY(opposite.parentcontainer) - getTranslateY(container.parentcontainer);
 
-                                console.log("dotposition- " + dotx + "-" + doty);
-//
-//                                if (inputcontainer === container) {
-//                                    dragline
-//                                            .attr("x2", dotx - inputTranslateX() + outputTranslateX())
-//                                            .attr("y2", doty - inputTranslateY() + outputTranslateY());
-//                                } else {
                                 dragline
                                         .attr("x2", dotx)
                                         .attr("y2", doty);
-//                                }
                                 dragdot2.remove();
-//                                connections.push({
-//                                    "source": d,
-//                                    "target": target,
-//                                    "line": dragline
-//                                }); //NOT USED
+
                             } else {
                                 //d3.select("#inputnode").text("");
                                 dragline.remove();
