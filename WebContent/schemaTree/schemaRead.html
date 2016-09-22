@@ -94,7 +94,7 @@
             var CONTAINER;
             $(document).ready(function () {
 
-                CONTAINER = initCanvas(30, 30, 500, 30, 170, 20);
+                CONTAINER = initCanvas(40, 40, 600, 40, 170, 20);
 
                 if (window.File && window.FileList && window.FileReader) {
                     init(CONTAINER[0]);
@@ -112,18 +112,20 @@
 
                 //update input output containers
                 var inputgroup = d3.select("#input-container-fo");
+
+                var inputtitleoutline = inputgroup.select("#input-container-title-outline");
+                var tempHeight = inputtitleoutline.attr("height");
+                inputtitleoutline.attr("x", inputstartx)
+                        .attr("y", inputstarty - tempHeight)
+                        .attr("width", elementwidth + 100);
                 var inputtitle = inputgroup.select("#input-container-title")
                         .attr("x", inputstartx)
-                        .attr("y", inputstarty + 15)
-                        .attr("width", elementwidth + 100);
-                var inputtitleoutline = inputgroup.select("#input-container-title-outline")
-                        .attr("x", inputstartx)
-                        .attr("y", inputstarty)
+                        .attr("y", inputstarty - tempHeight / 4) // divide by 4 to get title inside the rectangle
                         .attr("width", elementwidth + 100);
 
                 var inputoutline = inputcontainer.select("#input-container-outline")
                         .attr("x", inputstartx)
-                        .attr("y", inputstarty)
+                        .attr("y", inputstarty - tempHeight)
                         .attr("width", elementwidth + 100)
                         .attr("height", 200)
                         .attr("stroke", "black")
@@ -131,20 +133,20 @@
                         .attr("stroke-width", "1");
 
                 var outputgroup = d3.select("#output-container-fo");
+                var outputtitleoutline = outputgroup.select("#output-container-title-outline");
+                tempHeight = outputtitleoutline.attr("height");
+                outputtitleoutline.attr("x", outputstartx)
+                        .attr("y", outputstarty - tempHeight)
+                        .attr("width", elementwidth + 100);
+
                 var outputtitle = outputgroup.select("#output-container-title")
                         .attr("x", outputstartx)
-                        .attr("y", outputstarty + 15)
+                        .attr("y", outputstarty - tempHeight / 4)
                         .attr("width", elementwidth + 100);
-                var outputtitleoutline = outputgroup.select("#output-container-title-outline")
-                        .attr("x", outputstartx)
-                        .attr("y", outputstarty)
-                        .attr("width", elementwidth + 100);
-
-
 
                 var outputoutline = outputcontainer.select("#output-container-outline")
                         .attr("x", outputstartx)
-                        .attr("y", outputstarty)
+                        .attr("y", outputstarty - tempHeight)
                         .attr("width", elementwidth + 100)
                         .attr("height", 200)
                         .attr("stroke", "black")
@@ -229,10 +231,6 @@
 
             function updateContainer(container) {
 
-                var newY = Number(container.titleoutline.attr("height"));
-                container.title.attr("y", Number(container.title.attr("y")) - newY);
-                container.titleoutline.attr("y", Number(container.titleoutline.attr("y")) - newY);
-                container.containeroutline.attr("y", Number(container.containeroutline.attr("y")) - newY);
                 var leaves = container.leaves;
                 var maxinlev = 0;
                 for (var i = 0; i < leaves.length; i++) {
@@ -243,8 +241,8 @@
 
                 if (leaves.length !== 0) {
                     var instart = container.startX;
-                    var inw = container.elementwidth + 20 + (maxinlev * container.elementwidth / 4);
-                    var inh = 50 + ((container.elementheight + 2) * 20); //plus two for the border
+                    var inw = container.elementwidth + 20 + (maxinlev * container.elementwidth / 4); //20=safe margin
+                    var inh =  Number(container.titleoutline.attr("height"))+((container.elementheight ) * container.elementcount); 
                     container.titleoutline
                             .attr("width", inw)
                             .attr("x", instart);
@@ -257,7 +255,8 @@
 
 
                 //update the canvas height
-                var newh = (d3.max([10, 15]) * container.elementheight) + 200 + (d3.max(200, 100));//TODO
+                var newh = getMaxCanvasHeight();
+                console.log(newh);
                 if (Number(container.canvas.attr("height")) < newh) {
                     container.canvas.attr("height", newh);
                 }
@@ -468,6 +467,13 @@
                     return CONTAINER[0];
                 }
             }
+            function getMaxCanvasHeight() {
+                var maxInHeight = CONTAINER[0].elementcount + getTranslateY(CONTAINER[0].parentcontainer);
+                var maxOutHeight = CONTAINER[1].elementcount + getTranslateY(CONTAINER[1].parentcontainer);
+                console.log(maxInHeight);
+                return d3.max([maxInHeight, maxOutHeight]);
+            }
+
             function detectDropNode(xx, yy, opposite, container) { //parameters = mouse pointer position and the source data array
 
                 var targetContainer = opposite.parentcontainer;
