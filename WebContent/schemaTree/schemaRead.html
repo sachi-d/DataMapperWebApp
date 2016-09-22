@@ -16,10 +16,13 @@
                 list-style-type: none;
                 text-indent: 5px;
             }
-            li{
+            .nested-group{
                 border-bottom: 1px solid #c9c9c9;
                 border-left: 1px solid #c9c9c9;
                 width: max-content;
+            }
+            .node-element-text:active{
+                opacity: 0.5;
             }
         </style>
 
@@ -88,14 +91,14 @@
 
 
         <script>
-
+            var CONTAINER;
             $(document).ready(function () {
 
-                var CONTAINER = initCanvas(30, 30, 500, 30, 120, 20);
+                CONTAINER = initCanvas(30, 30, 500, 30, 170, 20);
 
                 if (window.File && window.FileList && window.FileReader) {
                     init(CONTAINER[0]);
-                    init(CONTAINER[1]);
+                    init(CONTAINER[1])
                 }
 
             });
@@ -161,6 +164,7 @@
                             this.x += d3.event.dx;
                             this.y += d3.event.dy;
                             d3.select(this).attr("transform", "translate(" + this.x + "," + this.y + ")");
+
 //                            console.log((this).id);
 //                            console.log(inputcontainer.attr("id"));
 //                            if ( (this) === inputcontainer) {
@@ -233,6 +237,13 @@
 
 
             function updateContainer(container) {
+
+//                var oldY = container.titleoutline.attr("y");
+                var newY = Number(container.titleoutline.attr("height"));
+                container.title.attr("y", Number(container.title.attr("y")) - newY);
+                container.titleoutline.attr("y", Number(container.titleoutline.attr("y")) - newY);
+                container.containeroutline.attr("y", Number(container.containeroutline.attr("y")) - newY);
+//                container.parentcontainer.attr("transform","translate("+getTranslateX(container.parentcontainer)+",-"+newY+")");
                 var leaves = container.leaves;
                 var maxinlev = 0;
                 for (var i = 0; i < leaves.length; i++) {
@@ -240,11 +251,10 @@
                         maxinlev = leaves[i].rank;
                     }
                 }
-                console.log("maxinlev-" + maxinlev);
 
                 if (leaves.length !== 0) {
-                    var instart = 0;
-                    var inw = container.elementwidth + 20 + (maxinlev * 20);
+                    var instart = container.startX;
+                    var inw = container.elementwidth + 20 + (maxinlev * container.elementwidth / 4);
                     var inh = 50 + ((container.elementheight + 2) * 20); //plus two for the border
                     container.titleoutline
                             .attr("width", inw)
@@ -258,7 +268,7 @@
 
 
                 //update the canvas height
-                var newh = (d3.max([10, 15]) * container.elementheight) + 200 + (d3.max(200,100));//TODO
+                var newh = (d3.max([10, 15]) * container.elementheight) + 200 + (d3.max(200, 100));//TODO
                 if (Number(container.canvas.attr("height")) < newh) {
                     container.canvas.attr("height", newh);
                 }
@@ -266,37 +276,32 @@
 
 
             function updateConnections(newx, newy, sourcecontainer) {
+                var opposite = getOppositeContainer(sourcecontainer).parentcontainer;
 
-//                if (sourcecontainer.attr("id") === inputcontainer.attr("id")) {
 
-                    sourcecontainer.selectAll(".dragline")
-                            .attr("x2", function () {
+                sourcecontainer.selectAll(".dragline")
+                        .attr("x2", function () {
+                            return d3.select(this).attr("x2") - newx;
+                        })
+                        .attr("y2", function () {
+                            return d3.select(this).attr("y2") - newy;
+                        });
 
-                                return d3.select(this).attr("x2") - newx;
-                            })
-                            .attr("y2", function () {
-                                return d3.select(this).attr("y2") - newy;
-                            });
-//                } else if (sourcecontainer.attr("id") === outputcontainer.attr("id")) {
-//                    canvas.selectAll(".dragline")
-//                            .attr("x2", function () {
-//                                //console.log(newx);
-//                                return Number(d3.select(this).attr("x2")) + newx;
-//                            })
-//                            .attr("y2", function () {
-//                                return Number(d3.select(this).attr("y2")) + newy;
-//                            });
-//
-//                }
+                opposite.selectAll(".dragline")
+                        .attr("x2", function () {
+                            return Number(d3.select(this).attr("x2")) + Number(newx);
+                        })
+                        .attr("y2", function () {
+                            return Number(d3.select(this).attr("y2")) + Number(newy);
+                        });
+
             }
 
             function parseJSONTree(text, container) {
 
                 var data = JSON.parse(text);
                 var title = data.title || "Root";
-                console.log(JSON.stringify(container.leaves));
                 container.elementcount = traverseJSONSchema(data, title, container, 0, 0, container.parentcontainer);
-                console.log(container.elementcount);
                 updateContainer(container);
             }
 
@@ -304,16 +309,16 @@
 
             function traverseJSONSchema(root, rootname, container, level, rank, resultpane) {
 
-                var margin = 30, height = container.elementheight, width = container.elementwidth;
+                var height = container.elementheight, width = container.elementwidth, margin = width / 4;
                 if (root.type === "object") {
-                    var listitem = resultpane.append("g");
+                    var listitem = resultpane.append("g").attr("class", "nested-group");
                     if (rootname !== "") {
                         var nodetext = rootname + ":" + root.type;
                         drawNode(container, listitem, nodetext, rank * margin, level * height, []);
                         rank++;
                         level++;
                     }
-                    var newlist = listitem.append("g");
+                    var newlist = listitem.append("g").attr("class", "nested-group");
                     var items = root.properties; //select PROPERTIES
 
                     for (var i = 0; i < Object.keys(items).length; i++) {   //traverse through each PROPERTY of the object
@@ -324,7 +329,7 @@
 
                 } else if (root.type === "array") {
                     var items = root.items; //select ITEMS
-                    var listitem = resultpane.append("g");
+                    var listitem = resultpane.append("g").attr("class", "nested-group");
                     if (rootname !== "") {
                         var nodetext = rootname + ":" + root.type + "[" + items.type + "]";
                         drawNode(container, listitem, nodetext, rank * margin, level * height, []);
@@ -349,10 +354,12 @@
             }
 
             function drawNode(container, parent, text, x, y, dotposition) {
-
+                console.log("drawing node-" + text + "x : " + x + "   y : " + y);
                 var height = container.elementheight,
                         width = container.elementwidth;
-                y += 80;
+                y += container.startY;
+                x += container.startX;
+
                 var parent1 = parent.append("g").attr("class", "node-element")
                         .attr("height", height)
                         .attr("width", width);
@@ -360,14 +367,7 @@
                         .attr("x", x)
                         .attr("y", y + (3 * height / 4))
                         .text(text);
-                if (dotposition.length === 2) {
-                    parent1.append("circle").attr("class", "drag-dot")
-                            .attr("r", height / 4)
-                            .attr("cx", x + dotposition[0])
-                            .attr("cy", y + dotposition[1])
-                            .attr("fill", "rgb(0,0,0)")
-                            .call(dragme);
-                }
+
 
                 var coordinates, dragdot2, dragline;
                 var dragme = d3.drag()
@@ -379,73 +379,72 @@
                             var thisdragR = d3.select(this).attr("r");
                             coordinates = [0, 0];
 
-                            dragdot2 = parent.append("circle").attr("class", "dragdot")
+                            dragdot2 = parent1.append("circle").attr("class", "dragdot")
                                     .attr("cx", thisdragX)
                                     .attr("cy", thisdragY)
                                     .attr("r", thisdragR)
                                     .attr("fill", "red");
-                            dragline = parent.append("line").attr("class", "dragline")
+                            dragline = parent1.append("line").attr("class", "dragline")
                                     .style("stroke", "black")
                                     .style("stroke-width", "2");
-//                            if (inputcontainer === container) {
                             dragline.attr("x1", thisdragX)
                                     .attr("x2", thisdragX)
                                     .attr("y1", thisdragY)
                                     .attr("y2", thisdragY);
-//                            } else {
-//
-//                                dragline.attr("x1", thisdragX - inputTranslateX() + outputTranslateX())
-//                                        .attr("x2", thisdragX - inputTranslateX() + outputTranslateX())
-//                                        .attr("y1", thisdragY - inputTranslateY() + outputTranslateY())
-//                                        .attr("y2", thisdragY - inputTranslateY() + outputTranslateY());
-//                            }
                         })
                         .on("drag", function (d) {
                             coordinates = d3.mouse(this);
                             xx = coordinates[0];
                             yy = coordinates[1];
 
-//                            if (inputcontainer === container) {
                             dragline.attr("x2", xx).attr("y2", yy);
-//                            } else {
-//
-//                                dragline
-//                                        .attr("x1", xx - inputTranslateX() + outputTranslateX())
-//                                        .attr("y1", yy - inputTranslateY() + outputTranslateY());
-//                            }
+
                             dragdot2.attr("cx", xx).attr("cy", yy);
+
                             //TODO if position is inside the outleafs - text color change
                         })
                         .on("end", function (d) {
-//                            var target = detectDropNode(xx, yy, data);
-//
-//                            if (target !== "null") {
+                            var opposite = getOppositeContainer(container.parentcontainer);
+                            var target = detectDropNode(xx, yy, opposite, container);
+                            console.log("x= " + xx + " y= " + yy);
+                            if (target !== "null") {
 //                                // d3.select("#outputnode").text(target.text);
 //
-//                                var dotx = Number(target.dot.attr("cx"));
-//                                var doty = Number(target.dot.attr("cy"));
+                                var dotx = Number(target.dotposition[0]) + target.x + opposite.startX + getTranslateX(opposite.parentcontainer) - getTranslateX(container.parentcontainer);
+                                var doty = Number(target.dotposition[1]) + target.y + opposite.startY + getTranslateY(opposite.parentcontainer) - getTranslateY(container.parentcontainer);
+
+                                console.log("dotposition- " + dotx + "-" + doty);
 //
 //                                if (inputcontainer === container) {
 //                                    dragline
 //                                            .attr("x2", dotx - inputTranslateX() + outputTranslateX())
 //                                            .attr("y2", doty - inputTranslateY() + outputTranslateY());
 //                                } else {
-//                                    dragline
-//                                            .attr("x1", dotx)
-//                                            .attr("y1", doty);
+                                dragline
+                                        .attr("x2", dotx)
+                                        .attr("y2", doty);
 //                                }
-//                                dragdot2.remove();
+                                dragdot2.remove();
 //                                connections.push({
 //                                    "source": d,
 //                                    "target": target,
 //                                    "line": dragline
 //                                }); //NOT USED
-//                            } else {
-//                                d3.select("#inputnode").text("");
-//                                dragline.remove();
-//                                dragdot2.remove();
-//                            }
+                            } else {
+                                //d3.select("#inputnode").text("");
+                                dragline.remove();
+                                dragdot2.remove();
+                            }
                         });
+                if (dotposition.length === 2) {
+                    parent1.classed("leaf-node", true);
+                    parent1.append("circle").attr("class", "drag-dot")
+                            .attr("r", height / 4)
+                            .attr("cx", x + dotposition[0])
+                            .attr("cy", y + dotposition[1])
+                            .attr("fill", "rgb(0,0,0)")
+                            .call(dragme);
+                }
             }
             function getTranslation(transform) {
                 // Create a dummy g for calculation purposes only. This will never
@@ -483,6 +482,50 @@
                 coordinates[0] = (position === "RIGHT" ? width : 0);
                 coordinates[1] = height / 2;
                 return coordinates;
+            }
+            function getOppositeContainer(container) { //input g or output g
+                var name = container.attr("id").split("-")[0];
+                if (name === "input") {
+                    return CONTAINER[1];
+                } else if (name === "output") {
+                    return CONTAINER[0];
+                }
+            }
+            function detectDropNode(xx, yy, opposite, container) { //parameters = mouse pointer position and the source data array
+
+                var targetContainer = opposite.parentcontainer;
+                var targetLeaves = opposite.leaves,
+                        height = opposite.elementheight,
+                        width = opposite.elementwidth;
+                console.log(JSON.stringify(targetLeaves));
+
+                var x = getTranslateX(targetContainer) + opposite.startX - getTranslateX(container.parentcontainer);
+                var y = getTranslateY(targetContainer) + opposite.startY - getTranslateY(container.parentcontainer);
+
+                console.log("translation-" + getTranslateY(targetContainer) + "-startY-" + opposite.startY + "-" + yy);
+                for (var i = 0; i < targetLeaves.length; i++) {
+
+                    var tempX = x + targetLeaves[i].x;
+                    var tempY = y + targetLeaves[i].y;
+                    console.log("targetleaveY-" + tempY + height);
+
+                    if (pointInLeaf([xx, yy], [tempX, tempY], width, height)) {
+                        return targetLeaves[i];
+                    }
+
+                }
+                return "null";
+            }
+
+            function pointInLeaf(point, startPoint, width, height) {
+                if (point[0] > startPoint[0] && point[0] < startPoint[0] + width) {
+                    //horizontally inside
+                    if (point[1] > startPoint[1] && point[1] < startPoint[1] + height) {
+                        //vertically in
+                        return true;
+                    }
+                }
+                return false;
             }
 
         </script>

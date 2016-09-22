@@ -20,9 +20,16 @@
         <svg class="canvas" width="1000" height="500">
         <g  id="container">  </g>  
         </svg>
+        <div class="happy">
 
+        </div>
 
         <script>
+            var div = d3.select(".happy");
+            div.append("p").attr("class", "happy-text leaf").text("happy text");
+            var p = div.append("p").attr("class", "happy-text").text("happy tssext");
+            d3.selectAll(".leaf").style("color", "red");
+            p.classed("newclass",true);
 
             var data = [{
                     "text": "inleaf1",
