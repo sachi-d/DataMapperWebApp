@@ -6,8 +6,7 @@
         <title>Schema to tree</title>
         <script src="assets/lib/d3/d3.js"></script>
         <script src="assets/lib/jQuery/jquery-3.1.0.js"></script>
-        <script src="assets/lib/jquery-ui-1.12.0.custom/jquery-ui.js"></script>
-        <!--        <script src="../d3trials/assets/fileHandler.js"></script>-->
+        <script src="assets/lib/jquery-ui-1.12.0.custom/jquery-ui.js"></script> 
         <script src="assets/fileHandler.js"></script>
         <link rel="stylesheet" href="assets/style.css">
 
@@ -242,7 +241,7 @@
                 if (leaves.length !== 0) {
                     var instart = container.startX;
                     var inw = container.elementwidth + 20 + (maxinlev * container.elementwidth / 4); //20=safe margin
-                    var inh =  Number(container.titleoutline.attr("height"))+((container.elementheight ) * container.elementcount); 
+                    var inh = Number(container.titleoutline.attr("height")) + ((container.elementheight) * container.elementcount);
                     container.titleoutline
                             .attr("width", inw)
                             .attr("x", instart);
