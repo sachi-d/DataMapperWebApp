@@ -219,6 +219,13 @@
                     $("#load-input").slideToggle();
                 });
 
+                d3.select("#clear-output-btn").on("click", function () {
+                    clearContainer(outputcontainer);
+                });
+                d3.select("#clear-input-btn").on("click", function () {
+                    clearContainer(inputcontainer);
+                });
+
                 inputcontainer.call(dragcontainer);
                 outputcontainer.call(dragcontainer);
 
@@ -285,7 +292,7 @@
             }
 
             function parseJSONTree(text, container) {
-
+                clearContainer(container.parentcontainer);
                 var data = JSON.parse(text);
                 var title = data.title || "Root";
                 container.elementcount = traverseJSONSchema(data, title, container, 0, 0, container.parentcontainer);
@@ -508,6 +515,10 @@
                     }
                 }
                 return false;
+            }
+
+            function clearContainer(container) {
+                container.selectAll(".nested-group").remove();
             }
 
         </script>
