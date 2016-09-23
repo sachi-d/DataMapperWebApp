@@ -4,10 +4,17 @@
     <head>
         <meta charset="UTF-8">
         <title>SVG Trial</title>
-
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.6/d3.js"></script>
     </head>
 
     <body>
+
+        <p>Marker</p>
+        <svg width="800" height="200" id="marker-canvas">
+
+        </svg>
+        <hr>
+
         <p>Rectangle</p>
         <svg width="800" height="200">
         <rect x="8" y="8" width="500" height="100" style="fill:rgb(0,200,0);stroke:rgb(200,0,0);stroke-width:5;" />
@@ -103,6 +110,37 @@
         <path stroke-dasharray="20,10,5,5,5,10" d="M15 160 l215 0" />
         </g>
         </svg> 
+
+        <script>
+            d3.xml("assets/images/turtle.svg").mimeType("image/svg+xml").get(function (xml) {
+                var importedNode = document.importNode(xml.documentElement, true).getElementsByTagName("g")[0],
+                        height = 500, width = 800,
+                        margin = 50,
+                        type = ['turtle', 'arrow'];
+                var svg = d3.select("#marker-canvas"),
+                        defs = svg.append("defs");
+
+                var marker = defs.append("marker")
+                        .attr({
+                            "id": "arrow",
+                            "viewBox": "0 -5 10 10",
+                            "refX": 10,
+                            "refY": 10,
+                            "markerWidth": 4,
+                            "markerHeight": 4,
+                            "orient": "auto"
+                        });
+                console.log(marker);
+                var arrow = svg.append("g").attr("class", "arrow").attr("cx",5).attr("cy",5);
+                arrow.append("path")
+                        .attr(
+                                "d", "M0,0L10,5L0,10"
+                                );
+                //.attr("class", "arrowHead");
+
+            });
+        </script>
+
     </body>
 
 </html>
