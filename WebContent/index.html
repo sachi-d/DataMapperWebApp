@@ -167,8 +167,11 @@
                             d3.select(this).attr("transform", "translate(" + this.x + "," + this.y + ")");
 
                             updateConnections(d3.event.dx, d3.event.dy, d3.select(this));
+                            resizeCanvas();
                         })
-                        .on("end", function () {});
+                        .on("end", function () {
+                           // resizeCanvas();
+                        });
 
 
 
@@ -261,11 +264,7 @@
 
 
                 //update the canvas height
-                var newh = getMaxCanvasHeight();
-                console.log(newh);
-                if (Number(container.canvas.attr("height")) < newh) {
-                    container.canvas.attr("height", newh);
-                }
+                resizeCanvas();
             }
 
 
@@ -348,7 +347,7 @@
             }
 
             function drawNode(container, parent, text, x, y, dotposition) {
-                console.log("drawing node-" + text + "x : " + x + "   y : " + y);
+
                 var height = container.elementheight,
                         width = container.elementwidth;
                 y += container.startY;
@@ -400,7 +399,7 @@
                         .on("end", function (d) {
                             var opposite = getOppositeContainer(container.parentcontainer);
                             var target = detectDropNode(xx, yy, opposite, container);
-                            console.log("x= " + xx + " y= " + yy);
+
                             if (target !== "null") {
 //                                // d3.select("#outputnode").text(target.text);
 //
@@ -473,12 +472,7 @@
                     return CONTAINER[0];
                 }
             }
-            function getMaxCanvasHeight() {
-                var maxInHeight = CONTAINER[0].elementcount + getTranslateY(CONTAINER[0].parentcontainer);
-                var maxOutHeight = CONTAINER[1].elementcount + getTranslateY(CONTAINER[1].parentcontainer);
-                console.log(maxInHeight);
-                return d3.max([maxInHeight, maxOutHeight]);
-            }
+
 
             function detectDropNode(xx, yy, opposite, container) { //parameters = mouse pointer position and the source data array
 
@@ -519,6 +513,15 @@
 
             function clearContainer(container) {
                 container.selectAll(".nested-group").remove();
+            }
+
+            function resizeCanvas() {
+                var maxInHeight = CONTAINER[0].startY + CONTAINER[0].elementcount * CONTAINER[0].elementheight + getTranslateY(CONTAINER[0].parentcontainer)+10;
+                var maxOutHeight = CONTAINER[1].startY + CONTAINER[1].elementcount * CONTAINER[1].elementheight + getTranslateY(CONTAINER[1].parentcontainer)+10;
+                var currentHeight = CONTAINER[0].canvas.attr("height");
+                console.log("current- " + currentHeight + " maxIn- " + maxInHeight + "maxOut- " + maxOutHeight);
+                CONTAINER[0].canvas.attr("height", d3.max([maxInHeight, maxOutHeight, currentHeight]));
+
             }
 
         </script>
