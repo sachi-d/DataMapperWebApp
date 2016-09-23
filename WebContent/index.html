@@ -264,7 +264,9 @@
 
 
                 //update the canvas height
+
                 resizeCanvas();
+
             }
 
 
@@ -362,21 +364,18 @@
                         .text(text);
 
 
-                var coordinates, dragdot2, dragline;
+                var coordinates, draghead2, dragline;
                 var dragme = d3.drag()
                         .on("start", function (d) {
                             // d3.select("#inputnode").text(d.text);
                             //   d3.select("#outputnode").text("");
                             var thisdragY = d3.select(this).attr("cy");
                             var thisdragX = d3.select(this).attr("cx");
-                            var thisdragR = d3.select(this).attr("r");
                             coordinates = [0, 0];
 
-                            dragdot2 = parent1.append("circle").attr("class", "dragdot")
-                                    .attr("cx", thisdragX)
-                                    .attr("cy", thisdragY)
-                                    .attr("r", thisdragR)
-                                    .attr("fill", "red");
+                            draghead2 = drawArrow(parent1, thisdragX, thisdragY);
+                            draghead2.attr("class", "drag-head-2");
+//                                    .attr("fill", "green");
                             dragline = parent1.append("line").attr("class", "dragline")
                                     .style("stroke", "black")
                                     .style("stroke-width", "2");
@@ -391,8 +390,8 @@
                             yy = coordinates[1];
 
                             dragline.attr("x2", xx).attr("y2", yy);
-
-                            dragdot2.attr("cx", xx).attr("cy", yy);
+                            moveArrow(draghead2, xx, yy);
+                            // draghead2.attr("cx", xx).attr("cy", yy);
 
                             //TODO if position is inside the outleafs - text color change
                         })
@@ -409,21 +408,18 @@
                                 dragline
                                         .attr("x2", dotx)
                                         .attr("y2", doty);
-                                dragdot2.remove();
+                                draghead2.remove();
 
                             } else {
                                 //d3.select("#inputnode").text("");
                                 dragline.remove();
-                                dragdot2.remove();
+                                draghead2.remove();
                             }
                         });
                 if (dotposition.length === 2) {
                     parent1.classed("leaf-node", true);
-                    parent1.append("circle").attr("class", "drag-dot")
-                            .attr("r", height / 4)
-                            .attr("cx", x + dotposition[0])
-                            .attr("cy", y + dotposition[1])
-                            .attr("fill", "rgb(0,0,0)")
+                    var arrowHead = drawArrow(parent1, x + dotposition[0], y + dotposition[1]);
+                    arrowHead.attr("class", "drag-head")
                             .call(dragme);
                 }
             }
@@ -480,17 +476,14 @@
                 var targetLeaves = opposite.leaves,
                         height = opposite.elementheight,
                         width = opposite.elementwidth;
-                console.log(JSON.stringify(targetLeaves));
 
                 var x = getTranslateX(targetContainer) + opposite.startX - getTranslateX(container.parentcontainer);
                 var y = getTranslateY(targetContainer) + opposite.startY - getTranslateY(container.parentcontainer);
 
-                console.log("translation-" + getTranslateY(targetContainer) + "-startY-" + opposite.startY + "-" + yy);
                 for (var i = 0; i < targetLeaves.length; i++) {
 
                     var tempX = x + targetLeaves[i].x;
                     var tempY = y + targetLeaves[i].y;
-                    console.log("targetleaveY-" + tempY + height);
 
                     if (pointInLeaf([xx, yy], [tempX, tempY], width, height)) {
                         return targetLeaves[i];
@@ -509,6 +502,22 @@
                     }
                 }
                 return false;
+            }
+            function drawArrow(parent, cx, cy) {
+                var newArrow = parent.append("polygon");
+                moveArrow(newArrow, cx, cy);
+                return newArrow;
+            }
+
+            function moveArrow(arrow, cx, cy) {
+                arrow.attr("points", function () {
+                    var p0 = [Number(cx) - 5, Number(cy) - 5],
+                            p1 = [Number(cx) + 5, Number(cy)],
+                            p2 = [Number(cx) - 5, Number(cy) + 5];
+                    return p0[0] + "," + p0[1] + " " + p1[0] + "," + p1[1] + " " + p2[0] + "," + p2[1];
+                })
+                        .attr("cx", cx)
+                        .attr("cy", cy);
             }
 
             function clearContainer(container) {
