@@ -255,7 +255,7 @@
 
                 //update the canvas height
                 var newh = getMaxCanvasHeight();
-                console.log(newh);
+       
                 if (Number(container.canvas.attr("height")) < newh) {
                     container.canvas.attr("height", newh);
                 }
@@ -341,7 +341,6 @@
             }
 
             function drawNode(container, parent, text, x, y, dotposition) {
-                console.log("drawing node-" + text + "x : " + x + "   y : " + y);
                 var height = container.elementheight,
                         width = container.elementwidth;
                 y += container.startY;
@@ -363,12 +362,11 @@
                             //   d3.select("#outputnode").text("");
                             var thisdragY = d3.select(this).attr("cy");
                             var thisdragX = d3.select(this).attr("cx");
-                            var thisdragR = d3.select(this).attr("r");
                             coordinates = [0, 0];
 
                             draghead2 = drawArrow(parent1, thisdragX, thisdragY);
-                            draghead2.attr("class", "drag-head-2")
-                                    .attr("fill", "red");
+                            draghead2.attr("class", "drag-head-2");
+//                                    .attr("fill", "green");
                             dragline = parent1.append("line").attr("class", "dragline")
                                     .style("stroke", "black")
                                     .style("stroke-width", "2");
@@ -391,7 +389,6 @@
                         .on("end", function (d) {
                             var opposite = getOppositeContainer(container.parentcontainer);
                             var target = detectDropNode(xx, yy, opposite, container);
-                            console.log("x= " + xx + " y= " + yy);
                             if (target !== "null") {
 //                                // d3.select("#outputnode").text(target.text);
 //
@@ -413,7 +410,6 @@
                     parent1.classed("leaf-node", true);
                     var arrowHead = drawArrow(parent1, x + dotposition[0], y + dotposition[1]);
                     arrowHead.attr("class", "drag-head")
-                            .attr("fill", "rgb(0,0,0)")
                             .call(dragme);
                 }
             }
@@ -465,7 +461,6 @@
             function getMaxCanvasHeight() {
                 var maxInHeight = CONTAINER[0].elementcount + getTranslateY(CONTAINER[0].parentcontainer);
                 var maxOutHeight = CONTAINER[1].elementcount + getTranslateY(CONTAINER[1].parentcontainer);
-                console.log(maxInHeight);
                 return d3.max([maxInHeight, maxOutHeight]);
             }
 
@@ -475,17 +470,14 @@
                 var targetLeaves = opposite.leaves,
                         height = opposite.elementheight,
                         width = opposite.elementwidth;
-                console.log(JSON.stringify(targetLeaves));
 
                 var x = getTranslateX(targetContainer) + opposite.startX - getTranslateX(container.parentcontainer);
                 var y = getTranslateY(targetContainer) + opposite.startY - getTranslateY(container.parentcontainer);
 
-                console.log("translation-" + getTranslateY(targetContainer) + "-startY-" + opposite.startY + "-" + yy);
                 for (var i = 0; i < targetLeaves.length; i++) {
 
                     var tempX = x + targetLeaves[i].x;
                     var tempY = y + targetLeaves[i].y;
-                    console.log("targetleaveY-" + tempY + height);
 
                     if (pointInLeaf([xx, yy], [tempX, tempY], width, height)) {
                         return targetLeaves[i];
@@ -506,17 +498,17 @@
                 return false;
             }
             function drawArrow(parent, cx, cy) {
-                var newArrow = parent.append("path");
+                var newArrow = parent.append("polygon");
                 moveArrow(newArrow, cx, cy);
                 return newArrow;
             }
 
             function moveArrow(arrow, cx, cy) {
-                arrow.attr("d", function () {
-                    var p0 = [cx - 5, cy - 5],
-                            p1 = [cx + 5, cy],
-                            p2 = [cx - 5, cy + 5];
-                    return "M" + p0[0] + ", " + p0[1] + "L" + p1[0] + "," + p1[1] + "L" + p2[0] + "," + p2[1];
+                arrow.attr("points", function () {
+                    var p0 = [Number(cx) - 5, Number(cy) - 5],
+                            p1 = [Number(cx) + 5, Number(cy)],
+                            p2 = [Number(cx) - 5, Number(cy) + 5];
+                    return p0[0] + "," + p0[1] + " " + p1[0] + "," + p1[1] + " " + p2[0] + "," + p2[1];
                 })
                         .attr("cx", cx)
                         .attr("cy", cy);

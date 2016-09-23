@@ -141,17 +141,17 @@
              var ar=       drawArrow(arrow, 80, 25);
             moveArrow(ar, 100, 40);
             function drawArrow(parent, cx, cy) {
-                var newArrow=parent.append("path");
+                var newArrow=parent.append("polygon");
                 moveArrow(newArrow,cx,cy);
                 return newArrow;
             }
 
             function moveArrow(arrow, cx, cy) {
-                arrow.attr("d", function () {
+                arrow.attr("points", function () {
                     var p0 = [cx - 5, cy - 5],
                             p1 = [cx + 5, cy],
                             p2 = [cx - 5, cy + 5];
-                    return "M" + p0[0] + ", " + p0[1] + "L" + p1[0] + "," + p1[1] + "L" + p2[0] + "," + p2[1];
+                    return p0[0] + "," + p0[1] + " " + p1[0] + "," + p1[1] + " " + p2[0] + "," + p2[1];
                 });
             }
         </script>
