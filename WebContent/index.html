@@ -356,7 +356,7 @@
                         .text(text);
 
 
-                var coordinates, dragdot2, dragline;
+                var coordinates, draghead2, dragline;
                 var dragme = d3.drag()
                         .on("start", function (d) {
                             // d3.select("#inputnode").text(d.text);
@@ -366,10 +366,8 @@
                             var thisdragR = d3.select(this).attr("r");
                             coordinates = [0, 0];
 
-                            dragdot2 = parent1.append("circle").attr("class", "dragdot")
-                                    .attr("cx", thisdragX)
-                                    .attr("cy", thisdragY)
-                                    .attr("r", thisdragR)
+                            draghead2 = drawArrow(parent1, thisdragX, thisdragY);
+                            draghead2.attr("class", "drag-head-2")
                                     .attr("fill", "red");
                             dragline = parent1.append("line").attr("class", "dragline")
                                     .style("stroke", "black")
@@ -385,8 +383,8 @@
                             yy = coordinates[1];
 
                             dragline.attr("x2", xx).attr("y2", yy);
-
-                            dragdot2.attr("cx", xx).attr("cy", yy);
+                            moveArrow(draghead2, xx, yy);
+                            // draghead2.attr("cx", xx).attr("cy", yy);
 
                             //TODO if position is inside the outleafs - text color change
                         })
@@ -403,20 +401,18 @@
                                 dragline
                                         .attr("x2", dotx)
                                         .attr("y2", doty);
-                                dragdot2.remove();
+                                draghead2.remove();
 
                             } else {
                                 //d3.select("#inputnode").text("");
                                 dragline.remove();
-                                dragdot2.remove();
+                                draghead2.remove();
                             }
                         });
                 if (dotposition.length === 2) {
                     parent1.classed("leaf-node", true);
-                    parent1.append("circle").attr("class", "drag-dot")
-                            .attr("r", height / 4)
-                            .attr("cx", x + dotposition[0])
-                            .attr("cy", y + dotposition[1])
+                    var arrowHead = drawArrow(parent1, x + dotposition[0], y + dotposition[1]);
+                    arrowHead.attr("class", "drag-head")
                             .attr("fill", "rgb(0,0,0)")
                             .call(dragme);
                 }
@@ -508,6 +504,22 @@
                     }
                 }
                 return false;
+            }
+            function drawArrow(parent, cx, cy) {
+                var newArrow = parent.append("path");
+                moveArrow(newArrow, cx, cy);
+                return newArrow;
+            }
+
+            function moveArrow(arrow, cx, cy) {
+                arrow.attr("d", function () {
+                    var p0 = [cx - 5, cy - 5],
+                            p1 = [cx + 5, cy],
+                            p2 = [cx - 5, cy + 5];
+                    return "M" + p0[0] + ", " + p0[1] + "L" + p1[0] + "," + p1[1] + "L" + p2[0] + "," + p2[1];
+                })
+                        .attr("cx", cx)
+                        .attr("cy", cy);
             }
 
         </script>
