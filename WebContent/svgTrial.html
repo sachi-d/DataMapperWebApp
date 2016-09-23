@@ -112,33 +112,48 @@
         </svg> 
 
         <script>
-            d3.xml("assets/images/turtle.svg").mimeType("image/svg+xml").get(function (xml) {
-                var importedNode = document.importNode(xml.documentElement, true).getElementsByTagName("g")[0],
-                        height = 500, width = 800,
-                        margin = 50,
-                        type = ['turtle', 'arrow'];
-                var svg = d3.select("#marker-canvas"),
-                        defs = svg.append("defs");
+            //d3.xml("assets/images/turtle.svg").mimeType("image/svg+xml").get(function (xml) {
+//                var importedNode = document.importNode(xml.documentElement, true).getElementsByTagName("g")[0],
+//                        height = 500, width = 800,
+//                        margin = 50,
+//                        type = ['turtle', 'arrow'];
+            var svg = d3.select("#marker-canvas"),
+                    defs = svg.append("defs");
+            var marker = defs.append("marker")
+                    .attr({
+                        "id": "arrow",
+                        "viewBox": "0 -5 10 10",
+                        "refX": 10,
+                        "refY": 10,
+                        "markerWidth": 4,
+                        "markerHeight": 4,
+                        "orient": "auto"
+                    });
+            console.log(marker);
+            var arrow = svg.append("g").attr("class", "arrow");
+            arrow.append("path")
+                    .attr(
+                            "d", "M0,0L10,5L0,10"
+                            );
+            //.attr("class", "arrowHead");
+            arrow.append("rect").attr("x", 30).attr("y", 10).attr("stroke", "blue").attr("width", 50).attr("height", 30).attr("fill", "none");
+            //var ar = arrow.append("path");
+             var ar=       drawArrow(arrow, 80, 25);
+            moveArrow(ar, 100, 40);
+            function drawArrow(parent, cx, cy) {
+                var newArrow=parent.append("path");
+                moveArrow(newArrow,cx,cy);
+                return newArrow;
+            }
 
-                var marker = defs.append("marker")
-                        .attr({
-                            "id": "arrow",
-                            "viewBox": "0 -5 10 10",
-                            "refX": 10,
-                            "refY": 10,
-                            "markerWidth": 4,
-                            "markerHeight": 4,
-                            "orient": "auto"
-                        });
-                console.log(marker);
-                var arrow = svg.append("g").attr("class", "arrow").attr("cx",5).attr("cy",5);
-                arrow.append("path")
-                        .attr(
-                                "d", "M0,0L10,5L0,10"
-                                );
-                //.attr("class", "arrowHead");
-
-            });
+            function moveArrow(arrow, cx, cy) {
+                arrow.attr("d", function () {
+                    var p0 = [cx - 5, cy - 5],
+                            p1 = [cx + 5, cy],
+                            p2 = [cx - 5, cy + 5];
+                    return "M" + p0[0] + ", " + p0[1] + "L" + p1[0] + "," + p1[1] + "L" + p2[0] + "," + p2[1];
+                });
+            }
         </script>
 
     </body>
