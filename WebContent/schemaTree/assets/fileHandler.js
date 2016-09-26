@@ -60,11 +60,11 @@ function fileSelectHandler(e, container) {
 // initialize
 function init(container) {
  
-    var fileselect = document.getElementById(container.fileselect);
-    var filedrag = document.getElementById(container.filedrag);
+    var fileSelect = document.getElementById(container.fileSelect);
+    var fileDrag = document.getElementById(container.fileDrag);
 
     // file select
-    fileselect.addEventListener("change", function (e) {
+    fileSelect.addEventListener("change", function (e) {
         fileSelectHandler(e, container)
     }, false);
 
@@ -73,12 +73,12 @@ function init(container) {
     if (xhr.upload) {
 
         // file drop
-        filedrag.addEventListener("dragover", fileDragHover, false);
-        filedrag.addEventListener("dragleave", fileDragHover, false);
-        filedrag.addEventListener("drop", function (e) {
+        fileDrag.addEventListener("dragover", fileDragHover, false);
+        fileDrag.addEventListener("dragleave", fileDragHover, false);
+        fileDrag.addEventListener("drop", function (e) {
             fileSelectHandler(e, container)
         }, false);
-        //  filedrag.style.display = "block";
+        //  fileDrag.style.display = "block";
 
     }
 
