@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+            <title>Collapsible html tree list</title>
+            <script src="../assets/lib/d3/d3.js"></script>
+            <script src="assets/lib/jQuery/jquery-3.1.0.js"></script>
+            <script src="assets/lib/jquery-ui-1.12.0.custom/jquery-ui.js"></script> 
+            <script src="assets/CollapsibleLists.js"></script>
+            <link rel="stylesheet" href="assets/style.css">
+
+                <style>
+                    .collapsibleList li{
+                        list-style-image:url('button.png');
+                        cursor:auto;
+                    }
+
+                    li.collapsibleListOpen{
+                        list-style-image:url('button-open.png');
+                        cursor:pointer;
+                    }
+
+                    li.collapsibleListClosed{
+                        list-style-image:url('button-closed.png');
+                        cursor:pointer;
+                    }
+
+                    /*css for tree branch structure*/
+                    ul.collapsibleList, ul.collapsibleList ul, ul.collapsibleList li {
+                        margin: 0;
+                        padding: 0;
+                        list-style-type: none;
+                    }
+                    ul.collapsibleList ul { padding-left: 0.3em; }
+                    ul.collapsibleList li {
+                        border-left: 1px dotted #000;
+                        padding-left: 13px;
+                        background: url(assets/dotted.gif) scroll no-repeat 1px 0.8em;
+                    }
+                    ul.collapsibleList li:last-child {
+                        border-left-width: 0px;
+                        padding-left: 14px;
+                        background: url(assets/dottedangle.gif) scroll no-repeat left top;
+                    }
+                </style>
+
+                </head>
+
+                <body>
+
+                    <ul class="collapsibleList">
+                        <li>
+                            Parent item
+                            <ul>
+                                <li>Child item</li>
+                                <li>Child item</li>
+                            </ul>
+                        </li>
+                        <li>
+                            Parent item
+                            <ul>
+                                <li>Child item</li>
+                                <li>Child item</li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <hr>
+                        <svg class="canvas" >
+                            <g  id="input-container">  
+                                <foreignObject x="10" y="10" width="200" height="400" id="input-container-fo" class="container-fo">
+                                    <div xmlns="http://www.w3.org/1999/xhtml" id="input-container-div" class="container-div">
+                                        <div class="container-div-title" id="input-container-div-title">Input</div>
+                                        <ul class="collapsibleList">
+                                            <li>
+                                                Parent item
+                                                <ul>
+                                                    <li class="child">Child item </li>
+                                                    <li class="child">Child item</li>
+                                                </ul>
+                                            </li>
+                                            <li>
+                                                Parent item
+                                                <ul>
+                                                    <li class="child">Child item</li>
+                                                    <li class="child">Child item</li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </foreignObject>
+                            </g>
+
+                        </svg>
+
+                        <script>
+                            CollapsibleLists.apply();
+                            d3.selectAll(".child").each(function(){
+                                console.log(d3.select(this).node());
+                            });
+                        </script>
+                </body>
+
+                </html>
