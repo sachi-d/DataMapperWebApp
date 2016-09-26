@@ -62,6 +62,7 @@
                             <ul>
                                 <li>Child item</li>
                                 <li>Child item</li>
+
                             </ul>
                         </li>
                     </ul>
@@ -88,16 +89,31 @@
                                                 </ul>
                                             </li>
                                         </ul>
+                                        <circle cx="10" cy="10" r="5" fill="black">
+                                            <circle cx="50" cy="50" r="40" stroke="blue" stroke-width="4" fill="pink" />
                                     </div>
                                 </foreignObject>
+                                <circle cx="50" cy="50" r="4" stroke="blue" stroke-width="4" fill="pink" />
                             </g>
+
+                        </svg>
+                        <svg class="canvas" width="1800" height="500">
+                            <g id="input-container" transform="translate(0,0)">
+
+                                <g id="input-container-fo" class="container-fo">
+                                    <rect class="container-title-outline" id="input-container-title-outline" width="200" height="20" fill="#77C1C0" stroke="black"></rect>
+                                    <text class="container-title" id="input-container-title" font-weight="bold" y="15">Input</text>
+                                    <rect class="container-outline" id="input-container-outline" width="200" height="300" fill="none" stroke="black"></rect>
+                                </g>
+                            </g>
+
 
                         </svg>
 
                         <script>
                             CollapsibleLists.apply();
-                            d3.selectAll(".child").each(function(){
-                                console.log(d3.select(this).node());
+                            d3.selectAll(".child").each(function () {
+                                console.log(d3.select(this));
                             });
                         </script>
                 </body>
