@@ -298,27 +298,17 @@
                 container.elementCount = traverseJSONSchema(data, title, container, 0, 0, container.parentContainer);
                 updateContainer(container);
 
-//                d3.select("#input-container").selectAll(".nested-group")
-//                        .each(function () {
-//                            var bbox = d3.select(this).node().getBBox();
-//                            d3.select(this)
-//                                    .append("polyline")
-//                                    .attr("points", function () {
-//                                        var sx = bbox.x ,
-//                                                sy = bbox.y +15,
-//                                                ex = sx,
-//                                                ey = sy + bbox.height - 30,
-//                                                mx = sx + 5,
-//                                                my = ey;
-//                                        return sx + "," + sy + " " + ex + "," + ey + " " + mx + "," + my;
-//                                    })
-////                                    .attr("width", bbox.width)
-////                                    .attr("height", bbox.height)
-////                                    .attr("x", bbox.x)
-////                                    .attr("y", bbox.y)
-//                                    .style("fill", "transparent")
-//                                    .style("stroke", "black");
-//                        });
+
+                d3.selectAll(".nested-group").each(function () {
+                    var sib = d3.select(this).select(".nested-group");
+                    d3.select(this).select(".parent-node").on("click", function () {
+
+                        sib.style("display", function () {
+                            return (sib.style("display") === "none" ? "inline" : "none");
+                        });
+
+                    })
+                });
             }
 
 
@@ -384,14 +374,14 @@
                 var parent1 = parent.append("g").attr("class", "node-element")
                         .attr("height", height)
                         .attr("width", width);
-                parent1.append("svg:image")
-                        .attr("x",x)
-                        .attr("y",y)
-                        .attr("width",11)
-                        .attr("height",11)
-                        .attr("xlink:href","schemaTree/assets/dottedangle.gif");
+//                parent1.append("svg:image")
+//                        .attr("x",x)
+//                        .attr("y",y)
+//                        .attr("width",11)
+//                        .attr("height",11)
+//                        .attr("xlink:href","schemaTree/assets/dottedangle.gif");
                 parent1.append("text").attr("class", "node-element-text")
-                        .attr("x", x+11)
+                        .attr("x", x + 11)
                         .attr("y", y + (3 * height / 4))
                         .text(text);
 
@@ -453,7 +443,10 @@
                     var arrowHead = drawArrow(parent1, x + dotPosition[0], y + dotPosition[1]);
                     arrowHead.attr("class", "drag-head")
                             .call(dragNode);
+                } else {
+                    parent1.classed("parent-node", true);
                 }
+
             }
             function getTranslation(transform) {
                 // Create a dummy g for calculation purposes only. This will never
