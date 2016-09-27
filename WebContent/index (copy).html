@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+            <title>Data Mapper tooling</title>
+            <script src="assets/lib/d3/d3.js"></script>
+            <script src="assets/lib/jQuery/jquery-3.1.0.js"></script>
+            <script src="assets/lib/jquery-ui-1.12.0.custom/jquery-ui.js"></script> 
+            <script src="assets/fileHandler.js"></script>
+            <link rel="stylesheet" href="assets/style.css">
+
+                <style>
+                    .structure,.structure ul {
+                        list-style-type: none;
+                        text-indent: 5px;
+                    }
+                    .nested-group{
+                        border-bottom: 1px solid #c9c9c9;
+                        border-left: 1px solid #c9c9c9;
+                        width: max-content;
+                    }
+                    .leaf-node:active{
+                        opacity: 0.5;
+                    }
+                    li{
+                        height: 40px;
+                    }
+                </style>
+
+                </head>
+
+                <body>
+
+
+                    <div id="file-load">
+                        <div class="file-load-container" id="input-file-load-container">
+                            <button id="load-input-btn">Load input</button>
+                            <button id="clear-input-btn">Clear input</button>
+
+                            <div class="load-file" id="load-input">
+                                <input type="file" id="input-file-select" name="input-select[]" accept=".json" />
+                                <div class="file-drag" id="input-file-drag">or drop files here</div>
+                            </div>
+
+                        </div>
+
+                        <div class="file-load-container" id="output-file-load-container">
+                            <button id="load-output-btn">Load output</button>
+                            <button id="clear-output-btn">Clear output</button>
+
+                            <div class="load-file" id="load-output">
+                                <input type="file" id="output-file-select" name="output-select[]" accept=".json" />
+                                <div class="file-drag" id="output-file-drag">or drop files here</div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+
+                    <div style="display:inline-block;">
+                        <ul id="input-structure" class="structure"  >
+
+                        </ul>
+                    </div>
+
+                    <div id="canvas-container">
+                        <svg class="canvas" width="1800" height="500">
+                            <g id="input-container" transform="translate(0,0)">
+
+                                <foreignObject x="20" y="10" width="200" height="400" id="input-contaidner-fo" class="container-fo">
+
+                                    <div xmlns="http://www.w3.org/1999/xhtml" id="input-container-div" class="container-div">
+                                        <div class="container-div-title" id="input-container-div-title">Input</div>
+                                        <ul class="collapsible-list">
+                                            <li>
+
+                                                Parent item
+                                                <ul>
+                                                    <li class="child">Child item <g class="sachi"></g></li>
+                                                    <li class="child">Child item<g class="sachi"></g></li>
+                                                </ul>
+                                            </li>
+                                            <li>
+                                                Parent item
+                                                <ul>
+                                                    <li class="child">Child item <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" class="sachi"></li>
+                                                    <li class="child">Child item<g class="sachi"></g></li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                        <circle cx="10" cy="10" r="5" fill="black">
+                                            <circle cx="50" cy="50" r="40" stroke="blue" stroke-width="4" fill="pink" />
+                                    </div>
+                                </foreignObject>
+                                <g id="input-container-fo" class="container-fo">
+                                    <rect class="container-title-outline" id="input-container-title-outline" height="20" fill="#77C1C0" stroke="black"></rect>
+                                    <text class="container-title" id="input-container-title" font-weight="bold">Input</text>
+                                    <rect class="container-outline" id="input-container-outline" height="10" fill="none" stroke="black"></rect>
+                                </g>
+                            </g>
+
+
+                            <g id="output-container" transform="translate(0,0)">
+                                <g id="output-container-fo" class="container-fo">
+                                    <rect class="container-title-outline" id="output-container-title-outline" height="20" fill="#E59CA5" stroke="black"></rect>
+                                    <text class="container-title" id="output-container-title" font-weight="bold">Output</text>
+                                    <rect class="container-outline" id="output-container-outline" height="10" fill="none" stroke="black"></rect>
+                                </g>
+
+                            </g>
+                            <!--<g id="trial-container"><g class="sachi"></g></g>-->
+                        </svg>
+
+                    </div>
+
+
+
+                    <script>
+                        var CONTAINER;
+                        $(document).ready(function () {
+                            
+                            d3.selectAll(".sachi").append("circle").attr("cx",0).attr("cy",0).attr("r",10).attr("fill","black");
+
+                            CONTAINER = initCanvas(40, 40, 600, 40, 170, 20);
+
+                            if (window.File && window.FileList && window.FileReader) {
+                                init(CONTAINER[0]);
+                                init(CONTAINER[1])
+                            }
+
+                        });
+
+                        function initCanvas(inputStartX, inputStartY, outputStartX, outputStartY, elementWidth, elementHeight) {
+                            var inputLeaves = [], outputLeaves = [];
+                            var canvas = d3.select(".canvas"),
+                                    inputContainer = d3.select("#input-container"),
+                                    outputContainer = d3.select("#output-container");
+
+
+                            //update input output containers
+                            var inputGroup = d3.select("#input-container-fo");
+
+                            var inputTitleOutline = inputGroup.select("#input-container-title-outline");
+                            var tempHeight = inputTitleOutline.attr("height");
+                            inputTitleOutline.attr("x", inputStartX)
+                                    .attr("y", inputStartY - tempHeight)
+                                    .attr("width", elementWidth + 100);
+                            var inputTitle = inputGroup.select("#input-container-title")
+                                    .attr("x", inputStartX)
+                                    .attr("y", inputStartY - tempHeight / 4) // divide by 4 to get title inside the rectangle
+                                    .attr("width", elementWidth + 100);
+
+                            var inputOutline = inputContainer.select("#input-container-outline")
+                                    .attr("x", inputStartX)
+                                    .attr("y", inputStartY - tempHeight)
+                                    .attr("width", elementWidth + 100)
+                                    .attr("height", 200)
+                                    .attr("stroke", "black")
+                                    .attr("fill", "none")
+                                    .attr("stroke-width", "1");
+
+                            var outputGroup = d3.select("#output-container-fo");
+                            var outputTitleOutline = outputGroup.select("#output-container-title-outline");
+                            tempHeight = outputTitleOutline.attr("height");
+                            outputTitleOutline.attr("x", outputStartX)
+                                    .attr("y", outputStartY - tempHeight)
+                                    .attr("width", elementWidth + 100);
+
+                            var outputTitle = outputGroup.select("#output-container-title")
+                                    .attr("x", outputStartX)
+                                    .attr("y", outputStartY - tempHeight / 4)
+                                    .attr("width", elementWidth + 100);
+
+                            var outputOutline = outputContainer.select("#output-container-outline")
+                                    .attr("x", outputStartX)
+                                    .attr("y", outputStartY - tempHeight)
+                                    .attr("width", elementWidth + 100)
+                                    .attr("height", 200)
+                                    .attr("stroke", "black")
+                                    .attr("fill", "none")
+                                    .attr("stroke-width", "1");
+
+
+
+                            //function to make the containers draggable
+                            var dragContainer = d3.drag()
+                                    .on("start", function () { })
+                                    .on("drag", function (d, i) {
+
+                                        this.x = this.x || 0;
+                                        this.y = this.y || 0;
+
+                                        this.x += d3.event.dx;
+                                        this.y += d3.event.dy;
+                                        d3.select(this).attr("transform", "translate(" + this.x + "," + this.y + ")");
+
+                                        updateConnections(d3.event.dx, d3.event.dy, d3.select(this));
+                                        resizeCanvas();
+                                    })
+                                    .on("end", function () {
+                                        // resizeCanvas();
+                                    });
+
+
+
+                            var CONTAINER = [
+                                {
+                                    "canvas": canvas,
+                                    "parentContainer": inputContainer,
+                                    "oppositeContainer": outputContainer,
+                                    "leaves": inputLeaves,
+                                    "dotPosition": "RIGHT",
+                                    "fileSelect": "input-file-select",
+                                    "fileDrag": "input-file-drag",
+                                    "fileLoad": "load-input",
+                                    "elementCount": 0,
+                                    "elementHeight": elementHeight,
+                                    "elementWidth": elementWidth,
+                                    "startX": inputStartX,
+                                    "startY": inputStartY,
+                                    "title": inputTitle,
+                                    "titleOutline": inputTitleOutline,
+                                    "containerOutline": inputOutline
+                                },
+                                {
+                                    "canvas": canvas,
+                                    "parentContainer": outputContainer,
+                                    "oppositeContainer": inputContainer,
+                                    "leaves": outputLeaves,
+                                    "dotPosition": "LEFT",
+                                    "fileSelect": "output-file-select",
+                                    "fileDrag": "output-file-drag",
+                                    "fileLoad": "load-output",
+                                    "elementCount": 0,
+                                    "elementHeight": elementHeight,
+                                    "elementWidth": elementWidth,
+                                    "startX": outputStartX,
+                                    "startY": outputStartY,
+                                    "title": outputTitle,
+                                    "titleOutline": outputTitleOutline,
+                                    "containerOutline": outputOutline
+                                }
+                            ];
+
+                            //display or hide the load file options
+                            d3.select("#load-output-btn").on("click", function () {
+                                $("#load-output").slideToggle();
+                            });
+                            d3.select("#load-input-btn").on("click", function () {
+                                $("#load-input").slideToggle();
+                            });
+
+                            d3.select("#clear-output-btn").on("click", function () {
+                                clearContainer(outputContainer);
+                            });
+                            d3.select("#clear-input-btn").on("click", function () {
+                                clearContainer(inputContainer);
+                            });
+
+                            inputContainer.call(dragContainer);
+                            outputContainer.call(dragContainer);
+
+                            return CONTAINER;
+                        }
+
+
+
+
+                        function updateContainer(container) {
+
+                            var leaves = container.leaves;
+                            var maxLevel = 0;
+                            for (var i = 0; i < leaves.length; i++) {
+                                if (maxLevel < leaves[i].rank) {
+                                    maxLevel = leaves[i].rank;
+                                }
+                            }
+
+                            if (leaves.length !== 0) {
+                                var tempWidth = container.elementWidth + 20 + (maxLevel * container.elementWidth / 4); //20=safe margin
+                                var tempHeight = Number(container.titleOutline.attr("height")) + ((container.elementHeight) * container.elementCount);
+                                container.titleOutline
+                                        .attr("width", tempWidth)
+                                        .attr("x", container.startX);
+                                container.containerOutline
+                                        .attr("width", tempWidth)
+                                        .attr("height", tempHeight)
+                                        .attr("x", container.startX);
+                            }
+
+
+
+                            //update the canvas height
+
+                            resizeCanvas();
+
+                        }
+
+
+                        function updateConnections(newX, newY, sourceContainer) {
+                            var opposite = getOppositeContainer(sourceContainer).parentContainer;
+
+
+                            sourceContainer.selectAll(".drag-line")
+                                    .attr("x2", function () {
+                                        return d3.select(this).attr("x2") - newX;
+                                    })
+                                    .attr("y2", function () {
+                                        return d3.select(this).attr("y2") - newY;
+                                    });
+
+                            opposite.selectAll(".drag-line")
+                                    .attr("x2", function () {
+                                        return Number(d3.select(this).attr("x2")) + Number(newX);
+                                    })
+                                    .attr("y2", function () {
+                                        return Number(d3.select(this).attr("y2")) + Number(newY);
+                                    });
+
+                        }
+
+                        function parseJSONTree(text, container) {
+                            clearContainer(container.parentContainer);
+                            var data = JSON.parse(text);
+                            var title = data.title || "Root";
+                            container.elementCount = traverseJSONSchema(data, title, container, 0, 0, container.parentContainer);
+                            updateContainer(container);
+
+                        }
+
+
+
+                        function traverseJSONSchema(root, rootName, container, level, rank, resultPane) {
+
+                            var height = container.elementHeight,
+                                    width = container.elementWidth,
+                                    margin = width / 4,
+                                    x = rank * margin,
+                                    y = level * height;
+                            if (root.type === "object") {
+                                var tempParent = resultPane.append("g").attr("class", "nested-group");
+                                if (rootName !== "") {
+                                    var nodeText = rootName + ":" + root.type;
+
+                                    drawNode(container, tempParent, nodeText, x, y, []);
+                                    rank++;
+                                    level++;
+                                }
+                                var nestedParent = tempParent.append("g").attr("class", "nested-group");
+                                var keys = root.properties; //select PROPERTIES
+
+                                for (var i = 0; i < Object.keys(keys).length; i++) {   //traverse through each PROPERTY of the object
+                                    var keyName = Object.keys(keys)[i];
+                                    var key = keys[keyName];
+                                    level = traverseJSONSchema(key, keyName, container, level, rank, nestedParent);
+                                }
+
+                            } else if (root.type === "array") {
+                                var keys = root.items; //select ITEMS
+                                var tempParent = resultPane.append("g").attr("class", "nested-group");
+                                if (rootName !== "") {
+                                    var nodeText = rootName + ":" + root.type + "[" + keys.type + "]";
+                                    drawNode(container, tempParent, nodeText, x, y, []);
+                                    rank++;
+                                    level++;
+                                }
+
+                                level = traverseJSONSchema(keys, "", container, level, rank, tempParent);  //recurse through the items of array
+                            } else if (["string", "integer", "number", "boolean"].indexOf(root.type) > -1) {    //when the type is a primitive
+                                var tempParent = resultPane.append("g");
+                                if (rootName !== "") {
+                                    var nodeText = rootName + ":" + root.type;
+                                    var dotPosition = getDotposition(height, width, container.dotPosition);
+                                    drawNode(container, tempParent, nodeText, x, y, dotPosition);
+                                    container.leaves.push({"text": nodeText, "rank": rank, "x": rank * margin, "y": level * height, "dotPosition": dotPosition});
+                                    rank++;
+                                    level++;
+                                }
+                            }
+
+                            return level;
+                        }
+
+                        function drawNode(container, parent, text, x, y, dotPosition) {
+
+                            var height = container.elementHeight,
+                                    width = container.elementWidth;
+                            y += container.startY;
+                            x += container.startX;
+
+                            var parent1 = parent.append("g").attr("class", "node-element")
+                                    .attr("height", height)
+                                    .attr("width", width);
+                            parent1.append("svg:image")
+                                    .attr("x", x)
+                                    .attr("y", y)
+                                    .attr("width", 11)
+                                    .attr("height", 11)
+                                    .attr("xlink:href", "schemaTree/assets/dottedangle.gif");
+                            parent1.append("text").attr("class", "node-element-text")
+                                    .attr("x", x + 11)
+                                    .attr("y", y + (3 * height / 4))
+                                    .text(text);
+
+
+                            var coordinates, dragHead2, dragLine;
+                            var dragNode = d3.drag()
+                                    .on("start", function (d) {
+                                        // d3.select("#inputnode").text(d.text);
+                                        //   d3.select("#outputnode").text("");
+                                        var thisDragY = d3.select(this).attr("cy");
+                                        var thisDragX = d3.select(this).attr("cx");
+                                        coordinates = [0, 0];
+
+                                        dragHead2 = drawArrow(parent1, thisDragX, thisDragY);
+                                        dragHead2.attr("class", "drag-head-2");
+                                        //                                    .attr("fill", "green");
+                                        dragLine = parent1.append("line").attr("class", "drag-line")
+                                                .style("stroke", "black")
+                                                .style("stroke-width", "2");
+                                        dragLine.attr("x1", thisDragX)
+                                                .attr("x2", thisDragX)
+                                                .attr("y1", thisDragY)
+                                                .attr("y2", thisDragY);
+                                    })
+                                    .on("drag", function (d) {
+                                        coordinates = d3.mouse(this);
+                                        xx = coordinates[0];
+                                        yy = coordinates[1];
+
+                                        dragLine.attr("x2", xx).attr("y2", yy);
+                                        moveArrow(dragHead2, xx, yy);
+                                        // dragHead2.attr("cx", xx).attr("cy", yy);
+
+                                        //TODO if position is inside the outleafs - text color change
+                                    })
+                                    .on("end", function (d) {
+                                        var opposite = getOppositeContainer(container.parentContainer);
+                                        var target = detectDropNode(xx, yy, opposite, container);
+
+                                        if (target !== "null") {
+                                            //                                // d3.select("#outputnode").text(target.text);
+                                            //
+                                            var dotx = Number(target.dotPosition[0]) + target.x + opposite.startX + getTranslateX(opposite.parentContainer) - getTranslateX(container.parentContainer);
+                                            var doty = Number(target.dotPosition[1]) + target.y + opposite.startY + getTranslateY(opposite.parentContainer) - getTranslateY(container.parentContainer);
+
+                                            dragLine
+                                                    .attr("x2", dotx)
+                                                    .attr("y2", doty);
+                                            dragHead2.remove();
+
+                                        } else {
+                                            //d3.select("#inputnode").text("");
+                                            dragLine.remove();
+                                            dragHead2.remove();
+                                        }
+                                    });
+                            if (dotPosition.length === 2) {
+                                parent1.classed("leaf-node", true);
+                                var arrowHead = drawArrow(parent1, x + dotPosition[0], y + dotPosition[1]);
+                                arrowHead.attr("class", "drag-head")
+                                        .call(dragNode);
+                            }
+                        }
+                        function getTranslation(transform) {
+                            // Create a dummy g for calculation purposes only. This will never
+                            // be appended to the DOM and will be discarded once this function 
+                            // returns.
+                            var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+                            // Set the transform attribute to the provided string value.
+                            g.setAttributeNS(null, "transform", transform);
+
+                            // consolidate the SVGTransformList containing all transformations
+                            // to a single SVGTransform of type SVG_TRANSFORM_MATRIX and get
+                            // its SVGMatrix. 
+                            var matrix = g.transform.baseVal.consolidate().matrix;
+
+                            // As per definition values e and f are the ones for the translation.
+                            return [matrix.e, matrix.f];
+                        }
+
+                        function getParentTransform(elementObject) { //parameter is an element in an object - inputs or outputs array
+                            var transform = d3.select(elementObject["_groups"][0][0].parentNode).attr("transform");
+                            return transform;
+                        }
+
+                        function getTranslateX(inputContainer) {
+                            return Number(getTranslation(inputContainer.attr("transform"))[0]);
+                        }
+
+                        function getTranslateY(inputContainer) {
+                            return Number(getTranslation(inputContainer.attr("transform"))[1]);
+                        }
+
+                        function getDotposition(height, width, position) {
+                            var coordinates = [0, 0];
+                            coordinates[0] = (position === "RIGHT" ? width : 0);
+                            coordinates[1] = height / 2;
+                            return coordinates;
+                        }
+                        function getOppositeContainer(container) { //input g or output g
+                            var name = container.attr("id").split("-")[0];
+                            if (name === "input") {
+                                return CONTAINER[1];
+                            } else if (name === "output") {
+                                return CONTAINER[0];
+                            }
+                        }
+
+
+                        function detectDropNode(xx, yy, opposite, container) { //parameters = mouse pointer position and the source data array
+
+                            var targetContainer = opposite.parentContainer;
+                            var targetLeaves = opposite.leaves,
+                                    height = opposite.elementHeight,
+                                    width = opposite.elementWidth;
+
+                            var x = getTranslateX(targetContainer) + opposite.startX - getTranslateX(container.parentContainer);
+                            var y = getTranslateY(targetContainer) + opposite.startY - getTranslateY(container.parentContainer);
+
+                            for (var i = 0; i < targetLeaves.length; i++) {
+
+                                var tempX = x + targetLeaves[i].x;
+                                var tempY = y + targetLeaves[i].y;
+
+                                if (pointInLeaf([xx, yy], [tempX, tempY], width, height)) {
+                                    return targetLeaves[i];
+                                }
+
+                            }
+                            return "null";
+                        }
+
+                        function pointInLeaf(point, startPoint, width, height) {
+                            if (point[0] > startPoint[0] && point[0] < startPoint[0] + width) {
+                                //horizontally inside
+                                if (point[1] > startPoint[1] && point[1] < startPoint[1] + height) {
+                                    //vertically in
+                                    return true;
+                                }
+                            }
+                            return false;
+                        }
+                        function drawArrow(parent, cx, cy) {
+                            var newArrow = parent.append("polygon");
+                            moveArrow(newArrow, cx, cy);
+                            return newArrow;
+                        }
+
+                        function moveArrow(arrow, cx, cy) {
+                            arrow.attr("points", function () {
+                                var p0 = [Number(cx) - 5, Number(cy) - 5],
+                                        p1 = [Number(cx) + 5, Number(cy)],
+                                        p2 = [Number(cx) - 5, Number(cy) + 5];
+                                return p0[0] + "," + p0[1] + " " + p1[0] + "," + p1[1] + " " + p2[0] + "," + p2[1];
+                            })
+                                    .attr("cx", cx)
+                                    .attr("cy", cy);
+                        }
+
+                        function clearContainer(container) {
+                            container.selectAll(".nested-group").remove();
+                        }
+
+                        function resizeCanvas() {
+                            var maxInHeight = CONTAINER[0].startY + CONTAINER[0].elementCount * CONTAINER[0].elementHeight + getTranslateY(CONTAINER[0].parentContainer) + 10;
+                            var maxOutHeight = CONTAINER[1].startY + CONTAINER[1].elementCount * CONTAINER[1].elementHeight + getTranslateY(CONTAINER[1].parentContainer) + 10;
+                            var currentHeight = CONTAINER[0].canvas.attr("height");
+                            CONTAINER[0].canvas.attr("height", d3.max([maxInHeight, maxOutHeight, currentHeight]));
+
+                        }
+
+                    </script>
+
+
+                </body>
+
+                </html>

@@ -32,13 +32,51 @@
                         padding: 0;
                         list-style-type: none;
                     }
-                    ul.collapsibleList ul { padding-left: 0.3em; }
+                    ul.collapsibleList ul { padding-left: 0.3em;} 
                     ul.collapsibleList li {
                         border-left: 1px dotted #000;
                         padding-left: 13px;
                         background: url(assets/dotted.gif) scroll no-repeat 1px 0.8em;
                     }
                     ul.collapsibleList li:last-child {
+                        border-left-width: 0px;
+                        padding-left: 14px;
+                        background: url(assets/dottedangle.gif) scroll no-repeat left top;
+                    }
+                    
+                    
+                    
+                    
+                    
+                    /* ----------------------------------------------- */
+                        .collapsibleList li{
+                        list-style-image:url('button.png');
+                        cursor:auto;
+                    }
+
+                    li.collapsibleListOpen{
+                        list-style-image:url('button-open.png');
+                        cursor:pointer;
+                    }
+
+                    li.collapsibleListClosed{
+                        list-style-image:url('button-closed.png');
+                        cursor:pointer;
+                    }
+
+                    /*css for tree branch structure*/
+                    g.nested-group, g.nested-group g, g.nested-group g {
+                        margin: 0;
+                        padding: 0;
+                        list-style-type: none;
+                    }
+                    g.nested-group g { padding-left: 0.3em; }
+                    g.nested-group g {
+                        border-left: 1px dotted #000;
+                        padding-left: 13px;
+                        background: url(assets/dotted.gif) scroll no-repeat 1px 0.8em;
+                    }
+                    g.nested-group g:last-child {
                         border-left-width: 0px;
                         padding-left: 14px;
                         background: url(assets/dottedangle.gif) scroll no-repeat left top;
@@ -55,6 +93,13 @@
                             <ul>
                                 <li>Child item</li>
                                 <li>Child item</li>
+                                <li>
+                                    Child - child
+                                    <ul>
+                                        <li>Child ojdksjdksjd</li>
+                                    </ul>
+                                </li>
+                                <li>jdkhjhsdh</li>
                             </ul>
                         </li>
                         <li>
@@ -105,6 +150,7 @@
                                     <text class="container-title" id="input-container-title" font-weight="bold" y="15">Input</text>
                                     <rect class="container-outline" id="input-container-outline" width="200" height="300" fill="none" stroke="black"></rect>
                                 </g>
+                              <g class="nested-group"><g width="170" height="20" class="node-element"><text y="55" x="40" class="node-element-text">person:object</text></g><g class="nested-group"><g><g width="170" height="20" class="node-element leaf-node"><text y="75" x="82.5" class="node-element-text">first name:string</text><polygon class="drag-head" cy="70" cx="252.5" points="247.5,65 257.5,70 247.5,75"></polygon></g></g><g><g width="170" height="20" class="node-element leaf-node"><text y="95" x="82.5" class="node-element-text">last name:string</text><polygon class="drag-head" cy="90" cx="252.5" points="247.5,85 257.5,90 247.5,95"></polygon></g></g><g><g width="170" height="20" class="node-element leaf-node"><text y="115" x="82.5" class="node-element-text">age:number</text><polygon class="drag-head" cy="110" cx="252.5" points="247.5,105 257.5,110 247.5,115"></polygon></g></g><g><g width="170" height="20" class="node-element leaf-node"><text y="135" x="82.5" class="node-element-text">birthday:string</text><polygon class="drag-head" cy="130" cx="252.5" points="247.5,125 257.5,130 247.5,135"></polygon></g></g><g class="nested-group"><g width="170" height="20" class="node-element"><text y="155" x="82.5" class="node-element-text">address:object</text></g><g class="nested-group"><g class="nested-group"><g width="170" height="20" class="node-element"><text y="175" x="125" class="node-element-text">street address:object</text></g><g class="nested-group"><g><g width="170" height="20" class="node-element leaf-node"><text y="195" x="167.5" class="node-element-text">house number:number</text><polygon class="drag-head" cy="190" cx="337.5" points="332.5,185 342.5,190 332.5,195"></polygon></g></g><g><g width="170" height="20" class="node-element leaf-node"><text y="215" x="167.5" class="node-element-text">lane:string</text><polygon class="drag-head" cy="210" cx="337.5" points="332.5,205 342.5,210 332.5,215"></polygon></g></g></g></g><g><g width="170" height="20" class="node-element leaf-node"><text y="235" x="125" class="node-element-text">city:string</text><polygon class="drag-head" cy="230" cx="295" points="290,225 300,230 290,235"></polygon></g></g><g><g width="170" height="20" class="node-element leaf-node"><text y="255" x="125" class="node-element-text">state:string</text><polygon class="drag-head" cy="250" cx="295" points="290,245 300,250 290,255"></polygon></g></g><g><g width="170" height="20" class="node-element leaf-node"><text y="275" x="125" class="node-element-text">country:string</text><polygon class="drag-head" cy="270" cx="295" points="290,265 300,270 290,275"></polygon></g></g></g></g><g class="nested-group"><g width="170" height="20" class="node-element"><text y="295" x="82.5" class="node-element-text">phone number:array[object]</text></g><g class="nested-group"><g class="nested-group"><g><g width="170" height="20" class="node-element leaf-node"><text y="315" x="125" class="node-element-text">location:string</text><polygon class="drag-head" cy="310" cx="295" points="290,305 300,310 290,315"></polygon></g></g><g><g width="170" height="20" class="node-element leaf-node"><text y="335" x="125" class="node-element-text">code:number</text><polygon class="drag-head" cy="330" cx="295" points="290,325 300,330 290,335"></polygon></g></g></g></g></g><g class="nested-group"><g width="170" height="20" class="node-element"><text y="355" x="82.5" class="node-element-text">children:array[string]</text></g><g></g></g><g><g width="170" height="20" class="node-element leaf-node"><text y="375" x="82.5" class="node-element-text">nickname:string</text><polygon class="drag-head" cy="370" cx="252.5" points="247.5,365 257.5,370 247.5,375"></polygon></g></g></g></g>
                             </g>
 
 

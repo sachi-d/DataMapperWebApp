@@ -297,6 +297,28 @@
                 var title = data.title || "Root";
                 container.elementCount = traverseJSONSchema(data, title, container, 0, 0, container.parentContainer);
                 updateContainer(container);
+
+//                d3.select("#input-container").selectAll(".nested-group")
+//                        .each(function () {
+//                            var bbox = d3.select(this).node().getBBox();
+//                            d3.select(this)
+//                                    .append("polyline")
+//                                    .attr("points", function () {
+//                                        var sx = bbox.x ,
+//                                                sy = bbox.y +15,
+//                                                ex = sx,
+//                                                ey = sy + bbox.height - 30,
+//                                                mx = sx + 5,
+//                                                my = ey;
+//                                        return sx + "," + sy + " " + ex + "," + ey + " " + mx + "," + my;
+//                                    })
+////                                    .attr("width", bbox.width)
+////                                    .attr("height", bbox.height)
+////                                    .attr("x", bbox.x)
+////                                    .attr("y", bbox.y)
+//                                    .style("fill", "transparent")
+//                                    .style("stroke", "black");
+//                        });
             }
 
 
@@ -305,12 +327,15 @@
 
                 var height = container.elementHeight,
                         width = container.elementWidth,
-                        margin = width / 4;
+                        margin = width / 4,
+                        x = rank * margin,
+                        y = level * height;
                 if (root.type === "object") {
                     var tempParent = resultPane.append("g").attr("class", "nested-group");
                     if (rootName !== "") {
                         var nodeText = rootName + ":" + root.type;
-                        drawNode(container, tempParent, nodeText, rank * margin, level * height, []);
+
+                        drawNode(container, tempParent, nodeText, x, y, []);
                         rank++;
                         level++;
                     }
@@ -328,7 +353,7 @@
                     var tempParent = resultPane.append("g").attr("class", "nested-group");
                     if (rootName !== "") {
                         var nodeText = rootName + ":" + root.type + "[" + keys.type + "]";
-                        drawNode(container, tempParent, nodeText, rank * margin, level * height, []);
+                        drawNode(container, tempParent, nodeText, x, y, []);
                         rank++;
                         level++;
                     }
@@ -339,7 +364,7 @@
                     if (rootName !== "") {
                         var nodeText = rootName + ":" + root.type;
                         var dotPosition = getDotposition(height, width, container.dotPosition);
-                        drawNode(container, tempParent, nodeText, rank * margin, level * height, dotPosition);
+                        drawNode(container, tempParent, nodeText, x, y, dotPosition);
                         container.leaves.push({"text": nodeText, "rank": rank, "x": rank * margin, "y": level * height, "dotPosition": dotPosition});
                         rank++;
                         level++;
@@ -359,8 +384,14 @@
                 var parent1 = parent.append("g").attr("class", "node-element")
                         .attr("height", height)
                         .attr("width", width);
+                parent1.append("svg:image")
+                        .attr("x",x)
+                        .attr("y",y)
+                        .attr("width",11)
+                        .attr("height",11)
+                        .attr("xlink:href","schemaTree/assets/dottedangle.gif");
                 parent1.append("text").attr("class", "node-element-text")
-                        .attr("x", x)
+                        .attr("x", x+11)
                         .attr("y", y + (3 * height / 4))
                         .text(text);
 
