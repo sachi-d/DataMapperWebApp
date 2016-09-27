@@ -353,7 +353,8 @@
                     var tempParent = resultPane.append("g");
                     if (rootName !== "") {
                         var nodeText = rootName + ":" + root.type;
-                        var dotPosition = getDotposition(height, width, container.dotPosition);
+                        var dotPosition = getDotposition(height, width+(rank*margin), container.dotPosition);
+                        console.log(dotPosition[0]);
                         drawNode(container, tempParent, nodeText, x, y, dotPosition);
                         container.leaves.push({"text": nodeText, "rank": rank, "x": rank * margin, "y": level * height, "dotPosition": dotPosition});
                         rank++;
