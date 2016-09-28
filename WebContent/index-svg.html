@@ -136,17 +136,17 @@
                 tempHeight = outputTitleOutline.attr("height");
                 outputTitleOutline.attr("x", outputStartX)
                         .attr("y", outputStartY - tempHeight)
-                        .attr("width", elementWidth + 100);
+                        .attr("width", elementWidth * 2);
 
                 var outputTitle = outputGroup.select("#output-container-title")
                         .attr("x", outputStartX)
                         .attr("y", outputStartY - tempHeight / 4)
-                        .attr("width", elementWidth + 100);
+                        .attr("width", elementWidth * 2);
 
                 var outputOutline = outputContainer.select("#output-container-outline")
                         .attr("x", outputStartX)
                         .attr("y", outputStartY - tempHeight)
-                        .attr("width", elementWidth + 100)
+                        .attr("width", elementWidth * 2)
                         .attr("height", 200)
                         .attr("stroke", "black")
                         .attr("fill", "none")
@@ -325,7 +325,7 @@
                     if (rootName !== "") {
                         var nodeText = rootName + ":" + root.type;
 
-                        drawNode(container, tempParent, nodeText, x, y, []);
+                        drawNode(container, tempParent, nodeText, x, y, [], "object");
                         rank++;
                         level++;
                     }
@@ -343,7 +343,7 @@
                     var tempParent = resultPane.append("g").attr("class", "nested-group");
                     if (rootName !== "") {
                         var nodeText = rootName + ":" + root.type + "[" + keys.type + "]";
-                        drawNode(container, tempParent, nodeText, x, y, []);
+                        drawNode(container, tempParent, nodeText, x, y, [], "array");
                         rank++;
                         level++;
                     }
@@ -353,10 +353,10 @@
                     var tempParent = resultPane.append("g");
                     if (rootName !== "") {
                         var nodeText = rootName + ":" + root.type;
-                        var dotPosition = getDotposition(height, width+(rank*margin), container.dotPosition);
-                        console.log(dotPosition[0]);
-                        drawNode(container, tempParent, nodeText, x, y, dotPosition);
-                        container.leaves.push({"text": nodeText, "rank": rank, "x": rank * margin, "y": level * height, "dotPosition": dotPosition});
+                        var dotPosition = getDotposition(height, width, rank, margin, container.dotPosition);
+
+                        var leafNode = drawNode(container, tempParent, nodeText, x, y, dotPosition, "leaf");
+                        container.leaves.push({"node": leafNode, "text": nodeText, "rank": rank, "x": rank * margin, "y": level * height, "dotPosition": dotPosition});
                         rank++;
                         level++;
                     }
@@ -365,7 +365,7 @@
                 return level;
             }
 
-            function drawNode(container, parent, text, x, y, dotPosition) {
+            function drawNode(container, parent, text, x, y, dotPosition, type) {
 
                 var height = container.elementHeight,
                         width = container.elementWidth;
@@ -375,21 +375,33 @@
                 var parent1 = parent.append("g").attr("class", "node-element")
                         .attr("height", height)
                         .attr("width", width);
-//                parent1.append("svg:image")
-//                        .attr("x",x)
-//                        .attr("y",y)
-//                        .attr("width",11)
-//                        .attr("height",11)
-//                        .attr("xlink:href","schemaTree/assets/dottedangle.gif");
+                parent1.append("svg:image")
+                        .attr("x", x)
+                        .attr("y", y + 4)
+                        .attr("width", 11)
+                        .attr("height", 11)
+                        .attr("xlink:href", function () {
+                            if (type === "object") {
+                                return "assets/images/object-icon.png";
+                            } else if (type === "array") {
+                                return "assets/images/array-icon.png";
+                            }
+                            return "assets/images/leaf-icon.png";
+                        });
                 parent1.append("text").attr("class", "node-element-text")
-                        .attr("x", x + 11)
+                        .attr("x", x + 12)
                         .attr("y", y + (3 * height / 4))
                         .text(text);
 
 
-                var coordinates, dragHead2, dragLine;
+                var coordinates, dragHead2, dragLine, target,
+                        opposite = getOppositeContainer(container.parentContainer),
+                        oppositeLeaves;
+
                 var dragNode = d3.drag()
                         .on("start", function (d) {
+                            oppositeLeaves = calculateLeafAreas(container, opposite);
+                            console.log(oppositeLeaves);
                             // d3.select("#inputnode").text(d.text);
                             //   d3.select("#outputnode").text("");
                             var thisDragY = d3.select(this).attr("cy");
@@ -416,15 +428,14 @@
                             moveArrow(dragHead2, xx, yy);
                             // dragHead2.attr("cx", xx).attr("cy", yy);
 
-                            //TODO if position is inside the outleafs - text color change
+                            target = detectDropNode(xx, yy, oppositeLeaves);
+                            console.log(target);
                         })
                         .on("end", function (d) {
-                            var opposite = getOppositeContainer(container.parentContainer);
-                            var target = detectDropNode(xx, yy, opposite, container);
 
                             if (target !== "null") {
 //                                // d3.select("#outputnode").text(target.text);
-//
+                                target.node.select("text").attr("fill", "black");
                                 var dotx = Number(target.dotPosition[0]) + target.x + opposite.startX + getTranslateX(opposite.parentContainer) - getTranslateX(container.parentContainer);
                                 var doty = Number(target.dotPosition[1]) + target.y + opposite.startY + getTranslateY(opposite.parentContainer) - getTranslateY(container.parentContainer);
 
@@ -447,7 +458,7 @@
                 } else {
                     parent1.classed("parent-node", true);
                 }
-
+                return parent1;
             }
             function getTranslation(transform) {
                 // Create a dummy g for calculation purposes only. This will never
@@ -480,9 +491,11 @@
                 return Number(getTranslation(inputContainer.attr("transform"))[1]);
             }
 
-            function getDotposition(height, width, position) {
+            function getDotposition(height, width, rank, margin, position) {
+                var tempWidth = width - (rank * margin) + width * 7 / 8;
+                var tempWidth2 = -rank * margin;
                 var coordinates = [0, 0];
-                coordinates[0] = (position === "RIGHT" ? width : 0);
+                coordinates[0] = (position === "RIGHT" ? tempWidth : tempWidth2);
                 coordinates[1] = height / 2;
                 return coordinates;
             }
@@ -496,38 +509,47 @@
             }
 
 
-            function detectDropNode(xx, yy, opposite, container) { //parameters = mouse pointer position and the source data array
-
-                var targetContainer = opposite.parentContainer;
-                var targetLeaves = opposite.leaves,
-                        height = opposite.elementHeight,
-                        width = opposite.elementWidth;
-
-                var x = getTranslateX(targetContainer) + opposite.startX - getTranslateX(container.parentContainer);
-                var y = getTranslateY(targetContainer) + opposite.startY - getTranslateY(container.parentContainer);
-
-                for (var i = 0; i < targetLeaves.length; i++) {
-
-                    var tempX = x + targetLeaves[i].x;
-                    var tempY = y + targetLeaves[i].y;
-
-                    if (pointInLeaf([xx, yy], [tempX, tempY], width, height)) {
-                        return targetLeaves[i];
+            function detectDropNode(xx, yy, target) { //parameters = mouse pointer position and the source data array
+//                console.log(target.x1);
+                for (var i = 0; i < target.length; i++) {
+                    var tempLeaf = target[i];
+                    if (pointInRect([xx, yy], tempLeaf.x1, tempLeaf.x2, tempLeaf.y1, tempLeaf.y2)) {
+                        tempLeaf.leaf.node.select("text").attr("fill", "red");
+                        return tempLeaf.leaf;
+                    } else {
+                        tempLeaf.leaf.node.select("text").attr("fill", "black");
                     }
-
                 }
                 return "null";
             }
 
-            function pointInLeaf(point, startPoint, width, height) {
-                if (point[0] > startPoint[0] && point[0] < startPoint[0] + width) {
+            function pointInRect(point, x1, x2, y1, y2) {
+
+                if (point[0] > x1 && point[0] < x2) {
                     //horizontally inside
-                    if (point[1] > startPoint[1] && point[1] < startPoint[1] + height) {
+                    if (point[1] > y1 && point[1] < y2) {
                         //vertically in
                         return true;
                     }
                 }
                 return false;
+            }
+
+            function calculateLeafAreas(container, opposite) {
+                var result = [];
+                var targetContainer = opposite.parentContainer;
+                var targetLeaves = opposite.leaves,
+                        height = opposite.elementHeight,
+                        width = Number(opposite.containerOutline.attr("width"));
+
+                var x = getTranslateX(targetContainer) + opposite.startX - getTranslateX(container.parentContainer);
+                var y = getTranslateY(targetContainer) + opposite.startY - getTranslateY(container.parentContainer);
+
+                for (var i = 0; i < targetLeaves.length; i++) {
+                    result.push({"leaf": targetLeaves[i], "x1": x, "y1": y + targetLeaves[i].y, "x2": x + width, "y2": y + targetLeaves[i].y + height});
+                }
+                console.log(result);
+                return result;
             }
             function drawArrow(parent, cx, cy) {
                 var newArrow = parent.append("polygon");
