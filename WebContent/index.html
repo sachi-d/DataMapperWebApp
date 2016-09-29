@@ -99,7 +99,7 @@
                 var op = addOperator(2, 1, "Concat");
             });
             var CONTAINER;
-            var CONNECTIONS = [];
+
             //function to make the containers draggable
             var dragContainer = d3.drag()
                     .on("start", function () { })
@@ -119,6 +119,8 @@
                         // resizeCanvas();
                     });
 
+
+            //function to make the anchors draggable
             var coordinates, dragHead2, dragLine, target; //assuming at a given time only one instance of these variables are present
             var dragAnchor = d3.drag()
                     .on("start", function (d) {
@@ -127,9 +129,9 @@
                         var thisDragY = d3.select(this).attr("cy");
                         var thisDragX = d3.select(this).attr("cx");
                         coordinates = [0, 0];
-                        var tempParent = d3.select(this)["_groups"][0][0].parentNode;
-                        dragHead2 = drawDragArrow(d3.select(tempParent), thisDragX, thisDragY);
-                        dragLine = d3.select(tempParent).append("line").attr("class", "drag-line")
+                        var tempParent = d3.select(d3.select(this)["_groups"][0][0].parentNode);
+                        dragHead2 = drawDragArrow(tempParent, thisDragX, thisDragY);
+                        dragLine = tempParent.append("line").attr("class", "drag-line")
                                 .style("stroke", "black")
                                 .style("stroke-width", "2");
                         dragLine.attr("x1", thisDragX)
@@ -457,6 +459,7 @@
 
                 if (dotPosition.length === 2) {
                     parent1.classed("leaf-node", true);
+                    parent1.attr("type",container.parentContainer.attr("id").split("-")[0]);
                     var arrowHead = drawArrow(parent1, x + dotPosition[0], y + dotPosition[1]);
                     arrowHead.attr("type", container.parentContainer.attr("id").split("-")[0]);
                 } else {
