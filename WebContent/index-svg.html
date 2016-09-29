@@ -55,7 +55,7 @@
         </div>
 
         <div >
-            <button id="concat-op-btn" >Add concat operator <br> 2*1 delem "-"</button>
+            <button id="concat-op-btn" >Add concat operator <br> 2 to 1</button>
         </div>
 
         <div style="display:inline-block;">
@@ -66,7 +66,7 @@
 
         <div id="canvas-container">
             <svg id="canvas" class="canvas" width="1800" height="500">
-            <g id="input-container" transform="translate(0,0)">
+            <g id="input-container" transform="translate(0,0)" class="container">
 
             <g id="input-container-fo" class="container-fo">
             <rect class="container-title-outline" id="input-container-title-outline" height="20" fill="#77C1C0" stroke="black"></rect>
@@ -76,7 +76,7 @@
             </g>
 
 
-            <g id="output-container" transform="translate(0,0)">
+            <g id="output-container" transform="translate(0,0)" class="container">
             <g id="output-container-fo" class="container-fo">
             <rect class="container-title-outline" id="output-container-title-outline" height="20" fill="#E59CA5" stroke="black"></rect>
             <text class="container-title" id="output-container-title" font-weight="bold">Output</text>
@@ -96,6 +96,7 @@
                 var op = addOperator(2, 1, "Concat");
             });
             var CONTAINER;
+            var CONNECTIONS = [];
             //function to make the containers draggable
             var dragContainer = d3.drag()
                     .on("start", function () { })
@@ -109,26 +110,22 @@
                         d3.select(this).attr("transform", "translate(" + this.x + "," + this.y + ")");
 
                         updateConnections(d3.event.dx, d3.event.dy, d3.select(this));
-                        resizeCanvas();
+                        resizeCanvas(d3.select(this));
                     })
                     .on("end", function () {
                         // resizeCanvas();
                     });
 
-            var coordinates, dragHead2, dragLine, target,
-                    //opposite = getOppositeContainer(container.parentContainer),
-                    oppositeLeaves;
+            var coordinates, dragHead2, dragLine, target; //assuming at a given time only one instance of these variables are present
             var dragAnchor = d3.drag()
                     .on("start", function (d) {
-                        //oppositeLeaves = calculateLeafAreas(container, opposite);
-                        //console.log(oppositeLeaves);
+
+
                         var thisDragY = d3.select(this).attr("cy");
                         var thisDragX = d3.select(this).attr("cx");
                         coordinates = [0, 0];
                         var tempParent = d3.select(this)["_groups"][0][0].parentNode;
                         dragHead2 = drawDragArrow(d3.select(tempParent), thisDragX, thisDragY);
-                        dragHead2.attr("class", "drag-head-2");
-//                                    .attr("fill", "green");
                         dragLine = d3.select(tempParent).append("line").attr("class", "drag-line")
                                 .style("stroke", "black")
                                 .style("stroke-width", "2");
@@ -144,22 +141,22 @@
 
                         dragLine.attr("x2", xx).attr("y2", yy);
                         moveArrow(dragHead2, xx, yy);
-                        // dragHead2.attr("cx", xx).attr("cy", yy);
 
-                        target = detectDropNode(xx, yy, []);
-                        console.log(target);
                     })
                     .on("end", function (d) {
 
-                        if (target !== "null") {
-//                                // d3.select("#outputnode").text(target.text);
-                            target.node.select("text").attr("fill", "black");
-                            var dotx = Number(target.dotPosition[0]) + target.x + opposite.startX + getTranslateX(opposite.parentContainer) - getTranslateX(container.parentContainer);
-                            var doty = Number(target.dotPosition[1]) + target.y + opposite.startY + getTranslateY(opposite.parentContainer) - getTranslateY(container.parentContainer);
+                        var sourceContainer = getParentContainer(d3.select(this));
+                        target = detectDropNode(xx, yy, d3.select(this).attr("type"), sourceContainer);
+                        if (target) {
+                            var oppositeContainer = getParentContainer(target);
+                            var dotx = Number(target.select(".drag-head").attr("cx")) + getTranslateX(oppositeContainer) - getTranslateX(sourceContainer);
+                            var doty = Number(target.select(".drag-head").attr("cy")) + getTranslateY(oppositeContainer) - getTranslateY(sourceContainer);
 
                             dragLine
                                     .attr("x2", dotx)
-                                    .attr("y2", doty);
+                                    .attr("y2", doty)
+                                    .attr("target-container", oppositeContainer.attr("id"));
+
                             dragHead2.remove();
 
                         } else {
@@ -172,7 +169,7 @@
 
             $(document).ready(function () {
 
-                CONTAINER = initCanvas(40, 40, 600, 40, 170, 20);
+                CONTAINER = initCanvas(40, 40, 800, 40, 170, 20);
 
                 if (window.File && window.FileList && window.FileReader) {
                     init(CONTAINER[0]);
@@ -197,8 +194,8 @@
             function initCanvas(inputStartX, inputStartY, outputStartX, outputStartY, elementWidth, elementHeight) {
                 var inputLeaves = [], outputLeaves = [];
                 var canvas = d3.select(".canvas"),
-                        inputContainer = d3.select("#input-container"),
-                        outputContainer = d3.select("#output-container");
+                        inputContainer = d3.select("#input-container").attr("x", inputStartX).attr("y", inputStartY),
+                        outputContainer = d3.select("#output-container").attr("x", outputStartX).attr("y", outputStartY);
 
 
                 //update input output containers
@@ -315,20 +312,15 @@
                             .attr("x", container.startX);
                 }
 
-
-
                 //update the canvas height
 
-                resizeCanvas();
+                resizeCanvas(container.parentContainer);
 
             }
 
 
             function updateConnections(newX, newY, sourceContainer) {
-                var opposite = getOppositeContainer(sourceContainer).parentContainer;
-
-
-                sourceContainer.selectAll(".drag-line")
+           sourceContainer.selectAll(".drag-line")
                         .attr("x2", function () {
                             return d3.select(this).attr("x2") - newX;
                         })
@@ -336,13 +328,24 @@
                             return d3.select(this).attr("y2") - newY;
                         });
 
-                opposite.selectAll(".drag-line")
-                        .attr("x2", function () {
-                            return Number(d3.select(this).attr("x2")) + Number(newX);
-                        })
-                        .attr("y2", function () {
-                            return Number(d3.select(this).attr("y2")) + Number(newY);
+                d3.select("#canvas").selectAll(".container").each(function () {
+
+                    if (d3.select(this).attr("id") !== sourceContainer.attr("id")) {
+                        var opposite = d3.select(this);
+                        opposite.selectAll(".drag-line").each(function () {
+                            if (d3.select(this).attr("target-container") === sourceContainer.attr("id")) {
+                                d3.select(this).attr("x2", function () {
+                                    return Number(d3.select(this).attr("x2")) + Number(newX);
+                                })
+                                        .attr("y2", function () {
+                                            return Number(d3.select(this).attr("y2")) + Number(newY);
+                                        });
+                            }
                         });
+
+                    }
+                });
+
 
             }
 
@@ -452,8 +455,7 @@
                 if (dotPosition.length === 2) {
                     parent1.classed("leaf-node", true);
                     var arrowHead = drawArrow(parent1, x + dotPosition[0], y + dotPosition[1]);
-                    arrowHead.attr("class", "drag-head")
-                            .call(dragAnchor);
+                    arrowHead.attr("type", container.parentContainer.attr("id").split("-")[0]);
                 } else {
                     parent1.classed("parent-node", true);
                 }
@@ -490,6 +492,15 @@
                 return Number(getTranslation(inputContainer.attr("transform"))[1]);
             }
 
+            function getParentContainer(nodeElement) { //a recursive method to find g.container of an element
+                if (nodeElement.classed("container")) {
+                    return nodeElement;
+                } else {
+                    return getParentContainer(d3.select(nodeElement["_groups"][0][0].parentNode));
+                }
+
+            }
+
             function getDotposition(height, width, rank, margin, position) {
                 var tempWidth = width - (rank * margin) + width * 7 / 8;
                 var tempWidth2 = -rank * margin;
@@ -498,61 +509,10 @@
                 coordinates[1] = height / 2;
                 return coordinates;
             }
-            function getOppositeContainer(container) { //input g or output g
-                var name = container.attr("id").split("-")[0];
-                if (name === "input") {
-                    return CONTAINER[1];
-                } else if (name === "output") {
-                    return CONTAINER[0];
-                }
-            }
 
 
-            function detectDropNode(xx, yy, target) { //parameters = mouse pointer position and the source data array
-//                console.log(target.x1);
-                for (var i = 0; i < target.length; i++) {
-                    var tempLeaf = target[i];
-                    if (pointInRect([xx, yy], tempLeaf.x1, tempLeaf.x2, tempLeaf.y1, tempLeaf.y2)) {
-                        tempLeaf.leaf.node.select("text").attr("fill", "red");
-                        return tempLeaf.leaf;
-                    } else {
-                        tempLeaf.leaf.node.select("text").attr("fill", "black");
-                    }
-                }
-                return "null";
-            }
-
-            function pointInRect(point, x1, x2, y1, y2) {
-
-                if (point[0] > x1 && point[0] < x2) {
-                    //horizontally inside
-                    if (point[1] > y1 && point[1] < y2) {
-                        //vertically in
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            function calculateLeafAreas(container, opposite) {
-                var result = [];
-                var targetContainer = opposite.parentContainer;
-                var targetLeaves = opposite.leaves,
-                        height = opposite.elementHeight,
-                        width = Number(opposite.containerOutline.attr("width"));
-
-                var x = getTranslateX(targetContainer) + opposite.startX - getTranslateX(container.parentContainer);
-                var y = getTranslateY(targetContainer) + opposite.startY - getTranslateY(container.parentContainer);
-
-                for (var i = 0; i < targetLeaves.length; i++) {
-                    result.push({"leaf": targetLeaves[i], "x1": x, "y1": y + targetLeaves[i].y, "x2": x + width, "y2": y + targetLeaves[i].y + height});
-                }
-                console.log(result);
-                return result;
-            }
             function drawArrow(parent, cx, cy) {
-                console.log(parent);
-                var newArrow = parent.append("polygon");
+                var newArrow = parent.append("polygon").attr("class", "drag-head");
                 moveArrow(newArrow, cx, cy);
 
                 newArrow.call(dragAnchor);
@@ -561,8 +521,7 @@
             }
 
             function drawDragArrow(parent, cx, cy) {
-                console.log(parent);
-                var newArrow = parent.append("polygon");
+                var newArrow = parent.append("polygon").attr("class", "drag-head-2");
                 moveArrow(newArrow, cx, cy);
                 return newArrow;
             }
@@ -582,25 +541,40 @@
                 CONTAINER_ITEM.leaves = [];
                 CONTAINER_ITEM.elementcount = 0;
                 CONTAINER_ITEM.parentContainer.selectAll(".nested-group").remove();
-                getOppositeContainer(CONTAINER_ITEM.parentContainer).parentContainer.selectAll("drag-line").remove();
+                //clear lines whose target is cleared container
+                d3.select("svg").selectAll("line").each(function () {
+                    if (d3.select(this).attr("target-container") === CONTAINER_ITEM.parentContainer.attr("id")) {
+                        d3.select(this).remove();
+                    }
+                });
             }
 
-            function resizeCanvas() {
+            function resizeCanvas(container) {
+                //update height is input/output elements are changed
                 var maxInHeight = CONTAINER[0].startY + CONTAINER[0].elementCount * CONTAINER[0].elementHeight + getTranslateY(CONTAINER[0].parentContainer) + 10;
                 var maxOutHeight = CONTAINER[1].startY + CONTAINER[1].elementCount * CONTAINER[1].elementHeight + getTranslateY(CONTAINER[1].parentContainer) + 10;
                 var currentHeight = CONTAINER[0].canvas.attr("height");
-                CONTAINER[0].canvas.attr("height", d3.max([maxInHeight, maxOutHeight, currentHeight]));
+
+                var souceHeight = Number(container.attr("y")) + getTranslateY(container) + 30;
+                CONTAINER[0].canvas.attr("height", d3.max([maxInHeight, maxOutHeight, currentHeight, souceHeight]));
+
+                //else
 
             }
 
-            function addOperator(inputCount, outputCount, title) {
-                var canvas = d3.select("#canvas");
-                var parent = canvas.append("g").attr("class", "operator").attr("transform", "translate(0,0)");
-                var max = d3.max([inputCount, outputCount]);
+            function addOperator(inputCount, outputCount, title) {  //add operator container with given inputcount, outputcount and title
+                var leaves = [];
+
                 var width = 100,
                         height = 20,
                         startX = 400,
                         startY = 20;
+                var canvas = d3.select("#canvas");
+                var parent = canvas.append("g").attr("class", "operator container")
+                        .attr("x", startX).attr("y", startY)
+                        .attr("id", title + new Date().getTime())
+                        .attr("transform", "translate(0,0)");
+                var max = d3.max([inputCount, outputCount]);
                 var opTitleOutline = parent.append("rect")
                         .attr("width", 2 * width)
                         .attr("height", 20)
@@ -623,16 +597,21 @@
                         .attr("stroke", "black");
                 var inputs = parent.append("g");
                 var outputs = parent.append("g");
+
                 if (inputCount !== 0) {
                     var tempHeight = height;
                     if (max !== inputCount) {
                         tempHeight = (max * height / inputCount);
                     }
                     for (var i = 0; i < inputCount; i++) {
+                        var tempInput = inputs.append("g").attr("class", "node-element op-node leaf-node").attr("type", "output").attr("width", width).attr("height", tempHeight);
                         var tempY = startY + i * tempHeight;
-                        inputs.append("rect").attr("x", startX).attr("y", tempY).attr("width", width).attr("height", tempHeight).attr("stroke", "black").attr("fill", "none");
-                        drawArrow(inputs, startX, tempY + tempHeight / 2);
+                        tempInput.append("rect").attr("x", startX).attr("y", tempY).attr("width", width).attr("height", tempHeight).attr("stroke", "black").attr("fill", "none");
+                        var anchor = drawArrow(tempInput, startX, tempY + tempHeight / 2);
+                        anchor.attr("type", "output");
+                        leaves.push({"node": tempInput, "text": "", "rank": 0, "x": startX, "y": tempY, "dotPosition": [startX, tempY + tempHeight / 2]});
                     }
+
                     startX += width;
                 }
                 if (outputCount !== 0) {
@@ -641,15 +620,56 @@
                         tempHeight = (max * height / outputCount);
                     }
                     for (var i = 0; i < outputCount; i++) {
+                        var tempOutput = outputs.append("g").attr("class", "node-element op-node leaf-node").attr("type", "input").attr("width", width).attr("height", tempHeight);
                         var tempY = startY + i * tempHeight;
-                        outputs.append("rect").attr("x", startX).attr("y", tempY).attr("width", width).attr("height", tempHeight).attr("stroke", "black").attr("fill", "none");
-                        drawArrow(outputs, startX + width, tempY + tempHeight / 2);
+                        tempOutput.append("rect").attr("x", startX).attr("y", tempY).attr("width", width).attr("height", tempHeight).attr("stroke", "black").attr("fill", "none");
+                        var anchor = drawArrow(tempOutput, startX + width, tempY + tempHeight / 2);
+                        anchor.attr("type", "input");
+                        leaves.push({"node": tempOutput, "text": "", "rank": 0, "x": startX, "y": tempY, "dotPosition": [startX + width, tempY + tempHeight / 2]});
                     }
 
                 }
                 parent.call(dragContainer);
+                CONTAINER.push({
+                    "canvas": canvas,
+                    "parentContainer": parent,
+                    "leaves": leaves,
+                    "startX": startX,
+                    "startY": startY
+                });
+                return parent;
             }
 
+            function detectDropNode(xx, yy, type, sourceContainer) { //detect if a drop is near opposite type of drag-head
+                var flag = false;
+                d3.select("#canvas").selectAll(".leaf-node").each(function () { //assuming every leaf node has an anchor
+                    if (!flag && d3.select(this).attr("type") !== type) {
+                        var anchor = d3.select(this).select(".drag-head");
+                        if (anchor !== null) {
+                            var x = Number(anchor.attr("cx")) + getTranslateX(getParentContainer(d3.select(this))) - getTranslateX(sourceContainer);
+                            var y = Number(anchor.attr("cy")) + getTranslateY(getParentContainer(d3.select(this))) - getTranslateY(sourceContainer);
+
+
+                            if (pointInRect([xx, yy], x - 10, x + 10, y - 10, y + 10)) {
+                                flag = d3.select(this);
+                            }
+                        }
+                    }
+                });
+                return flag;
+            }
+
+            function pointInRect(point, x1, x2, y1, y2) { //determines if the point(array of coord) is bouded by the rectangle
+
+                if (point[0] > x1 && point[0] < x2) {
+                    //horizontally inside
+                    if (point[1] > y1 && point[1] < y2) {
+                        //vertically in
+                        return true;
+                    }
+                }
+                return false;
+            }
         </script>
 
 

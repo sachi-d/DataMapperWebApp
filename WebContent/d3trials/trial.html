@@ -23,13 +23,42 @@
         <div class="happy">
 
         </div>
+        <div id="try-each">
+            <svg id="try-each-canvas">
+            <g class="me"><circle id="a" cx="50" cy="30" r="4" fill="red" /></g>
+            <g class="me"><circle id="b" cx="30" cy="30" r="4" fill="red" /></g>
+            <g class="me"><circle id="c" cx="50" cy="50" r="4" fill="red" /></g>
+            <g class="me"><circle id="d" cx="50" cy="70" r="4" fill="red" /></g>
+            <g class="me"><circle id="e" cx="50" cy="90" r="4" fill="red" /></g>
+            </svg>
+        </div>
 
         <script>
+            function func() {
+                var fel = false;
+                d3.select("#try-each-canvas").selectAll(".me").each(function () {
+                    if (!fel) {
+                        var cir = d3.select(this).select("circle");
+                        console.log("circle - " + cir.attr("id"));
+                        if (cir.attr("cx") === "30") {
+                            console.log("success----------");
+                            fel = d3.select(this);
+                            return "sol";
+                        }
+                    }
+                });
+                return fel;
+            }
+
+            console.log(func());
+
+
+
             var div = d3.select(".happy");
             div.append("p").attr("class", "happy-text leaf").text("happy text");
             var p = div.append("p").attr("class", "happy-text").text("happy tssext");
             d3.selectAll(".leaf").style("color", "red");
-            p.classed("newclass",true);
+            p.classed("newclass", true);
 
             var data = [{
                     "text": "inleaf1",
