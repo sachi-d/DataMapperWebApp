@@ -23,6 +23,9 @@
             .leaf-node:active{
                 opacity: 0.5;
             }
+            .leaf-node:hover{
+                opacity: 0.5;
+            }
         </style>
 
     </head>
@@ -320,7 +323,7 @@
 
 
             function updateConnections(newX, newY, sourceContainer) {
-           sourceContainer.selectAll(".drag-line")
+                sourceContainer.selectAll(".drag-line")
                         .attr("x2", function () {
                             return d3.select(this).attr("x2") - newX;
                         })
