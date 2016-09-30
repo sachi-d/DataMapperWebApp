@@ -61,12 +61,6 @@
             <button id="concat-op-btn" >Add concat operator <br> 2 to 1</button>
         </div>
 
-        <div style="display:inline-block;">
-            <ul id="input-structure" class="structure"  >
-
-            </ul>
-        </div>
-
         <div id="canvas-container">
             <svg id="canvas" class="canvas" width="1800" height="500">
             <g id="input-container" transform="translate(0,0)" class="container">
@@ -87,7 +81,7 @@
             </g>
 
             </g>
-            <g id="trial-container"></g>
+          
             </svg>
 
         </div>
@@ -115,9 +109,7 @@
                         updateConnections(d3.event.dx, d3.event.dy, d3.select(this));
                         resizeCanvas(d3.select(this));
                     })
-                    .on("end", function () {
-                        // resizeCanvas();
-                    });
+                    .on("end", function () { });
 
 
             //function to make the anchors draggable
@@ -146,7 +138,6 @@
 
                         dragLine.attr("x2", xx).attr("y2", yy);
                         moveArrow(dragHead2, xx, yy);
-
                     })
                     .on("end", function (d) {
 //                        console.log(dragLine);
@@ -161,7 +152,6 @@
                                     .attr("x2", dotx)
                                     .attr("y2", doty)
                                     .attr("target-container", oppositeContainer.attr("id"));
-
                         } else {
                             //d3.select("#inputnode").text("");
                             dragLine.remove();
@@ -244,7 +234,6 @@
                         .attr("fill", "none")
                         .attr("stroke-width", "1");
 
-
                 var CONTAINER = [
                     {
                         "canvas": canvas,
@@ -309,9 +298,7 @@
                 }
 
                 //update the canvas height
-
                 resizeCanvas(container.parentContainer);
-
             }
 
 
@@ -338,11 +325,8 @@
                                         });
                             }
                         });
-
                     }
                 });
-
-
             }
 
             function parseJSONTree(text, container) {
@@ -352,17 +336,15 @@
                 container.elementCount = traverseJSONSchema(data, title, container, 0, 0, container.parentContainer);
                 updateContainer(container);
 
-
-                d3.selectAll(".nested-group").each(function () {
-                    var sib = d3.select(this).select(".nested-group");
-                    d3.select(this).select(".parent-node").on("click", function () {
-
-                        sib.style("display", function () {
-                            return (sib.style("display") === "none" ? "inline" : "none");
-                        });
-
-                    })
-                });
+//                d3.selectAll(".nested-group").each(function () {
+//                    var sib = d3.select(this).select(".nested-group");
+//                    d3.select(this).select(".parent-node").on("click", function () {
+//
+//                        sib.style("display", function () {
+//                            return (sib.style("display") === "none" ? "inline" : "none");
+//                        });
+//                    })
+//                });
             }
 
 
@@ -554,9 +536,6 @@
 
                 var souceHeight = Number(container.attr("y")) + getTranslateY(container) + 30;
                 CONTAINER[0].canvas.attr("height", d3.max([maxInHeight, maxOutHeight, currentHeight, souceHeight]));
-
-                //else
-
             }
 
             function addOperator(inputCount, outputCount, title) {  //add operator container with given inputcount, outputcount and title
