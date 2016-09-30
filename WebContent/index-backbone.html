@@ -61,12 +61,6 @@
             <button id="concat-op-btn" >Add concat operator <br> 2 to 1</button>
         </div>
 
-        <div style="display:inline-block;">
-            <ul id="input-structure" class="structure"  >
-
-            </ul>
-        </div>
-
         <div id="canvas-container">
             <svg id="canvas" class="canvas" width="1800" height="500">
             <g id="input-container" transform="translate(0,0)" class="container">
@@ -87,7 +81,7 @@
             </g>
 
             </g>
-            <g id="trial-container"></g>
+
             </svg>
 
         </div>
@@ -120,7 +114,7 @@
                     });
 
 
-          //function to make the anchors draggable
+            //function to make the anchors draggable
             //  var coordinates, dragHead2, target; //assuming at a given time only one instance of these variables are present
             var dragAnchor = d3.drag()
                     .on("start", function (d) {
@@ -459,7 +453,7 @@
 
                 if (dotPosition.length === 2) {
                     parent1.classed("leaf-node", true);
-                    parent1.attr("type",container.parentContainer.attr("id").split("-")[0]);
+                    parent1.attr("type", container.parentContainer.attr("id").split("-")[0]);
                     var arrowHead = drawArrow(parent1, x + dotPosition[0], y + dotPosition[1]);
                     arrowHead.attr("type", container.parentContainer.attr("id").split("-")[0]);
                 } else {
