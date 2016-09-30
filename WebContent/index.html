@@ -10,24 +10,6 @@
         <script src="assets/fileHandler.js"></script>
         <link rel="stylesheet" href="assets/style.css">
 
-        <style>
-            .structure,.structure ul {
-                list-style-type: none;
-                text-indent: 5px;
-            }
-            .nested-group{
-                border-bottom: 1px solid #c9c9c9;
-                border-left: 1px solid #c9c9c9;
-                width: max-content;
-            }
-            .leaf-node:active{
-                opacity: 0.5;
-            }
-            .leaf-node:hover{
-                opacity: 0.5;
-            }
-        </style>
-
     </head>
 
     <body>
@@ -81,7 +63,7 @@
             </g>
 
             </g>
-          
+
             </svg>
 
         </div>
@@ -92,7 +74,7 @@
             d3.select("#concat-op-btn").on("click", function () {
                 var op = addOperator(2, 1, "Concat");
             });
-            var CONTAINER;
+            var CONTAINER = [];
 
             //function to make the containers draggable
             var dragContainer = d3.drag()
@@ -294,7 +276,7 @@
                             .attr("width", tempWidth)
                             .attr("height", tempHeight)
                             .attr("x", container.startX);
-                    container.parentContainer.attr("width",tempWidth).attr("height",tempHeight);
+                    container.parentContainer.attr("width", tempWidth).attr("height", tempHeight);
                 }
 
                 //update the canvas height

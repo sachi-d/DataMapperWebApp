@@ -33,7 +33,12 @@
 .node-element{
     display: inline;
 }
-
+.leaf-node:active{
+    opacity: 0.5;
+}
+.leaf-node:hover{
+    opacity: 0.5;
+}
 
 /*two canvas containers for each input and output*/
 
