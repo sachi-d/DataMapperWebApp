@@ -6,24 +6,29 @@
         <title>Data Mapper tooling</title>
         <script src="assets/lib/d3/d3.js"></script>
         <script src="assets/lib/jQuery/jquery-3.1.0.js"></script>
-        <script src="assets/lib/jquery-ui-1.12.0.custom/jquery-ui.js"></script> 
+        <script src="assets/lib/jquery-ui-1.12.0.custom/jquery-ui.js"></script>
+        <script src="assets/lib/underscore/underscore_1.8.3.js" type="text/javascript"></script>
+        <script src="assets/lib/backbone/backbone_1.3.3.js" type="text/javascript"></script>
         <script src="assets/fileHandler.js"></script>
         <link rel="stylesheet" href="assets/style.css">
 
         <style>
-            .structure,.structure ul {
+            .structure, .structure ul {
                 list-style-type: none;
                 text-indent: 5px;
             }
-            .nested-group{
+
+            .nested-group {
                 border-bottom: 1px solid #c9c9c9;
                 border-left: 1px solid #c9c9c9;
                 width: max-content;
             }
-            .leaf-node:active{
+
+            .leaf-node:active {
                 opacity: 0.5;
             }
-            .leaf-node:hover{
+
+            .leaf-node:hover {
                 opacity: 0.5;
             }
         </style>
@@ -39,7 +44,7 @@
                 <button id="clear-input-btn">Clear input</button>
 
                 <div class="load-file" id="load-input">
-                    <input type="file" id="input-file-select" name="input-select[]" accept=".json" />
+                    <input type="file" id="input-file-select" name="input-select[]" accept=".json"/>
                     <div class="file-drag" id="input-file-drag">or drop files here</div>
                 </div>
 
@@ -50,15 +55,15 @@
                 <button id="clear-output-btn">Clear output</button>
 
                 <div class="load-file" id="load-output">
-                    <input type="file" id="output-file-select" name="output-select[]" accept=".json" />
+                    <input type="file" id="output-file-select" name="output-select[]" accept=".json"/>
                     <div class="file-drag" id="output-file-drag">or drop files here</div>
                 </div>
 
             </div>
         </div>
 
-        <div >
-            <button id="concat-op-btn" >Add concat operator <br> 2 to 1</button>
+        <div>
+            <button id="concat-op-btn">Add concat operator <br> 2 to 1</button>
         </div>
 
         <div id="canvas-container">
@@ -66,18 +71,22 @@
             <g id="input-container" transform="translate(0,0)" class="container">
 
             <g id="input-container-fo" class="container-fo">
-            <rect class="container-title-outline" id="input-container-title-outline" height="20" fill="#77C1C0" stroke="black"></rect>
+            <rect class="container-title-outline" id="input-container-title-outline" height="20" fill="#77C1C0"
+                  stroke="black"></rect>
             <text class="container-title" id="input-container-title" font-weight="bold">Input</text>
-            <rect class="container-outline" id="input-container-outline" height="10" fill="none" stroke="black"></rect>
+            <rect class="container-outline" id="input-container-outline" height="10" fill="none"
+                  stroke="black"></rect>
             </g>
             </g>
 
 
             <g id="output-container" transform="translate(0,0)" class="container">
             <g id="output-container-fo" class="container-fo">
-            <rect class="container-title-outline" id="output-container-title-outline" height="20" fill="#E59CA5" stroke="black"></rect>
+            <rect class="container-title-outline" id="output-container-title-outline" height="20" fill="#E59CA5"
+                  stroke="black"></rect>
             <text class="container-title" id="output-container-title" font-weight="bold">Output</text>
-            <rect class="container-outline" id="output-container-outline" height="10" fill="none" stroke="black"></rect>
+            <rect class="container-outline" id="output-container-outline" height="10" fill="none"
+                  stroke="black"></rect>
             </g>
 
             </g>
@@ -87,16 +96,288 @@
         </div>
 
 
-
         <script>
+            var DataMapper = {
+                Models: {},
+                Collections: {},
+                Views: {},
+                Templates: {}
+            };
+
+            DataMapper.Models.Node = Backbone.Model.extend({
+                defaults: {
+                    text: "",
+                    x: 0,
+                    y: 0
+                }
+            });
+
+
+            DataMapper.Models.LeafNode = Node.extend({
+                type: "input" //or output
+            });
+
+
+            DataMapper.Models.Anchor = Backbone.Model.extend({
+                defaults: {
+                    parent: d3.select(DataMapper.Views.Canvas.el),
+                    cx: 0,
+                    cy: 0,
+                    width: 10,
+                    height: 10,
+                    points: "",
+                    type: "input"
+                },
+                dragAnchor: d3.drag()
+                        .on("start", function (d) {
+                            var thisDragY = d3.select(this).attr("cy");
+                            var thisDragX = d3.select(this).attr("cx");
+
+                            var tempParent = d3.select(d3.select(this)["_groups"][0][0].parentNode);
+                            dragHead2 = drawDragArrow(tempParent, thisDragX, thisDragY);
+                            dragLine = tempParent.append("line").attr("class", "drag-line")
+                                    .style("stroke", "black")
+                                    .style("stroke-width", "2");
+                            dragLine.attr("x1", thisDragX)
+                                    .attr("x2", thisDragX)
+                                    .attr("y1", thisDragY)
+                                    .attr("y2", thisDragY);
+                            d3.select(this)["_groups"][0][0].dragLine = dragLine;
+                            d3.select(this)["_groups"][0][0].dragHead2 = dragHead2;
+                        })
+                        .on("drag", function (d) {
+                            coordinates = d3.mouse(this);
+                            xx = coordinates[0];
+                            yy = coordinates[1];
+
+                            d3.select(this)["_groups"][0][0].dragLine.attr("x2", xx).attr("y2", yy);
+                            moveArrow(d3.select(this)["_groups"][0][0].dragHead2, xx, yy);
+
+                        })
+                        .on("end", function (d) {
+                            console.log(d3.select(this)["_groups"][0][0].dragLine);
+                            var sourceContainer = getParentContainer(d3.select(this));
+                            target = detectDropNode(xx, yy, d3.select(this).attr("type"), sourceContainer);
+                            if (target) {
+                                var oppositeContainer = getParentContainer(target);
+                                var dotx = Number(target.select(".drag-head").attr("cx")) + getTranslateX(oppositeContainer) - getTranslateX(sourceContainer);
+                                var doty = Number(target.select(".drag-head").attr("cy")) + getTranslateY(oppositeContainer) - getTranslateY(sourceContainer);
+
+                                d3.select(this)["_groups"][0][0].dragLine
+                                        .attr("x2", dotx)
+                                        .attr("y2", doty)
+                                        .attr("target-container", oppositeContainer.attr("id"));
+
+                                d3.select(this)["_groups"][0][0].dragHead2.remove();
+
+                            } else {
+                                //d3.select("#inputnode").text("");
+                                d3.select(this)["_groups"][0][0].dragLine.remove();
+                                d3.select(this)["_groups"][0][0].dragHead2.remove();
+                            }
+                        }),
+                drawArrow: function () {
+                    var newArrow = this.parent.append("polygon").attr("class", "drag-head");
+                    moveArrow(newArrow, this.cx, this.cy);
+                    newArrow.call(this.dragAnchor);
+                },
+                drawDragArrow: function (parent, cx, cy) {
+                    var newArrow = parent.append("polygon").attr("class", "drag-head-2");
+                    moveArrow(newArrow, cx, cy);
+                    return newArrow;
+                },
+                moveArrow: function (arrow, cx, cy) {
+                    arrow.attr("points", function () {
+                        var p0 = [Number(cx) - 5, Number(cy) - 5],
+                                p1 = [Number(cx) + 5, Number(cy)],
+                                p2 = [Number(cx) - 5, Number(cy) + 5];
+                        return p0[0] + "," + p0[1] + " " + p1[0] + "," + p1[1] + " " + p2[0] + "," + p2[1];
+                    })
+                            .attr("cx", cx)
+                            .attr("cy", cy);
+                }
+            });
+
+
+            DataMapper.Models.OpContainerBox = Backbone.Model.extend({
+                defaults: {
+                    title: "",
+                    inputCount: 0,
+                    outputCount: 0,
+                    x: 400,
+                    y: 40,
+                    leaves: [],
+                    height: 20,
+                    width: 120
+                },
+                dragContainer: d3.drag()
+                        .on("start", function () {
+                        })
+                        .on("drag", function (d, i) {
+
+                            this.x = this.x || 0;
+                            this.y = this.y || 0;
+
+                            this.x += d3.event.dx;
+                            this.y += d3.event.dy;
+                            d3.select(this).attr("transform", "translate(" + this.x + "," + this.y + ")");
+
+                            updateConnections(d3.event.dx, d3.event.dy, d3.select(this));
+                            resizeCanvas(d3.select(this));
+                        })
+                        .on("end", function () {
+                            // resizeCanvas();
+                        }),
+                drawContainer: function () {
+                    var canvas = d3.select(DataMapper.Views.CanvasView.el);
+                    var parent = canvas.append("g").attr("class", "operator container")
+                            .attr("x", this.x).attr("y", this.y)
+                            .attr("id", this.title + new Date().getTime())
+                            .attr("transform", "translate(0,0)");
+                    var max = d3.max([this.inputCount, this.outputCount]);
+                    var opTitleOutline = parent.append("rect")
+                            .attr("width", 2 * this.width)
+                            .attr("height", 20)
+                            .attr("x", this.x)
+                            .attr("y", this.y)
+                            .attr("fill", "#C5E3FF")
+                            .attr("stroke", "black");
+                    var opTitle = parent.append("text")
+                            .attr("font-weight", "bold")
+                            .attr("x", this.x)
+                            .attr("y", this.y + 15)
+                            .text(title);
+                    this.y += 20;
+                    var opContainerOutline = parent.append("rect")
+                            .attr("width", 2 * width)
+                            .attr("height", max * this.height)
+                            .attr("x", this.x)
+                            .attr("y", this.y)
+                            .attr("fill", "none")
+                            .attr("stroke", "black");
+                    var inputs = parent.append("g");
+                    var outputs = parent.append("g");
+
+                    if (this.inputCount !== 0) {
+                        var tempHeight = this.height;
+                        if (max !== this.inputCount) {
+                            tempHeight = (max * this.height / this.inputCount);
+                        }
+                        for (var i = 0; i < this.inputCount; i++) {
+                            var tempInput = inputs.append("g").attr("class", "node-element op-node leaf-node").attr("type", "output").attr("width", width).attr("height", tempHeight);
+                            var tempY = this.y + i * tempHeight;
+                            tempInput.append("rect").attr("x", this.x).attr("y", tempY).attr("width", this.width).attr("height", tempHeight).attr("stroke", "black").attr("fill", "none");
+                            var anchor = new Anchor({parent: tempInput, cx: this.x, cy: tempY + tempHeight / 2, type: "output"});
+                            new AnchorView({model: anchor}); //drawArrow(tempInput, this.x, tempY + tempHeight / 2);
+//                            anchor.attr("type", "output");
+//                            leaves.push({
+//                                "node": tempInput,
+//                                "text": "",
+//                                "rank": 0,
+//                                "x": this.x,
+//                                "y": tempY,
+//                                "dotPosition": [this.x, tempY + tempHeight / 2]
+//                            });
+                        }
+
+                        this.x += this.width;
+                    }
+                    if (this.outputCount !== 0) {
+                        var tempHeight = this.height;
+                        if (max !== this.outputCount) {
+                            tempHeight = (max * this.height / this.outputCount);
+                        }
+                        for (var i = 0; i < this.outputCount; i++) {
+                            var tempOutput = outputs.append("g").attr("class", "node-element op-node leaf-node").attr("type", "input").attr("width", this.width).attr("height", tempHeight);
+                            var tempY = this.y + i * tempHeight;
+                            tempOutput.append("rect").attr("x", this.x).attr("y", tempY).attr("width", this.width).attr("height", tempHeight).attr("stroke", "black").attr("fill", "none");
+                            var anchor = new Anchor({parent: tempOutput, cx: this.x + this.width, cy: tempY + tempHeight / 2, type: "input"});
+                            new AnchorView({model: anchor});
+
+//                            leaves.push({
+//                                "node": tempOutput,
+//                                "text": "",
+//                                "rank": 0,
+//                                "x": this.x,
+//                                "y": tempY,
+//                                "dotPosition": [this.x + width, tempY + tempHeight / 2]
+//                            });
+                        }
+
+                    }
+//                    parent.call(dragContainer);
+//                    CONTAINER.push({
+//                        "canvas": canvas,
+//                        "parentContainer": parent,
+//                        "leaves": leaves,
+//                        "this.x": this.x,
+//                        "this.y": this.y
+//                    });
+                }
+            });
+
+            DataMapper.Views.CanvasView = Backbone.View.extend({
+                el: "#canvas",
+                params: {
+                    inputStartX: 40,
+                    inputStartY: 40,
+                    outputStartX: 800,
+                    outputStartY: 40,
+                    elementWidth: 170,
+                    elementHeight: 20
+                },
+                initialize: function () {
+                    new LoadFileView();
+                    this.render();
+                },
+                render: function () {
+                    d3.select(this.el)
+                }
+            });
+            
+            DataMapper.Views.AnchorView=Backbone.View.extend({
+                el:".drag-head",
+                initialize:function(){
+                    this.model.drawArrow();
+                }
+            });
+
+            DataMapper.Views.LoadFileView = Backbone.View.extend({
+                el: "#file-load",
+                events: {
+                    "click #load-input-btn": 'slideInput',
+                    "click #load-output-btn": "slideOutput"
+                },
+                slideInput: function () {
+                    $("#load-input").slideToggle();
+                },
+                slideOutput: function () {
+                    $("#load-output").slideToggle();
+                }
+            });
+
+            DataMapper.Views.OperatorView = Backbone.View.extend({
+                el: "#concat-op-btn",
+                events: {
+                    "click": "addConcatOp"
+                },
+                addConcatOp: function () {
+                    this.model.set({title: "Concat", inputCount: 2, outputCount: 1});
+                }
+            })
+
+            new CanvasView();
+
             d3.select("#concat-op-btn").on("click", function () {
                 var op = addOperator(2, 1, "Concat");
             });
+
             var CONTAINER;
 
             //function to make the containers draggable
             var dragContainer = d3.drag()
-                    .on("start", function () { })
+                    .on("start", function () {
+                    })
                     .on("drag", function (d, i) {
 
                         this.x = this.x || 0;
@@ -174,13 +455,7 @@
                     init(CONTAINER[0]);
                     init(CONTAINER[1])
                 }
-                //display or hide the load file options
-                d3.select("#load-output-btn").on("click", function () {
-                    $("#load-output").slideToggle();
-                });
-                d3.select("#load-input-btn").on("click", function () {
-                    $("#load-input").slideToggle();
-                });
+
                 d3.select("#clear-output-btn").on("click", function () {
                     clearContainer(CONTAINER[1]);
                 });
@@ -287,8 +562,6 @@
             }
 
 
-
-
             function updateContainer(container) {
 
                 var leaves = container.leaves;
@@ -369,7 +642,6 @@
             }
 
 
-
             function traverseJSONSchema(root, rootName, container, level, rank, resultPane) {
 
                 var height = container.elementHeight,
@@ -413,7 +685,14 @@
                         var dotPosition = getDotposition(height, width, rank, margin, container.dotPosition);
 
                         var leafNode = drawNode(container, tempParent, nodeText, x, y, dotPosition, "leaf");
-                        container.leaves.push({"node": leafNode, "text": nodeText, "rank": rank, "x": rank * margin, "y": level * height, "dotPosition": dotPosition});
+                        container.leaves.push({
+                            "node": leafNode,
+                            "text": nodeText,
+                            "rank": rank,
+                            "x": rank * margin,
+                            "y": level * height,
+                            "dotPosition": dotPosition
+                        });
                         rank++;
                         level++;
                     }
@@ -463,7 +742,7 @@
             }
             function getTranslation(transform) {
                 // Create a dummy g for calculation purposes only. This will never
-                // be appended to the DOM and will be discarded once this function 
+                // be appended to the DOM and will be discarded once this function
                 // returns.
                 var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
 
@@ -472,7 +751,7 @@
 
                 // consolidate the SVGTransformList containing all transformations
                 // to a single SVGTransform of type SVG_TRANSFORM_MATRIX and get
-                // its SVGMatrix. 
+                // its SVGMatrix.
                 var matrix = g.transform.baseVal.consolidate().matrix;
 
                 // As per definition values e and f are the ones for the translation.
@@ -609,7 +888,14 @@
                         tempInput.append("rect").attr("x", startX).attr("y", tempY).attr("width", width).attr("height", tempHeight).attr("stroke", "black").attr("fill", "none");
                         var anchor = drawArrow(tempInput, startX, tempY + tempHeight / 2);
                         anchor.attr("type", "output");
-                        leaves.push({"node": tempInput, "text": "", "rank": 0, "x": startX, "y": tempY, "dotPosition": [startX, tempY + tempHeight / 2]});
+                        leaves.push({
+                            "node": tempInput,
+                            "text": "",
+                            "rank": 0,
+                            "x": startX,
+                            "y": tempY,
+                            "dotPosition": [startX, tempY + tempHeight / 2]
+                        });
                     }
 
                     startX += width;
@@ -625,7 +911,14 @@
                         tempOutput.append("rect").attr("x", startX).attr("y", tempY).attr("width", width).attr("height", tempHeight).attr("stroke", "black").attr("fill", "none");
                         var anchor = drawArrow(tempOutput, startX + width, tempY + tempHeight / 2);
                         anchor.attr("type", "input");
-                        leaves.push({"node": tempOutput, "text": "", "rank": 0, "x": startX, "y": tempY, "dotPosition": [startX + width, tempY + tempHeight / 2]});
+                        leaves.push({
+                            "node": tempOutput,
+                            "text": "",
+                            "rank": 0,
+                            "x": startX,
+                            "y": tempY,
+                            "dotPosition": [startX + width, tempY + tempHeight / 2]
+                        });
                     }
 
                 }
