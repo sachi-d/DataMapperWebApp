@@ -62,7 +62,7 @@
             </div>
         </div>
 
-        <div>
+        <div id="op-panel">
             <button id="concat-op-btn">Add concat operator <br> 2 to 1</button>
         </div>
 
@@ -99,11 +99,16 @@
         <script>
             var DataMapper = {
                 Canvas: d3.select("#canvas"),
+                Operators: null,
                 Models: {},
                 Collections: {},
                 Views: {},
                 Templates: {}
             };
+
+            DataMapper.Collections.Operators = Backbone.Collection.extend({
+                model: DataMapper.Models.Operator
+            });
 
             DataMapper.Views.AnchorView = Backbone.View.extend({
                 el: ".drag-head",
@@ -127,19 +132,28 @@
             });
 
             DataMapper.Views.OperatorView = Backbone.View.extend({
-                el: "#concat-op-btn",
-                operators: [],
-                events: {
-                    "click": "addConcatOp"
+                el: "#op-panel",
+                initialize: function () {
+                    console.log(this.model);
+                    this.render();
                 },
-                addConcatOp: function () {
-                    var concatOperator = new DataMapper.Models.OpContainerBox({title: "Concat", inputCount: 2, outputCount: 1});
-//                    concatOperator.set("title","Concat");
-                    this.operators.push(concatOperator);
-                    concatOperator.drawContainer();
+                render: function () {
+                    this.model.drawContainer();
                 }
             });
 
+            DataMapper.Views.OperatorPanelView = Backbone.View.extend({
+                el: "#op-panel",
+                events: {
+                    "click #concat-op-btn": "addConcatOp"
+                },
+                addConcatOp: function () {
+                    var concatModel = new DataMapper.Models.Operator({title: "Concat", id: "concat" + new Date().getTime(), inputCount: 2, outputCount: 1});
+                    var concatView = new DataMapper.Views.OperatorView({model: concatModel});
+                    //console.log(concatModel);
+//                    DataMapper.Operators.add([concatModel]);
+                }
+            });
 
             DataMapper.Views.CanvasView = Backbone.View.extend({
                 el: "#canvas",
@@ -152,12 +166,10 @@
                     elementHeight: 20
                 },
                 initialize: function () {
+                    DataMapper.Operators = new DataMapper.Collections.Operators(); //initialize a collection
                     new DataMapper.Views.LoadFileView();
-                    new DataMapper.Views.OperatorView();
-                    this.render();
-                },
-                render: function () {
-                    d3.select(this.el);
+                    new DataMapper.Views.OperatorPanelView();
+//                    this.render();
                 }
             });
 
@@ -179,7 +191,7 @@
 
             DataMapper.Models.Anchor = Backbone.Model.extend({
                 defaults: {
-                    parent: d3.select(DataMapper.Views.CanvasView.el),
+                    parent: DataMapper.Canvas,
                     cx: 0,
                     cy: 0,
                     width: 10,
@@ -207,7 +219,7 @@
                             xx = coordinates[0];
                             yy = coordinates[1];
 
-                            d3.select(this)["_groups"][0][0].dragLine.attr("x2", xx).attr("y2", yy);
+                            dragLine.attr("x2", xx).attr("y2", yy);
                             moveArrow(dragHead2, xx, yy);
 
                         })
@@ -239,7 +251,7 @@
                 },
                 drawDragArrow: function (parent, cx, cy) {
                     var newArrow = parent.append("polygon").attr("class", "drag-head-2");
-                    moveArrow(newArrow, cx, cy);
+                    this.moveArrow(newArrow, cx, cy);
                     return newArrow;
                 },
                 moveArrow: function (arrow, cx, cy) {
@@ -255,8 +267,9 @@
             });
 
 
-            DataMapper.Models.OpContainerBox = Backbone.Model.extend({
+            DataMapper.Models.Operator = Backbone.Model.extend({
                 title: "Operator",
+                id: "id",
                 inputCount: 0,
                 outputCount: 0,
                 defaults: {
@@ -288,7 +301,7 @@
                     var canvas = DataMapper.Canvas;
                     var parent = canvas.append("g").attr("class", "operator container")
                             .attr("x", this.get('x')).attr("y", this.get('y'))
-                            .attr("id", this.get('title') + new Date().getTime())
+                            .attr("id", this.get('id'))
                             .attr("transform", "translate(0,0)");
                     var inputCount = this.get('inputCount'),
                             outputCount = this.get('outputCount');
@@ -351,26 +364,10 @@
                             tempOutput.append("rect").attr("x", this.get('x')).attr("y", tempY).attr("width", this.get('width')).attr("height", tempHeight).attr("stroke", "black").attr("fill", "none");
                             var anchor = new DataMapper.Models.Anchor({parent: tempOutput, cx: this.get('x') + this.get('width'), cy: tempY + tempHeight / 2, type: "input"});
                             new DataMapper.Views.AnchorView({model: anchor});
-
-//                            leaves.push({
-//                                "node": tempOutput,
-//                                "text": "",
-//                                "rank": 0,
-//                                "x": this.get('x'),
-//                                "y": tempY,
-//                                "dotPosition": [this.get('x') + width, tempY + tempHeight / 2]
-//                            });
                         }
 
                     }
-//                    parent.call(dragContainer);
-//                    CONTAINER.push({
-//                        "canvas": canvas,
-//                        "parentContainer": parent,
-//                        "leaves": leaves,
-//                        "this.get('x')": this.get('x'),
-//                        "this.get('y')": this.get('y')
-//                    });
+                    parent.call(this.dragContainer);
                     console.log(canvas);
                 }
             });
