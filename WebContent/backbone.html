@@ -90,6 +90,7 @@
             </g>
 
             </g>
+            <rect x="40" y="40" width="40" height="40" id="dragme" />
 
             </svg>
 
@@ -138,10 +139,56 @@
                     this.set("title", "fffff");
                 },
                 drawContainer: function () {
-                 }
+                }
             });
             new DataMapper.Views.OperatorView();
+//            var myObject;
+//            function myFunction(a, b) {
+//                console.log(this);
+//                return a * b;
+//            }
+//            var my = myFunction(1, 1)
+//            myObject = myFunction.call(my, 10, 2);    // Will return 20 
+//            console.log(myObject);
+//            
+//            
 
+            var mode = Backbone.Model.extend({
+                dragContainer: //function(){
+                        d3.drag()
+                        .on("start", function ( ) {
+                            console.log("dragStarted");
+                            console.log(this);
+                        })
+                        .on("drag", function (d, i) {
+                            model.trial();
+                        })
+                        .on("end", function () {
+                        }),
+                trial: function () {
+                    console.log("success!! ---------------------");
+                    console.log(this);
+                },
+                func: function (selection,model) {
+                    selection.call(d3.drag)
+                       .on("start", function ( ) {
+                            console.log("dragStarted");
+                        })
+                        .on("drag", function (d, i) {
+                            model.trial();
+                        })
+                        .on("end", function () {
+                        });
+                },
+                initialize: function () {
+//                    var m = this.trial.call('m');
+                    d3.select("#dragme").call(this.func, this);
+                    this.func(d3.select("#dragme"),this);
+                }
+            });
+
+
+            new mode();
 
         </script>
 
