@@ -145,10 +145,13 @@
                     var files = e.target.files || e.dataTransfer.files;
                     if (d3.select(e.target).classed("input")) { //if the target is input
                         this.clearInput();
-                        var containerModel = new DataMapper.Models.TreeContainer({file: files[0]});
-                        new DataMapper.Views.TreeContainerView({el: "#input-container", model: containerModel});
+                        DataMapper.InputView.model.set('file', files[0]);
+                        DataMapper.InputView.render();
                         this.slideInput();
                     } else if (d3.select(e.target).classed("output")) {
+                        this.clearOutput();
+                        DataMapper.OutputView.model.set('file', files[0]);
+                        DataMapper.OutputView.render();
                         this.slideOutput();
                     }
                 },
@@ -164,7 +167,6 @@
                     d3.select(e.target).classed("file-drag-hover", true);
                 }
             });
-
             DataMapper.Views.AnchorView = Backbone.View.extend({
                 el: ".drag-head",
                 initialize: function () {
@@ -177,7 +179,6 @@
                     this.model.drawNode();
                 }
             });
-
             DataMapper.Views.OperatorView = Backbone.View.extend({
                 el: "#op-panel",
                 initialize: function () {
@@ -187,14 +188,27 @@
                     this.model.drawContainer();
                 }
             });
-
-            DataMapper.Views.TreeContainerView = DataMapper.Views.OperatorView.extend({
+            DataMapper.Views.TreeContainerView = Backbone.View.extend({
                 initialize: function () {
+                    d3.select(this.el).call(this.model.dragContainer);
                     this.model.set('parent', this.el);
-                    this.render();
+                    this.drawInitContainer();
+                    //this.model.onchange updateContainer
+                },
+                render: function () {
+                    this.model.drawContainer();
+                },
+                drawInitContainer: function () {
+                    var parent = d3.select(this.el);
+                    var height = this.model.get("nodeHeight") || this.model.nodeHeight;
+                    var width = this.model.get("containerWidth") || this.model.containerWidth;
+
+                    parent.select(".container-title-outline").attr("x", this.model.get('startX')).attr("y", this.model.get("startY")-height).attr("height", height).attr("width", width);
+                    parent.select(".container-title").attr("x", this.model.get("startX")).attr("y", this.model.get("startY")-5);
+                    parent.select(".container-outline").attr("x", this.model.get('startX')).attr("y", this.model.get("startY")).attr("height", height).attr("width", width);
+                    this.model.updateContainerHeight();
                 }
             });
-
             DataMapper.Views.OperatorPanelView = Backbone.View.extend({
                 el: "#op-panel",
                 events: {
@@ -219,6 +233,10 @@
                     DataMapper.Operators = new DataMapper.Collections.Operators(); //initialize a collection
                     new DataMapper.Views.LoadFileView();
                     new DataMapper.Views.OperatorPanelView();
+                    var inputModel = new DataMapper.Models.TreeContainer({type: "input", startX: this.params.inputStartX, startY: this.params.inputStartY});
+                    DataMapper.InputView = new DataMapper.Views.TreeContainerView({el: "#input-container", model: inputModel});
+                    var outputModel = new DataMapper.Models.TreeContainer({type: "output", startX: this.params.outputStartX, startY: this.params.outputStartY});
+                    DataMapper.OutputView = new DataMapper.Views.TreeContainerView({el: "#output-container", model: outputModel});
 //                    this.render();
                 }
             });
@@ -458,18 +476,20 @@
                 }
             });
             DataMapper.Models.TreeContainer = DataMapper.Models.Operator.extend({
-                elementCount: 0,
+                elementCount: 7,
+                containerWidth: 200,
+                nodeHeight: 20,
                 file: '',
-                object: {jj: "kk"},
                 type: "input",
                 parent: d3.select("#canvas"),
+                startX: 0,
+                startY: 0,
                 drawContainer: function () {
-//                    this.set('type', "aaa")
+                    this.set('tempParent', this.get('parent'));
                     this.readFile();
-
                 },
-                readFile: function ( ) {
-//                    console.log(this.get('type'));
+                readFile: function () {
+                    console.log(this.get('startX'));
 //                    this.set("type","bbb");
                     var model = this;
                     // display text
@@ -483,21 +503,78 @@
                             data = JSON.parse(text);
                             model.parseFile(data);
                         };
-
                         reader.readAsText(this.get('file'));
                     }
                 },
                 parseFile: function (data) {
                     var title = data.title || "Root";
-                    var count = this.traverseJSONSchema( );
+                    var count = this.traverseJSONSchema(data, title, 0, 0, d3.select(this.get('tempParent')));
                     this.set('elementCount', count);
-                    this.updateContainer( );
+                    this.updateContainerHeight();
                 },
-                updateContainer: function () {
-                    console.log("update container");
+                updateContainerHeight: function () {
+                    var outline = d3.select(this.get('parent')).select(".container-outline");
+                    var model = this;
+                    outline.attr("height", function () {
+                        var count = model.get('elementCount') || model.elementCount,
+                                height = model.get('nodeHeight') || model.nodeHeight;
+                        return (count) * height;
+                    });
                 },
-                traverseJSONSchema: function () {
-                    console.log("traverse func");
+                traverseJSONSchema: function (root, rootName, level, rank, resultPane) {
+                    var height = this.nodeHeight,
+                            width = this.containerWidth,
+                            margin = width / 4,
+                            x = this.get('startX') + rank * margin,
+                            y = this.get('startY') + level * height;
+                    var tempParent = resultPane.append("g").attr("class", "nested-group");
+                    if (root.type === "object") {
+                        if (rootName !== "") {
+                            var nodeText = rootName + ":" + root.type;
+                            var node = new DataMapper.Models.Node({parent: tempParent, text: nodeText, x: x, y: y, type: this.get('type'), category: "object", height: height, width: width});
+                            node.drawNode();
+                            this.updateMaxTextLength(nodeText);
+                            rank++;
+                            level++;
+                        }
+                        var nestedParent = tempParent.append("g").attr("class", "nested-group");
+                        var keys = root.properties; //select PROPERTIES
+                        for (var i = 0; i < Object.keys(keys).length; i++) {   //traverse through each PROPERTY of the object
+                            var keyName = Object.keys(keys)[i];
+                            var key = keys[keyName];
+                            level = this.traverseJSONSchema(key, keyName, level, rank, tempParent);
+                        }
+
+                    } else if (root.type === "array") {
+                        var keys = root.items; //select ITEMS
+                        if (rootName !== "") {
+                            var nodeText = rootName + ":" + root.type + "[" + keys.type + "]";
+                            var node = new DataMapper.Models.Node({parent: tempParent, text: nodeText, x: x, y: y, type: this.get('type'), category: "array", height: height, width: width});
+                            node.drawNode();
+                            this.updateMaxTextLength(nodeText);
+                            rank++;
+                            level++;
+                        }
+
+                        level = this.traverseJSONSchema(keys, "", level, rank, tempParent); //recurse through the items of array
+                    } else if (["string", "integer", "number", "boolean"].indexOf(root.type) > -1) {    //when the type is a primitive
+                        tempParent.classed("nested-group", false);
+                        if (rootName !== "") {
+                            var nodeText = rootName + ":" + root.type;
+                            this.updateMaxTextLength(nodeText);
+                            var node = new DataMapper.Models.Node({parent: tempParent, text: nodeText, x: x, y: y, type: this.get('type'), category: root.type, height: height, width: width});
+                            node.drawNode();
+                            rank++;
+                            level++;
+                        }
+                    }
+                    return level;
+                },
+                updateMaxTextLength: function (t) {
+//                    var m = t.node().getComputedTextLength();
+//                    if (this.get('maxLength') < m) {
+//                        this.set('maxLength', m)
+//                    }
                 }
             });
             new DataMapper.Views.CanvasView();
@@ -521,7 +598,7 @@
                     });
             //function to make the anchors draggable
             //  var coordinates, dragHead2, target; //assuming at a given time only one instance of these variables are present
-            var dragAnchor = d3.drag()
+            var ddragAnchor = d3.drag()
                     .on("start", function (d) {
                         var thisDragY = d3.select(this).attr("cy");
                         var thisDragX = d3.select(this).attr("cx");
@@ -564,101 +641,16 @@
                         }
                     });
             $(document).ready(function () {
-
-                CONTAINER = initCanvas(40, 40, 800, 40, 170, 20);
-                if (window.File && window.FileList && window.FileReader) {
-//                    init(CONTAINER[0]);
-//                    init(CONTAINER[1]);
-                }
+//
+//                CONTAINER = initCanvas(40, 40, 800, 40, 170, 20);
+//                if (window.File && window.FileList && window.FileReader) {
+////                    init(CONTAINER[0]);
+////                    init(CONTAINER[1]);
+//                }
 
 
             });
-            function initCanvas(inputStartX, inputStartY, outputStartX, outputStartY, elementWidth, elementHeight) {
-                var inputLeaves = [], outputLeaves = [];
-                var canvas = d3.select(".canvas"),
-                        inputContainer = d3.select("#input-container").attr("x", inputStartX).attr("y", inputStartY),
-                        outputContainer = d3.select("#output-container").attr("x", outputStartX).attr("y", outputStartY);
-                //update input output containers
-                var inputGroup = d3.select("#input-container-fo");
-                var inputTitleOutline = inputGroup.select("#input-container-title-outline");
-                var tempHeight = inputTitleOutline.attr("height");
-                inputTitleOutline.attr("x", inputStartX)
-                        .attr("y", inputStartY - tempHeight)
-                        .attr("width", elementWidth * 2);
-                var inputTitle = inputGroup.select("#input-container-title")
-                        .attr("x", inputStartX)
-                        .attr("y", inputStartY - tempHeight / 4) // divide by 4 to get title inside the rectangle
-                        .attr("width", elementWidth * 2);
-                var inputOutline = inputContainer.select("#input-container-outline")
-                        .attr("x", inputStartX)
-                        .attr("y", inputStartY - tempHeight)
-                        .attr("width", elementWidth * 2)
-                        .attr("height", 200)
-                        .attr("stroke", "black")
-                        .attr("fill", "none")
-                        .attr("stroke-width", "1");
-                var outputGroup = d3.select("#output-container-fo");
-                var outputTitleOutline = outputGroup.select("#output-container-title-outline");
-                tempHeight = outputTitleOutline.attr("height");
-                outputTitleOutline.attr("x", outputStartX)
-                        .attr("y", outputStartY - tempHeight)
-                        .attr("width", elementWidth * 2);
-                var outputTitle = outputGroup.select("#output-container-title")
-                        .attr("x", outputStartX)
-                        .attr("y", outputStartY - tempHeight / 4)
-                        .attr("width", elementWidth * 2);
-                var outputOutline = outputContainer.select("#output-container-outline")
-                        .attr("x", outputStartX)
-                        .attr("y", outputStartY - tempHeight)
-                        .attr("width", elementWidth * 2)
-                        .attr("height", 200)
-                        .attr("stroke", "black")
-                        .attr("fill", "none")
-                        .attr("stroke-width", "1");
-                var CONTAINER = [
-                    {
-                        "canvas": canvas,
-                        "parentContainer": inputContainer,
-                        "oppositeContainer": outputContainer,
-                        "leaves": inputLeaves,
-                        "dotPosition": "RIGHT",
-                        "fileSelect": "input-file-select",
-                        "fileDrag": "input-file-drag",
-                        "fileLoad": "load-input",
-                        "elementCount": 0,
-                        "elementHeight": elementHeight,
-                        "elementWidth": elementWidth,
-                        "startX": inputStartX,
-                        "startY": inputStartY,
-                        "title": inputTitle,
-                        "titleOutline": inputTitleOutline,
-                        "containerOutline": inputOutline
-                    },
-                    {
-                        "canvas": canvas,
-                        "parentContainer": outputContainer,
-                        "oppositeContainer": inputContainer,
-                        "leaves": outputLeaves,
-                        "dotPosition": "LEFT",
-                        "fileSelect": "output-file-select",
-                        "fileDrag": "output-file-drag",
-                        "fileLoad": "load-output",
-                        "elementCount": 0,
-                        "elementHeight": elementHeight,
-                        "elementWidth": elementWidth,
-                        "startX": outputStartX,
-                        "startY": outputStartY,
-                        "title": outputTitle,
-                        "titleOutline": outputTitleOutline,
-                        "containerOutline": outputOutline
-                    }
-                ];
-                inputContainer.call(dragContainer);
-                outputContainer.call(dragContainer);
-                return CONTAINER;
-            }
-
-
+    
             function updateContainer(container) {
 
                 var leaves = container.leaves;
@@ -914,7 +906,6 @@
                 var souceHeight = Number(container.attr("y")) + getTranslateY(container) + 30;
                 CONTAINER[0].canvas.attr("height", d3.max([maxInHeight, maxOutHeight, currentHeight, souceHeight]));
                 //else
-
             }
 
             function addOperator(inputCount, outputCount, title) {  //add operator container with given inputcount, outputcount and title
