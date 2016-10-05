@@ -98,7 +98,7 @@
         <div id="tree1"></div>
 
         <script>
-                     
+
             var DataMapper = {
                 Models: {},
                 Collections: {},
@@ -110,11 +110,13 @@
             DataMapper.Views.OperatorView = Backbone.View.extend({
                 el: "#op-panel",
                 operators: [],
+                node: "",
                 events: {
                     "click #concat-op-btn": "addConcatOp"
                 },
                 addConcatOp: function () {
                     var concatOperator = new DataMapper.Models.OpContainerBox({title: "Concat", inputCount: 2, outputCount: 1});
+                    console.log(concatOperator.get('title'));
                     this.operators.push(concatOperator);
                     concatOperator.drawContainer();
                 }
@@ -132,9 +134,11 @@
                     height: 20,
                     width: 120
                 },
+                initialize: function () {
+                    this.set("title", "fffff");
+                },
                 drawContainer: function () {
-                    console.log(this.get('title'));
-                }
+                 }
             });
             new DataMapper.Views.OperatorView();
 

@@ -92,14 +92,16 @@
             </g>
 
             </svg>
-         
+
         </div>
 
 
         <script>
             var DataMapper = {
                 Canvas: d3.select("#canvas"),
-                Operators: null,
+                Operators: {},
+                InputContainer: {},
+                OutputContainer: {},
                 Models: {},
                 Collections: {},
                 Views: {},
@@ -108,59 +110,74 @@
             DataMapper.Collections.Operators = Backbone.Collection.extend({
                 model: DataMapper.Models.Operator
             });
-            DataMapper.Views.InputContainerView = Backbone.View.extend({
+            DataMapper.Views.LoadFileView = Backbone.View.extend({
                 el: "#file-load",
                 events: {
                     "change .file-select": "fileChange",
-                    "dragenter .file-drag":"dragEnter",
-                    "dragleave .file-drag":"dragLeave",
-                    "dragover .file-drag":"dragOver"
+                    "dragenter .file-drag": "dragEnter",
+                    "dragleave .file-drag": "dragLeave",
+                    "dragover .file-drag": "dragOver",
+                    "drop .file-drag": "drop",
+                    "click #load-input-btn": 'slideInput',
+                    "click #load-output-btn": "slideOutput",
+                    "click #clear-input-btn": "clearInput",
+                    "click #clear-output-btn": "clearOutput"
+                },
+                slideInput: function () {
+                    $("#load-input").slideToggle();
+                },
+                slideOutput: function () {
+                    $("#load-output").slideToggle();
+                },
+                clearInput: function () {
+                    d3.select("#input-container").selectAll(".nested-group").remove();
+                },
+                clearOutput: function () {
+                    d3.select("#output-container").selectAll(".nested-group").remove();
+                },
+                drop: function (e) {
+                    this.dragLeave(e);
+                    this.fileChange(e);
                 },
                 fileChange: function (e) {
-                    console.log(e.target.files);
+                    e.stopPropagation();
+                    e.preventDefault();
+                    var files = e.target.files || e.dataTransfer.files;
+                    if (d3.select(e.target).classed("input")) { //if the target is input
+                        this.clearInput();
+                        var containerModel = new DataMapper.Models.TreeContainer({file: files[0]});
+                        new DataMapper.Views.TreeContainerView({el: "#input-container", model: containerModel});
+                        this.slideInput();
+                    } else if (d3.select(e.target).classed("output")) {
+                        this.slideOutput();
+                    }
                 },
-                dragEnter:function(){
-                    console.log("dag enter");
+                dragEnter: function (e) {
+                    d3.select(e.target).classed("file-drag-hover", true);
                 },
-                dragLeave:function(){
-                    console.log("dag leave");
+                dragLeave: function (e) {
+                    d3.select(e.target).classed("file-drag-hover", false);
                 },
-                dragOver:function(){
-                    console.log("dag over");
+                dragOver: function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    d3.select(e.target).classed("file-drag-hover", true);
                 }
             });
-            DataMapper.Views.OutputContainerView = Backbone.View.extend({
-                el: "#output-container",
-                events: {
-//                    "change #input-file-select":"change",
-//                    "dragenter #input-file-drag":"change",
-//                    "dragleave #input-file-drag":"change",
-//                    "dragover #input-file-drag":"change"
-                },
-                change: function () {
-                    console.log("ck");
-                }
-            });
+
             DataMapper.Views.AnchorView = Backbone.View.extend({
                 el: ".drag-head",
                 initialize: function () {
                     this.model.drawArrow();
                 }
             });
-            DataMapper.Views.LoadFileView = Backbone.View.extend({
-                el: "#file-load",
-                events: {
-                    "click #load-input-btn": 'slideInput',
-                    "click #load-output-btn": "slideOutput"
-                },
-                slideInput: function () {
-                    $("#load-input").slideToggle();
-                    console.log("dlife");
-                },
-                slideOutput: function () {
-                    $("#load-output").slideToggle();
+            DataMapper.Views.NodeView = Backbone.View.extend({
+                el: ".node-element",
+                initialize: function () {
+                    this.model.drawNode();
                 }
             });
+
             DataMapper.Views.OperatorView = Backbone.View.extend({
                 el: "#op-panel",
                 initialize: function () {
@@ -170,6 +187,14 @@
                     this.model.drawContainer();
                 }
             });
+
+            DataMapper.Views.TreeContainerView = DataMapper.Views.OperatorView.extend({
+                initialize: function () {
+                    this.model.set('parent', this.el);
+                    this.render();
+                }
+            });
+
             DataMapper.Views.OperatorPanelView = Backbone.View.extend({
                 el: "#op-panel",
                 events: {
@@ -188,27 +213,87 @@
                     inputStartX: 40,
                     inputStartY: 40,
                     outputStartX: 800,
-                    outputStartY: 40,
-                    elementWidth: 170,
-                    elementHeight: 20
+                    outputStartY: 40
                 },
                 initialize: function () {
                     DataMapper.Operators = new DataMapper.Collections.Operators(); //initialize a collection
                     new DataMapper.Views.LoadFileView();
-                    new DataMapper.Views.InputContainerView();
                     new DataMapper.Views.OperatorPanelView();
 //                    this.render();
                 }
             });
-            DataMapper.Models.Node = Backbone.Model.extend({
+            DataMapper.Models.Node = Backbone.Model.extend({//set parent, text, x,y, type,category
                 defaults: {
+                    parent: d3.select("#canvas"),
                     text: "",
                     x: 0,
-                    y: 0
+                    y: 0,
+                    width: 170,
+                    height: 20,
+                    type: "", //input or output or null
+                    category: "leaf", //object, array or endType or operator,
+                    dotPosition: [],
+                    node: d3.select("#canvas")
+                },
+                initialize: function () {
+                    if (this.get('type') === "input") {
+                        this.set('dotPosition', [this.get('x') + this.get('width'), this.get('y') + this.get('height') / 2]);
+                    } else if (this.get('type') === "output") {
+                        this.set('dotPosition', [this.get('x'), this.get('y') + this.get('height') / 2]);
+                    }
+                },
+                drawNode: function () {
+                    //  function drawNode(container, parent, text, x, y, dotPosition, type) {
+                    var model = this;
+                    var height = this.get('height'),
+                            width = this.get('width');
+                    var parent1 = this.get('parent').append("g").attr("class", "node-element")
+                            .attr("height", height)
+                            .attr("width", width);
+                    this.set('node', parent1);
+                    if (this.get('category') !== "operator") {
+                        parent1.append("svg:image")
+                                .attr("x", this.get('x'))
+                                .attr("y", this.get('y') + 4)
+                                .attr("width", 11)
+                                .attr("height", 11)
+                                .attr("xlink:href", function () {
+                                    if (model.get('category') === "object") {
+                                        return "assets/images/object-icon.png";
+                                    } else if (model.get('category') === "array") {
+                                        return "assets/images/array-icon.png";
+                                    }
+                                    return "assets/images/leaf-icon.png";
+                                });
+                    } else {
+                        this.drawOutline();
+                    }
+                    parent1.append("text").attr("class", "node-element-text")
+                            .attr("x", this.get('x') + 12)
+                            .attr("y", this.get('y') + (3 * height / 4))
+                            .text(this.get('text'));
+                    if (this.get('dotPosition').length === 2) {
+                        parent1.classed("leaf-node", true);
+                        parent1.attr("type", this.get('type'));
+                        var anchor = new DataMapper.Models.Anchor({parent: parent1, cx: this.get('dotPosition')[0], cy: this.get('dotPosition')[1], type: this.get('type')});
+                        new DataMapper.Views.AnchorView({model: anchor});
+//                        var arrowHead = drawArrow(parent1, this.get('dotPosition')[0],this.get('dotPosition')[1]);
+//                        arrowHead.attr("type",this.get('type'));
+                    } else {
+                        parent1.classed("parent-node", true);
+                    }
+
+                    return parent1;
+                },
+                drawOutline: function () {
+                    this.get('node').append("rect")
+                            .attr("x", this.get('x'))
+                            .attr("y", this.get('y'))
+                            .attr("width", this.get('width'))
+                            .attr("height", this.get('height'))
+                            .attr("stroke", "black")
+                            .attr("fill", "none");
                 }
-            });
-            DataMapper.Models.LeafNode = DataMapper.Models.Node.extend({
-                type: "input" //or output
             });
             DataMapper.Models.Anchor = Backbone.Model.extend({
                 defaults: {
@@ -345,20 +430,12 @@
                             tempHeight = (max * this.get('height') / inputCount);
                         }
                         for (var i = 0; i < inputCount; i++) {
-                            var tempInput = inputs.append("g").attr("class", "node-element op-node leaf-node").attr("type", "output").attr("width", this.get('width')).attr("height", tempHeight);
+                            //parent, text, x,y,type,category
+
+//                            var tempInput = inputs.append("g").attr("class", "node-element op-node leaf-node").attr("type", "output").attr("width", this.get('width')).attr("height", tempHeight);
                             var tempY = this.get('y') + i * tempHeight;
-                            tempInput.append("rect").attr("x", this.get('x')).attr("y", tempY).attr("width", this.get('width')).attr("height", tempHeight).attr("stroke", "black").attr("fill", "none");
-                            var anchor = new DataMapper.Models.Anchor({parent: tempInput, cx: this.get('x'), cy: tempY + tempHeight / 2, type: "output"});
-                            new DataMapper.Views.AnchorView({model: anchor}); //drawArrow(tempInput, this.get('x'), tempY + tempHeight / 2);
-//                            anchor.attr("type", "output");
-//                            leaves.push({
-//                                "node": tempInput,
-//                                "text": "",
-//                                "rank": 0,
-//                                "x": this.get('x'),
-//                                "y": tempY,
-//                                "dotPosition": [this.get('x'), tempY + tempHeight / 2]
-//                            });
+                            var node = new DataMapper.Models.Node({parent: inputs, text: "", x: this.get('x'), y: tempY, type: "output", category: "operator", height: tempHeight, width: this.get('width')});
+                            node.drawNode();
                         }
 
                         this.set('x', this.get('width') + this.get('x'));
@@ -369,11 +446,10 @@
                             tempHeight = (max * this.get('height') / outputCount);
                         }
                         for (var i = 0; i < outputCount; i++) {
-                            var tempOutput = outputs.append("g").attr("class", "node-element op-node leaf-node").attr("type", "input").attr("width", this.get('width')).attr("height", tempHeight);
+//                            var tempOutput = outputs.append("g").attr("class", "node-element op-node leaf-node").attr("type", "input").attr("width", this.get('width')).attr("height", tempHeight);
                             var tempY = this.get('y') + i * tempHeight;
-                            tempOutput.append("rect").attr("x", this.get('x')).attr("y", tempY).attr("width", this.get('width')).attr("height", tempHeight).attr("stroke", "black").attr("fill", "none");
-                            var anchor = new DataMapper.Models.Anchor({parent: tempOutput, cx: this.get('x') + this.get('width'), cy: tempY + tempHeight / 2, type: "input"});
-                            new DataMapper.Views.AnchorView({model: anchor});
+                            var node = new DataMapper.Models.Node({parent: outputs, text: "", x: this.get('x'), y: tempY, type: "input", category: "operator", height: tempHeight, width: this.get('width')});
+                            node.drawNode();
                         }
 
                     }
@@ -382,13 +458,49 @@
                 }
             });
             DataMapper.Models.TreeContainer = DataMapper.Models.Operator.extend({
+                elementCount: 0,
+                file: '',
+                object: {jj: "kk"},
+                type: "input",
+                parent: d3.select("#canvas"),
+                drawContainer: function () {
+//                    this.set('type', "aaa")
+                    this.readFile();
+
+                },
+                readFile: function ( ) {
+//                    console.log(this.get('type'));
+//                    this.set("type","bbb");
+                    var model = this;
+                    // display text
+                    if (this.get('file').name.endsWith(".json") || this.get('file').type === "application/json") {
+
+                        var reader = new FileReader();
+                        var data;
+                        reader.onload = function (e) {
+                            //parseJSON
+                            var text = e.target.result;
+                            data = JSON.parse(text);
+                            model.parseFile(data);
+                        };
+
+                        reader.readAsText(this.get('file'));
+                    }
+                },
+                parseFile: function (data) {
+                    var title = data.title || "Root";
+                    var count = this.traverseJSONSchema( );
+                    this.set('elementCount', count);
+                    this.updateContainer( );
+                },
+                updateContainer: function () {
+                    console.log("update container");
+                },
+                traverseJSONSchema: function () {
+                    console.log("traverse func");
+                }
             });
             new DataMapper.Views.CanvasView();
-            
-
-
-
-
             var CONTAINER;
             //function to make the containers draggable
             var dragContainer = d3.drag()
@@ -459,12 +571,7 @@
 //                    init(CONTAINER[1]);
                 }
 
-                d3.select("#clear-output-btn").on("click", function () {
-                    clearContainer(CONTAINER[1]);
-                });
-                d3.select("#clear-input-btn").on("click", function () {
-                    clearContainer(CONTAINER[0]);
-                });
+
             });
             function initCanvas(inputStartX, inputStartY, outputStartX, outputStartY, elementWidth, elementHeight) {
                 var inputLeaves = [], outputLeaves = [];
@@ -624,7 +731,7 @@
             }
 
 
-            function traverseJSONSchema(root, rootName, container, level, rank, resultPane) {
+            function traverseJSONSchema(root, rootName, contrainer, level, rank, resultPane) {
 
                 var height = container.elementHeight,
                         width = container.elementWidth,
