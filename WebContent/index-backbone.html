@@ -50,7 +50,7 @@
 
         <div id="canvas-container">
             <svg id="canvas" class="canvas" width="1800" height="500">
-            <g id="input-container" transform="translate(0,0)" class="container">
+            <g id="input-container" transform="translate(40,40)" class="container">
 
             <g id="input-container-fo" class="container-fo">
             <rect class="container-title-outline" id="input-container-title-outline" height="20" fill="#77C1C0"
@@ -62,7 +62,7 @@
             </g>
 
 
-            <g id="output-container" transform="translate(0,0)" class="container">
+            <g id="output-container" transform="translate(800,40)" class="container">
             <g id="output-container-fo" class="container-fo">
             <rect class="container-title-outline" id="output-container-title-outline" height="20" fill="#E59CA5"
                   stroke="black"></rect>
@@ -184,9 +184,9 @@
                     var parent = d3.select(this.el);
                     var height = this.model.get("nodeHeight") || this.model.nodeHeight;
                     var width = this.model.get("containerWidth") || this.model.containerWidth;
-                    parent.select(".container-title-outline").attr("x", this.model.get('startX')).attr("y", this.model.get("startY") - height).attr("height", height).attr("width", width);
-                    parent.select(".container-title").attr("x", this.model.get("startX")).attr("y", this.model.get("startY") - 5);
-                    parent.select(".container-outline").attr("x", this.model.get('startX')).attr("y", this.model.get("startY")).attr("height", height).attr("width", width);
+                    parent.select(".container-title-outline").attr("x", 0).attr("y", -height).attr("height", height).attr("width", width);
+                    parent.select(".container-title").attr("x", 0).attr("y", -5);
+                    parent.select(".container-outline").attr("x", 0).attr("y", 0).attr("height", height).attr("width", width);
                     this.model.updateContainerHeight();
                 }
             });
@@ -214,9 +214,9 @@
                     DataMapper.Operators = new DataMapper.Collections.Operators(); //initialize a collection
                     new DataMapper.Views.LoadFileView();
                     new DataMapper.Views.OperatorPanelView();
-                    var inputModel = new DataMapper.Models.TreeContainer({type: "input", startX: this.params.inputStartX, startY: this.params.inputStartY});
+                    var inputModel = new DataMapper.Models.TreeContainer({type: "input"});
                     DataMapper.InputView = new DataMapper.Views.TreeContainerView({el: "#input-container", model: inputModel});
-                    var outputModel = new DataMapper.Models.TreeContainer({type: "output", startX: this.params.outputStartX, startY: this.params.outputStartY});
+                    var outputModel = new DataMapper.Models.TreeContainer({type: "output"});
                     DataMapper.OutputView = new DataMapper.Views.TreeContainerView({el: "#output-container", model: outputModel});
 //                    this.render();
                 }
@@ -452,7 +452,7 @@
                                 this.y += d3.event.dy;
                                 d3.select(this).attr("transform", "translate(" + this.x + "," + this.y + ")");
                                 self.updateConnections(d3.event.dx, d3.event.dy);
-//                            resizeCanvas(d3.select(this));
+                                self.resizeCanvas(this.x, this.y);
                             })
                             .on("end", function () {
                                 // resizeCanvas();
@@ -541,6 +541,9 @@
                             });
                         }
                     });
+                },
+                resizeCanvas: function (x, y) {
+
                 }
             });
             DataMapper.Models.TreeContainer = DataMapper.Models.Operator.extend({
@@ -550,8 +553,6 @@
                 file: '',
                 type: "input",
                 parent: d3.select("#canvas"),
-                startX: 0,
-                startY: 0,
                 drawContainer: function () {
                     this.set('tempParent', this.get('parent'));
                     this.readFile();
@@ -590,18 +591,17 @@
                 },
                 updateContainerWidth: function (t) {
                     var maxLength = this.containerWidth || this.get('containerWidth');
-                    var overhead = this.get("startX");
                     var parent = this.get('parent');
                     parent.selectAll("text").each(function () {
                         var x = Number(d3.select(this).attr("x"));
                         var len = d3.select(this).node().getComputedTextLength();
-                        maxLength = d3.max([maxLength, x + len - overhead]);
+                        maxLength = d3.max([maxLength, x + len]);
                     });
                     parent.select(".container-outline").attr("width", maxLength);
                     parent.select(".container-title-outline").attr("width", maxLength);
                     if (this.get('type') === "input") {
                         parent.selectAll(".drag-head").each(function () {
-                            var cx = maxLength + overhead, cy = d3.select(this).attr("cy");
+                            var cx = maxLength, cy = d3.select(this).attr("cy");
                             d3.select(this).attr("points", function () {
                                 var p0 = [Number(cx) - 5, Number(cy) - 5],
                                         p1 = [Number(cx) + 5, Number(cy)],
@@ -617,9 +617,9 @@
                     var height = this.nodeHeight,
                             width = this.containerWidth,
                             margin = width / 6,
-                            x = this.get('startX'),
+                            x = 0,
                             overhead = rank * margin,
-                            y = this.get('startY') + level * height;
+                            y = level * height;
                     var tempParent = resultPane.append("g").attr("class", "nested-group");
                     if (root.type === "object") {
                         if (rootName !== "") {
