@@ -172,8 +172,8 @@
             });
             DataMapper.Views.TreeContainerView = Backbone.View.extend({
                 initialize: function () {
-                    d3.select(this.el).call(this.model.dragContainer);
-                    this.model.set('parent', this.el);
+                    d3.select(this.el).call(this.model.dragContainer());
+                    this.model.set('parent', d3.select(this.el));
                     this.drawInitContainer();
                     //this.model.onchange updateContainer
                 },
@@ -184,7 +184,6 @@
                     var parent = d3.select(this.el);
                     var height = this.model.get("nodeHeight") || this.model.nodeHeight;
                     var width = this.model.get("containerWidth") || this.model.containerWidth;
-
                     parent.select(".container-title-outline").attr("x", this.model.get('startX')).attr("y", this.model.get("startY") - height).attr("height", height).attr("width", width);
                     parent.select(".container-title").attr("x", this.model.get("startX")).attr("y", this.model.get("startY") - 5);
                     parent.select(".container-outline").attr("x", this.model.get('startX')).attr("y", this.model.get("startY")).attr("height", height).attr("width", width);
@@ -263,8 +262,6 @@
                         parent1.attr("type", this.get('type'));
                         var anchor = new DataMapper.Models.Anchor({parent: parent1, cx: this.get('dotPosition')[0], cy: this.get('dotPosition')[1], type: this.get('type')});
                         new DataMapper.Views.AnchorView({model: anchor});
-//                        var arrowHead = drawArrow(parent1, this.get('dotPosition')[0],this.get('dotPosition')[1]);
-//                        arrowHead.attr("type",this.get('type'));
                     } else {
                         parent1.classed("parent-node", true);
                     }
@@ -309,49 +306,52 @@
                     points: "",
                     type: "input"
                 },
-                dragAnchor: d3.drag()
-                        .on("start", function (d) {
-                            var thisDragY = d3.select(this).attr("cy");
-                            var thisDragX = d3.select(this).attr("cx");
-                            var tempParent = d3.select(d3.select(this)["_groups"][0][0].parentNode);
-                            dragHead2 = drawDragArrow(tempParent, thisDragX, thisDragY);
-                            dragLine = tempParent.append("line").attr("class", "drag-line")
-                                    .style("stroke", "black")
-                                    .style("stroke-width", "2");
-                            dragLine.attr("x1", thisDragX)
-                                    .attr("x2", thisDragX)
-                                    .attr("y1", thisDragY)
-                                    .attr("y2", thisDragY);
-                        })
-                        .on("drag", function (d) {
-                            coordinates = d3.mouse(this);
-                            xx = coordinates[0];
-                            yy = coordinates[1];
-                            dragLine.attr("x2", xx).attr("y2", yy);
-                            moveArrow(dragHead2, xx, yy);
-                        })
-                        .on("end", function (d) {
-                            var sourceContainer = getParentContainer(d3.select(this));
-                            target = detectDropNode(xx, yy, d3.select(this).attr("type"), sourceContainer);
-                            if (target) {
-                                var oppositeContainer = getParentContainer(target);
-                                var dotx = Number(target.select(".drag-head").attr("cx")) + getTranslateX(oppositeContainer) - getTranslateX(sourceContainer);
-                                var doty = Number(target.select(".drag-head").attr("cy")) + getTranslateY(oppositeContainer) - getTranslateY(sourceContainer);
-                                dragLine
-                                        .attr("x2", dotx)
-                                        .attr("y2", doty)
-                                        .attr("target-container", oppositeContainer.attr("id"));
-                                dragHead2.remove();
-                            } else {
-                                //d3.select("#inputnode").text("");
-                                dragLine.remove();
-                                dragHead2.remove();
-                            }
-                        }),
+                dragAnchor: function () {
+                    var self = this;
+                    return d3.drag()
+                            .on("start", function (d) {
+                                var thisDragY = d3.select(this).attr("cy");
+                                var thisDragX = d3.select(this).attr("cx");
+                                var tempParent = d3.select(d3.select(this)["_groups"][0][0].parentNode);
+                                dragHead2 = self.drawDragArrow(tempParent, thisDragX, thisDragY);
+                                dragLine = tempParent.append("line").attr("class", "drag-line")
+                                        .style("stroke", "black")
+                                        .style("stroke-width", "2");
+                                dragLine.attr("x1", thisDragX)
+                                        .attr("x2", thisDragX)
+                                        .attr("y1", thisDragY)
+                                        .attr("y2", thisDragY);
+                            })
+                            .on("drag", function (d) {
+                                coordinates = d3.mouse(this);
+                                xx = coordinates[0];
+                                yy = coordinates[1];
+                                dragLine.attr("x2", xx).attr("y2", yy);
+                                self.moveArrow(dragHead2, xx, yy);
+                            })
+                            .on("end", function (d) {
+                                var sourceContainer = self.getParentContainer(d3.select(this));
+                                target = self.detectDropNode(xx, yy, d3.select(this).attr("type"), sourceContainer);
+                                if (target) {
+                                    var oppositeContainer = self.getParentContainer(target);
+                                    var dotx = Number(target.select(".drag-head").attr("cx")) + self.getTranslateX(oppositeContainer) - self.getTranslateX(sourceContainer);
+                                    var doty = Number(target.select(".drag-head").attr("cy")) + self.getTranslateY(oppositeContainer) - self.getTranslateY(sourceContainer);
+                                    dragLine
+                                            .attr("x2", dotx)
+                                            .attr("y2", doty)
+                                            .attr("target-container", oppositeContainer.attr("id"));
+                                    dragHead2.remove();
+                                } else {
+                                    //d3.select("#inputnode").text("");
+                                    dragLine.remove();
+                                    dragHead2.remove();
+                                }
+                            });
+                },
                 drawArrow: function () {
                     var newArrow = this.get('parent').append("polygon").attr("class", "drag-head");
                     this.moveArrow(newArrow, this.get('cx'), this.get('cy'));
-                    newArrow.call(this.dragAnchor);
+                    newArrow.call(this.dragAnchor());
                 },
                 drawDragArrow: function (parent, cx, cy) {
                     var newArrow = parent.append("polygon").attr("class", "drag-head-2");
@@ -367,6 +367,64 @@
                     })
                             .attr("cx", cx)
                             .attr("cy", cy);
+                },
+                getTranslation: function (transform) {
+                    // Create a dummy g for calculation purposes only. This will never
+                    // be appended to the DOM and will be discarded once this function
+                    // returns.
+                    var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                    // Set the transform attribute to the provided string value.
+                    g.setAttributeNS(null, "transform", transform);
+                    // consolidate the SVGTransformList containing all transformations
+                    // to a single SVGTransform of type SVG_TRANSFORM_MATRIX and get
+                    // its SVGMatrix.
+                    var matrix = g.transform.baseVal.consolidate().matrix;
+                    // As per definition values e and f are the ones for the translation.
+                    return [matrix.e, matrix.f];
+                },
+                getParentTransform: function (elementObject) { //parameter is an element in an object - inputs or outputs array
+                    var transform = d3.select(elementObject["_groups"][0][0].parentNode).attr("transform");
+                    return transform;
+                },
+                getTranslateX: function (sourceContainer) {
+                    return Number(this.getTranslation(sourceContainer.attr("transform"))[0]);
+                },
+                getTranslateY: function (sourceContainer) {
+                    return Number(this.getTranslation(sourceContainer.attr("transform"))[1]);
+                },
+                getParentContainer: function (nodeElement) { //a recursive method to find g.container of an element
+                    if (nodeElement.classed("container")) {
+                        return nodeElement;
+                    } else {
+                        return this.getParentContainer(d3.select(nodeElement["_groups"][0][0].parentNode));
+                    }
+                },
+                detectDropNode: function (xx, yy, type, sourceContainer) { //detect if a drop is near opposite type of drag-head
+                    var flag = false, self = this;
+                    d3.select("#canvas").selectAll(".leaf-node").each(function () { //assuming every leaf node has an anchor
+                        if (!flag && d3.select(this).attr("type") !== type) {
+                            var anchor = d3.select(this).select(".drag-head");
+                            if (anchor !== null) {
+                                var x = Number(anchor.attr("cx")) + self.getTranslateX(self.getParentContainer(d3.select(this))) - self.getTranslateX(sourceContainer);
+                                var y = Number(anchor.attr("cy")) + self.getTranslateY(self.getParentContainer(d3.select(this))) - self.getTranslateY(sourceContainer);
+                                if (self.pointInRect([xx, yy], x - 10, x + 10, y - 10, y + 10)) {
+                                    flag = d3.select(this);
+                                }
+                            }
+                        }
+                    });
+                    return flag;
+                },
+                pointInRect: function (point, x1, x2, y1, y2) { //determines if the point(array of coord) is bouded by the rectangle
+
+                    if (point[0] > x1 && point[0] < x2) {
+                        //horizontally inside
+                        if (point[1] > y1 && point[1] < y2) {
+                            //vertically in
+                            return true;
+                        }
+                    }
+                    return false;
                 }
             });
             DataMapper.Models.Operator = Backbone.Model.extend({
@@ -381,31 +439,32 @@
                     height: 20,
                     width: 120
                 },
-                dragContainer: //function () {
-                        d3.drag()
-                        .on("start", function () {
-                            console.log("drag started");
-                        })
-                        .on("drag", function (d, i) {
+                dragContainer: function () {
+                    var self = this;
+                    return d3.drag()
+                            .on("start", function () {
+                            })
+                            .on("drag", function (d, i) {
 
-                            this.x = this.x || 0;
-                            this.y = this.y || 0;
-                            this.x += d3.event.dx;
-                            this.y += d3.event.dy;
-                            d3.select(this).attr("transform", "translate(" + this.x + "," + this.y + ")");
-//                            this.trial();
-                            updateConnections(d3.event.dx, d3.event.dy, d3.select(this));
+                                this.x = this.x || 0;
+                                this.y = this.y || 0;
+                                this.x += d3.event.dx;
+                                this.y += d3.event.dy;
+                                d3.select(this).attr("transform", "translate(" + this.x + "," + this.y + ")");
+                                self.updateConnections(d3.event.dx, d3.event.dy);
 //                            resizeCanvas(d3.select(this));
-                        })
-                        .on("end", function () {
-                            // resizeCanvas();
-                        }),
+                            })
+                            .on("end", function () {
+                                // resizeCanvas();
+                            });
+                },
                 drawContainer: function () {
                     var canvas = DataMapper.Canvas;
                     var parent = canvas.append("g").attr("class", "operator container")
                             .attr("x", this.get('x')).attr("y", this.get('y'))
                             .attr("id", this.get('id'))
                             .attr("transform", "translate(0,0)");
+                    this.set('parent', parent);
                     var inputCount = this.get('inputCount'),
                             outputCount = this.get('outputCount');
                     var max = d3.max([inputCount, outputCount]);
@@ -437,9 +496,6 @@
                             tempHeight = (max * this.get('height') / inputCount);
                         }
                         for (var i = 0; i < inputCount; i++) {
-                            //parent, text, x,y,type,category
-
-//                            var tempInput = inputs.append("g").attr("class", "node-element op-node leaf-node").attr("type", "output").attr("width", this.get('width')).attr("height", tempHeight);
                             var tempY = this.get('y') + i * tempHeight;
                             var node = new DataMapper.Models.Node({parent: inputs, text: "", x: this.get('x'), y: tempY, type: "output", category: "operator", height: tempHeight, width: this.get('width')});
                             node.drawNode();
@@ -453,17 +509,16 @@
                             tempHeight = (max * this.get('height') / outputCount);
                         }
                         for (var i = 0; i < outputCount; i++) {
-//                            var tempOutput = outputs.append("g").attr("class", "node-element op-node leaf-node").attr("type", "input").attr("width", this.get('width')).attr("height", tempHeight);
                             var tempY = this.get('y') + i * tempHeight;
                             var node = new DataMapper.Models.Node({parent: outputs, text: "", x: this.get('x'), y: tempY, type: "input", category: "operator", height: tempHeight, width: this.get('width')});
                             node.drawNode();
                         }
 
                     }
-                    parent.call(this.dragContainer);
-                    console.log(canvas);
+                    parent.call(this.dragContainer());
                 },
-                updateConnections: function (newX, newY, sourceContainer) {
+                updateConnections: function (newX, newY) {
+                    var sourceContainer = this.get('parent');
                     sourceContainer.selectAll(".drag-line")
                             .attr("x2", function () {
                                 return d3.select(this).attr("x2") - newX;
@@ -472,7 +527,6 @@
                                 return d3.select(this).attr("y2") - newY;
                             });
                     d3.select("#canvas").selectAll(".container").each(function () {
-
                         if (d3.select(this).attr("id") !== sourceContainer.attr("id")) {
                             var opposite = d3.select(this);
                             opposite.selectAll(".drag-line").each(function () {
@@ -503,8 +557,6 @@
                     this.readFile();
                 },
                 readFile: function () {
-                    console.log(this.get('startX'));
-//                    this.set("type","bbb");
                     var model = this;
                     // display text
                     if (this.get('file').name.endsWith(".json") || this.get('file').type === "application/json") {
@@ -522,12 +574,13 @@
                 },
                 parseFile: function (data) {
                     var title = data.title || "Root";
-                    var count = this.traverseJSONSchema(data, title, 0, 0, d3.select(this.get('tempParent')));
+                    var count = this.traverseJSONSchema(data, title, 0, 0, this.get('tempParent'));
                     this.set('elementCount', count);
                     this.updateContainerHeight();
+                    this.updateContainerWidth();
                 },
                 updateContainerHeight: function () {
-                    var outline = d3.select(this.get('parent')).select(".container-outline");
+                    var outline = this.get('parent').select(".container-outline");
                     var model = this;
                     outline.attr("height", function () {
                         var count = model.get('elementCount') || model.elementCount,
@@ -535,10 +588,35 @@
                         return (count) * height;
                     });
                 },
+                updateContainerWidth: function (t) {
+                    var maxLength = this.containerWidth || this.get('containerWidth');
+                    var overhead = this.get("startX");
+                    var parent = this.get('parent');
+                    parent.selectAll("text").each(function () {
+                        var x = Number(d3.select(this).attr("x"));
+                        var len = d3.select(this).node().getComputedTextLength();
+                        maxLength = d3.max([maxLength, x + len - overhead]);
+                    });
+                    parent.select(".container-outline").attr("width", maxLength);
+                    parent.select(".container-title-outline").attr("width", maxLength);
+                    if (this.get('type') === "input") {
+                        parent.selectAll(".drag-head").each(function () {
+                            var cx = maxLength + overhead, cy = d3.select(this).attr("cy");
+                            d3.select(this).attr("points", function () {
+                                var p0 = [Number(cx) - 5, Number(cy) - 5],
+                                        p1 = [Number(cx) + 5, Number(cy)],
+                                        p2 = [Number(cx) - 5, Number(cy) + 5];
+                                return p0[0] + "," + p0[1] + " " + p1[0] + "," + p1[1] + " " + p2[0] + "," + p2[1];
+                            })
+                                    .attr("cx", cx)
+                                    .attr("cy", cy);
+                        });
+                    }
+                },
                 traverseJSONSchema: function (root, rootName, level, rank, resultPane) {
                     var height = this.nodeHeight,
                             width = this.containerWidth,
-                            margin = width / 5,
+                            margin = width / 6,
                             x = this.get('startX'),
                             overhead = rank * margin,
                             y = this.get('startY') + level * height;
@@ -548,7 +626,6 @@
                             var nodeText = rootName + ":" + root.type;
                             var node = new DataMapper.Models.Node({parent: tempParent, text: nodeText, x: x, y: y, type: this.get('type'), category: "object", height: height, width: width});
                             node.drawContainerNode(overhead);
-                            this.updateMaxTextLength(nodeText);
                             rank++;
                             level++;
                         }
@@ -566,7 +643,6 @@
                             var nodeText = rootName + ":" + root.type + "[" + keys.type + "]";
                             var node = new DataMapper.Models.Node({parent: tempParent, text: nodeText, x: x, y: y, type: this.get('type'), category: "array", height: height, width: width});
                             node.drawContainerNode(overhead);
-                            this.updateMaxTextLength(nodeText);
                             rank++;
                             level++;
                         }
@@ -576,7 +652,6 @@
                         tempParent.classed("nested-group", false);
                         if (rootName !== "") {
                             var nodeText = rootName + ":" + root.type;
-                            this.updateMaxTextLength(nodeText);
                             var node = new DataMapper.Models.Node({parent: tempParent, text: nodeText, x: x, y: y, type: this.get('type'), category: root.type, height: height, width: width});
                             node.drawContainerNode(overhead);
                             rank++;
@@ -584,141 +659,14 @@
                         }
                     }
                     return level;
-                },
-                updateMaxTextLength: function (t) {
-//                    var m = t.node().getComputedTextLength();
-//                    if (this.get('maxLength') < m) {
-//                        this.set('maxLength', m)
-//                    }
                 }
+
             });
             new DataMapper.Views.CanvasView();
 
 
 
-            function updateConnections(newX, newY, sourceContainer) {
-                sourceContainer.selectAll(".drag-line")
-                        .attr("x2", function () {
-                            return d3.select(this).attr("x2") - newX;
-                        })
-                        .attr("y2", function () {
-                            return d3.select(this).attr("y2") - newY;
-                        });
-                d3.select("#canvas").selectAll(".container").each(function () {
 
-                    if (d3.select(this).attr("id") !== sourceContainer.attr("id")) {
-                        var opposite = d3.select(this);
-                        opposite.selectAll(".drag-line").each(function () {
-                            if (d3.select(this).attr("target-container") === sourceContainer.attr("id")) {
-                                d3.select(this).attr("x2", function () {
-                                    return Number(d3.select(this).attr("x2")) + Number(newX);
-                                })
-                                        .attr("y2", function () {
-                                            return Number(d3.select(this).attr("y2")) + Number(newY);
-                                        });
-                            }
-                        });
-                    }
-                });
-            }
-
-
-            function getTranslation(transform) {
-                // Create a dummy g for calculation purposes only. This will never
-                // be appended to the DOM and will be discarded once this function
-                // returns.
-                var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-                // Set the transform attribute to the provided string value.
-                g.setAttributeNS(null, "transform", transform);
-                // consolidate the SVGTransformList containing all transformations
-                // to a single SVGTransform of type SVG_TRANSFORM_MATRIX and get
-                // its SVGMatrix.
-                var matrix = g.transform.baseVal.consolidate().matrix;
-                // As per definition values e and f are the ones for the translation.
-                return [matrix.e, matrix.f];
-            }
-
-            function getParentTransform(elementObject) { //parameter is an element in an object - inputs or outputs array
-                var transform = d3.select(elementObject["_groups"][0][0].parentNode).attr("transform");
-                return transform;
-            }
-
-            function getTranslateX(inputContainer) {
-                return Number(getTranslation(inputContainer.attr("transform"))[0]);
-            }
-
-            function getTranslateY(inputContainer) {
-                return Number(getTranslation(inputContainer.attr("transform"))[1]);
-            }
-
-            function getParentContainer(nodeElement) { //a recursive method to find g.container of an element
-                if (nodeElement.classed("container")) {
-                    return nodeElement;
-                } else {
-                    return getParentContainer(d3.select(nodeElement["_groups"][0][0].parentNode));
-                }
-
-            }
-
-            function getDotposition(height, width, rank, margin, position) {
-                var tempWidth = width - (rank * margin) + width * 7 / 8;
-                var tempWidth2 = -rank * margin;
-                var coordinates = [0, 0];
-                coordinates[0] = (position === "RIGHT" ? tempWidth : tempWidth2);
-                coordinates[1] = height / 2;
-                return coordinates;
-            }
-
-
-       
-
-            function drawDragArrow(parent, cx, cy) {
-                var newArrow = parent.append("polygon").attr("class", "drag-head-2");
-                moveArrow(newArrow, cx, cy);
-                return newArrow;
-            }
-
-            function moveArrow(arrow, cx, cy) {
-                arrow.attr("points", function () {
-                    var p0 = [Number(cx) - 5, Number(cy) - 5],
-                            p1 = [Number(cx) + 5, Number(cy)],
-                            p2 = [Number(cx) - 5, Number(cy) + 5];
-                    return p0[0] + "," + p0[1] + " " + p1[0] + "," + p1[1] + " " + p2[0] + "," + p2[1];
-                })
-                        .attr("cx", cx)
-                        .attr("cy", cy);
-            }
-
-
-
-            function detectDropNode(xx, yy, type, sourceContainer) { //detect if a drop is near opposite type of drag-head
-                var flag = false;
-                d3.select("#canvas").selectAll(".leaf-node").each(function () { //assuming every leaf node has an anchor
-                    if (!flag && d3.select(this).attr("type") !== type) {
-                        var anchor = d3.select(this).select(".drag-head");
-                        if (anchor !== null) {
-                            var x = Number(anchor.attr("cx")) + getTranslateX(getParentContainer(d3.select(this))) - getTranslateX(sourceContainer);
-                            var y = Number(anchor.attr("cy")) + getTranslateY(getParentContainer(d3.select(this))) - getTranslateY(sourceContainer);
-                            if (pointInRect([xx, yy], x - 10, x + 10, y - 10, y + 10)) {
-                                flag = d3.select(this);
-                            }
-                        }
-                    }
-                });
-                return flag;
-            }
-
-            function pointInRect(point, x1, x2, y1, y2) { //determines if the point(array of coord) is bouded by the rectangle
-
-                if (point[0] > x1 && point[0] < x2) {
-                    //horizontally inside
-                    if (point[1] > y1 && point[1] < y2) {
-                        //vertically in
-                        return true;
-                    }
-                }
-                return false;
-            }
         </script>
 
 

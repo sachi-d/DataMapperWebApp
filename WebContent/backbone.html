@@ -152,42 +152,45 @@
 //            console.log(myObject);
 //            
 //            
-
+            
             var mode = Backbone.Model.extend({
-                dragContainer: //function(){
-                        d3.drag()
+                dragContainer: function(){
+                    var self = this; 
+                    return d3.drag()
                         .on("start", function ( ) {
                             console.log("dragStarted");
                             console.log(this);
                         })
                         .on("drag", function (d, i) {
-                            model.trial();
+                            self.trial();
                         })
                         .on("end", function () {
-                        }),
+                        })
+               },
                 trial: function () {
                     console.log("success!! ---------------------");
                     console.log(this);
                 },
-                func: function (selection,model) {
+                func: function (selection, model) {
                     selection.call(d3.drag)
-                       .on("start", function ( ) {
-                            console.log("dragStarted");
-                        })
-                        .on("drag", function (d, i) {
-                            model.trial();
-                        })
-                        .on("end", function () {
-                        });
+                            .on("start", function ( ) {
+                                console.log("dragStarted");
+                            })
+                            .on("drag", function (d, i) {
+                                model.trial();
+                            })
+                            .on("end", function () {
+                            });
                 },
                 initialize: function () {
-//                    var m = this.trial.call('m');
-                    d3.select("#dragme").call(this.func, this);
-                    this.func(d3.select("#dragme"),this);
+
+                    d3.select("#dragme").call(this.dragContainer());
+//                    d3.select("#dragme").call(this.func, this);
+//                    this.func(d3.select("#dragme"), this);
                 }
             });
 
-
+            
             new mode();
 
         </script>
