@@ -432,6 +432,7 @@
                 id: "id",
                 inputCount: 0,
                 outputCount: 0,
+                parent: d3.select("canvas"),
                 defaults: {
                     x: 400,
                     y: 40,
@@ -446,7 +447,7 @@
                             })
                             .on("drag", function (d, i) {
 
-                                this.x = this.x || 0;
+                                this.x = this.x || 0; 
                                 this.y = this.y || 0;
                                 this.x += d3.event.dx;
                                 this.y += d3.event.dy;
@@ -468,20 +469,20 @@
                     var inputCount = this.get('inputCount'),
                             outputCount = this.get('outputCount');
                     var max = d3.max([inputCount, outputCount]);
-                    var opTitleOutline = parent.append("rect")
+                    var opTitleOutline = parent.append("rect").attr("class", "container-title-outline")
                             .attr("width", 2 * this.get('width'))
                             .attr("height", 20) //height of the rect title=20
                             .attr("x", this.get('x'))
                             .attr("y", this.get('y'))
                             .attr("fill", "#C5E3FF")
                             .attr("stroke", "black");
-                    var opTitle = parent.append("text")
+                    var opTitle = parent.append("text").attr("class", "container-title")
                             .attr("font-weight", "bold")
                             .attr("x", this.get('x'))
                             .attr("y", this.get('y') + 15)
                             .text(this.get('title'));
                     this.set('y', this.get('y') + 20);
-                    var opContainerOutline = parent.append("rect")
+                    var opContainerOutline = parent.append("rect").attr("class", "container-outline")
                             .attr("width", 2 * this.get('width'))
                             .attr("height", max * this.get('height'))
                             .attr("x", this.get('x'))
@@ -543,7 +544,14 @@
                     });
                 },
                 resizeCanvas: function (x, y) {
-
+                    var tempY = Number(this.get('parent').select(".container-outline").attr("height")) + y,
+                            tempX = Number(this.get('parent').select(".container-outline").attr("width")) + x;
+                    if (d3.select("#canvas").attr("width") < tempX) {
+                        d3.select("#canvas").attr("width", tempX);
+                    }
+                    if (d3.select("#canvas").attr("height") < tempY) {
+                        d3.select("#canvas").attr("height", tempY);
+                    }
                 }
             });
             DataMapper.Models.TreeContainer = DataMapper.Models.Operator.extend({
@@ -552,7 +560,6 @@
                 nodeHeight: 20,
                 file: '',
                 type: "input",
-                parent: d3.select("#canvas"),
                 drawContainer: function () {
                     this.set('tempParent', this.get('parent'));
                     this.readFile();
@@ -662,6 +669,7 @@
                 }
 
             });
+
             new DataMapper.Views.CanvasView();
 
 
