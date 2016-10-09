@@ -214,9 +214,9 @@
                     DataMapper.Operators = new DataMapper.Collections.Operators(); //initialize a collection
                     new DataMapper.Views.LoadFileView();
                     new DataMapper.Views.OperatorPanelView();
-                    var inputModel = new DataMapper.Models.TreeContainer({type: "input"});
+                    var inputModel = new DataMapper.Models.TreeContainer({type: "input", x: 40});
                     DataMapper.InputView = new DataMapper.Views.TreeContainerView({el: "#input-container", model: inputModel});
-                    var outputModel = new DataMapper.Models.TreeContainer({type: "output"});
+                    var outputModel = new DataMapper.Models.TreeContainer({type: "output", x: 800});
                     DataMapper.OutputView = new DataMapper.Views.TreeContainerView({el: "#output-container", model: outputModel});
 //                    this.render();
                 }
@@ -446,9 +446,9 @@
                             .on("start", function () {
                             })
                             .on("drag", function (d, i) {
+                                this.x = this.x || self.get('x');
 
-                                this.x = this.x || 0; 
-                                this.y = this.y || 0;
+                                this.y = this.y || self.get('y');
                                 this.x += d3.event.dx;
                                 this.y += d3.event.dy;
                                 d3.select(this).attr("transform", "translate(" + this.x + "," + this.y + ")");
@@ -462,9 +462,8 @@
                 drawContainer: function () {
                     var canvas = DataMapper.Canvas;
                     var parent = canvas.append("g").attr("class", "operator container")
-                            .attr("x", this.get('x')).attr("y", this.get('y'))
                             .attr("id", this.get('id'))
-                            .attr("transform", "translate(0,0)");
+                            .attr("transform", "translate(" + this.get('x') + "," + this.get('y') + ")");
                     this.set('parent', parent);
                     var inputCount = this.get('inputCount'),
                             outputCount = this.get('outputCount');
@@ -472,37 +471,39 @@
                     var opTitleOutline = parent.append("rect").attr("class", "container-title-outline")
                             .attr("width", 2 * this.get('width'))
                             .attr("height", 20) //height of the rect title=20
-                            .attr("x", this.get('x'))
-                            .attr("y", this.get('y'))
+                            .attr("x", 0)
+                            .attr("y", 0)
                             .attr("fill", "#C5E3FF")
                             .attr("stroke", "black");
                     var opTitle = parent.append("text").attr("class", "container-title")
                             .attr("font-weight", "bold")
-                            .attr("x", this.get('x'))
-                            .attr("y", this.get('y') + 15)
+                            .attr("x", 0)
+                            .attr("y", 15)
                             .text(this.get('title'));
-                    this.set('y', this.get('y') + 20);
+
                     var opContainerOutline = parent.append("rect").attr("class", "container-outline")
                             .attr("width", 2 * this.get('width'))
                             .attr("height", max * this.get('height'))
-                            .attr("x", this.get('x'))
-                            .attr("y", this.get('y'))
+                            .attr("x", 0)
+                            .attr("y", 20)
                             .attr("fill", "none")
                             .attr("stroke", "black");
                     var inputs = parent.append("g").attr("class", "op-inputs");
                     var outputs = parent.append("g").attr("class", "op-outputs");
+                    var x = 0,
+                            y = Number(opTitleOutline.attr("height"));
                     if (inputCount !== 0) {
                         var tempHeight = this.get('height');
                         if (max !== inputCount) {
                             tempHeight = (max * this.get('height') / inputCount);
                         }
                         for (var i = 0; i < inputCount; i++) {
-                            var tempY = this.get('y') + i * tempHeight;
-                            var node = new DataMapper.Models.Node({parent: inputs, text: "", x: this.get('x'), y: tempY, type: "output", category: "operator", height: tempHeight, width: this.get('width')});
+                            var tempY = y + i * tempHeight;
+                            var node = new DataMapper.Models.Node({parent: inputs, text: "", x: x, y: tempY, type: "output", category: "operator", height: tempHeight, width: this.get('width')});
                             node.drawNode();
                         }
 
-                        this.set('x', this.get('width') + this.get('x'));
+                        x += this.get('width');
                     }
                     if (outputCount !== 0) {
                         var tempHeight = this.get('height');
@@ -510,8 +511,8 @@
                             tempHeight = (max * this.get('height') / outputCount);
                         }
                         for (var i = 0; i < outputCount; i++) {
-                            var tempY = this.get('y') + i * tempHeight;
-                            var node = new DataMapper.Models.Node({parent: outputs, text: "", x: this.get('x'), y: tempY, type: "input", category: "operator", height: tempHeight, width: this.get('width')});
+                            var tempY = y + i * tempHeight;
+                            var node = new DataMapper.Models.Node({parent: outputs, text: "", x: x, y: tempY, type: "input", category: "operator", height: tempHeight, width: this.get('width')});
                             node.drawNode();
                         }
 
@@ -556,6 +557,8 @@
             });
             DataMapper.Models.TreeContainer = DataMapper.Models.Operator.extend({
                 elementCount: 7,
+                x: 0,
+                y: 40,
                 containerWidth: 300,
                 nodeHeight: 20,
                 file: '',
@@ -669,6 +672,7 @@
                 }
 
             });
+
 
             new DataMapper.Views.CanvasView();
 
