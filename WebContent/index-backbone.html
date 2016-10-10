@@ -76,13 +76,13 @@
             </svg>
 
         </div>
-        <button onclick="show()">show</button>
+        <!--<button onclick="showMappings()">showMappings</button>-->
 
 
         <script>
-            function show() {
+            function showMappings() {
                 for (var i = 0; i < DataMapper.Mappings.length; i++) {
-                    console.log("mapping " + i + 1);
+                    console.log("mapping " + i);
                     console.log(DataMapper.Mappings[i]);
                 }
             }
@@ -97,6 +97,10 @@
                 Views: {},
                 Templates: {}
             };
+
+
+
+
             DataMapper.Models.Mapping = Backbone.Model.extend({
                 sourceContainer: d3.select("#canvas"), //container
                 sourceNode: null, //node (g)
@@ -105,7 +109,9 @@
                 status: 1,
                 initialize: function () {
                     var map = this.getMapping();
-                    DataMapper.Mappings.push({source: map[0], target: map[1], status: 1});
+                    var mapObj = {source: map[0], target: map[1], status: 1};
+                    DataMapper.Mappings.push(mapObj);
+                    console.log(mapObj);
                 },
                 getMapping: function () {
                     console.log();
