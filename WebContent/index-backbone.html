@@ -109,7 +109,7 @@
                 targetNode: null,
                 status: 1,
                 initialize: function () {
-                    this.getMapping(); 
+                    this.getMapping();
                     DataMapper.Mappings.push(this);
                     console.log(this);
                 },
@@ -293,9 +293,6 @@
                     } else if (this.get('type') === "output") {
                         this.set('dotPosition', [this.get('x'), this.get('y') + this.get('height') / 2]);
                     }
-//                    if(this.get("category")==="object" || this.get("category")==="array"){
-//                        this.set("dotPosition",[]);
-//                    }
                 },
                 drawNode: function () {
                     //  function drawNode(container, parent, text, x, y, dotPosition, type) {
@@ -318,13 +315,11 @@
                         parent1.attr("type", this.get('type'));
                         var anchor = new DataMapper.Models.Anchor({parent: parent1, cx: this.get('dotPosition')[0], cy: this.get('dotPosition')[1], type: this.get('type')});
                         new DataMapper.Views.AnchorView({model: anchor});
-                    } else {
-                        parent1.classed("parent-node", true);
                     }
 
                     return parent1;
                 },
-                drawContainerNode: function (overhead) {
+                drawContainerNode: function (overhead, isLeaf) {
                     var obj = this.drawNode();
                     obj.select("text").attr("x", this.get("x") + 12 + overhead);
                     var model = this;
@@ -341,6 +336,11 @@
                                 }
                                 return "assets/images/leaf-icon.png";
                             });
+                    if (!isLeaf) {
+                        obj.classed("parent-node", true);
+                        obj.classed("leanf-node", false);
+                        obj.select(".drag-head").remove();
+                    }
                 },
                 drawOutline: function () {
                     this.get('node').append("rect")
@@ -699,7 +699,7 @@
                         if (rootName !== "") {
                             var nodeText = rootName + ":" + root.type;
                             var node = new DataMapper.Models.Node({parent: tempParent, text: nodeText, x: x, y: y, type: this.get('type'), category: "object", height: height, width: width});
-                            node.drawContainerNode(overhead);
+                            node.drawContainerNode(overhead, false);
                             rank++;
                             level++;
                         }
@@ -708,7 +708,7 @@
                         for (var i = 0; i < Object.keys(keys).length; i++) {   //traverse through each PROPERTY of the object
                             var keyName = Object.keys(keys)[i];
                             var key = keys[keyName];
-                            level = this.traverseJSONSchema(key, keyName, level, rank, tempParent);
+                            level = this.traverseJSONSchema(key, keyName, level, rank, nestedParent);
                         }
 
                     } else if (root.type === "array") {
@@ -716,18 +716,20 @@
                         if (rootName !== "") {
                             var nodeText = rootName + ":" + root.type + "[" + keys.type + "]";
                             var node = new DataMapper.Models.Node({parent: tempParent, text: nodeText, x: x, y: y, type: this.get('type'), category: "array", height: height, width: width});
-                            node.drawContainerNode(overhead);
+                            node.drawContainerNode(overhead, !keys.hasOwnProperty("properties"));
                             rank++;
                             level++;
                         }
-
-                        level = this.traverseJSONSchema(keys, "", level, rank, tempParent); //recurse through the items of array
+                        if (keys.hasOwnProperty("properties")) {
+                            level = this.traverseJSONSchema(keys, "", level, rank, tempParent); //recurse through the items of array
+                        }
                     } else if (["string", "integer", "number", "boolean"].indexOf(root.type) > -1) {    //when the type is a primitive
-                        tempParent.classed("nested-group", false);
+//                        resultPane.classed("nested-group", false);
+                        tempParent.remove();
                         if (rootName !== "") {
                             var nodeText = rootName + ":" + root.type;
-                            var node = new DataMapper.Models.Node({parent: tempParent, text: nodeText, x: x, y: y, type: this.get('type'), category: root.type, height: height, width: width});
-                            node.drawContainerNode(overhead);
+                            var node = new DataMapper.Models.Node({parent: resultPane, text: nodeText, x: x, y: y, type: this.get('type'), category: "leaf", height: height, width: width});
+                            node.drawContainerNode(overhead, true);
                             rank++;
                             level++;
                         }
