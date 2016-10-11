@@ -38,6 +38,10 @@
     <body>
 
 
+        <div id="example">
+
+        </div>
+
         <div id="file-load">
             <div class="file-load-container" id="input-file-load-container">
                 <button id="load-input-btn">Load input</button>
@@ -99,6 +103,10 @@
         <div id="tree1"></div>
 
         <script>
+            d3.select("#example").classed("newClass", true);
+            console.log(d3.select("#example").classed("nedwClass"));
+            d3.select("#example").classed("newClass", !d3.select("#example").classed("newClass"));
+            d3.select("#example").classed("newClass", !d3.select("#example").classed("newClass"));
 
             var DataMapper = {
                 Models: {},
@@ -152,21 +160,21 @@
 //            console.log(myObject);
 //            
 //            
-            
+
             var mode = Backbone.Model.extend({
-                dragContainer: function(){
-                    var self = this; 
+                dragContainer: function () {
+                    var self = this;
                     return d3.drag()
-                        .on("start", function ( ) {
-                            console.log("dragStarted");
-                            console.log(this);
-                        })
-                        .on("drag", function (d, i) {
-                            self.trial();
-                        })
-                        .on("end", function () {
-                        })
-               },
+                            .on("start", function ( ) {
+                                console.log("dragStarted");
+                                console.log(this);
+                            })
+                            .on("drag", function (d, i) {
+                                self.trial();
+                            })
+                            .on("end", function () {
+                            });
+                },
                 trial: function () {
                     console.log("success!! ---------------------");
                     console.log(this);
@@ -190,7 +198,7 @@
                 }
             });
 
-            
+
             new mode();
 
         </script>

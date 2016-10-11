@@ -92,6 +92,7 @@
                 InputView: {},
                 OutputView: {},
                 Mappings: [],
+                //for namespace purposes------
                 Models: {},
                 Collections: {},
                 Views: {},
@@ -114,7 +115,6 @@
                     console.log(mapObj);
                 },
                 getMapping: function () {
-                    console.log();
                     var head = "path", tail = "path";
                     if (this.get('sourceContainer').classed('operator')) {
                         head = this.get('sourceContainer').attr("id"); //+ " - " + this.get('sourceNode').attr("type");
@@ -173,6 +173,8 @@
                 fileChange: function (e) {
                     e.stopPropagation();
                     e.preventDefault();
+                    console.log(e);
+                    e.dataTransfer = e.originalEvent.dataTransfer;
                     var files = e.target.files || e.dataTransfer.files;
                     if (d3.select(e.target).classed("input")) { //if the target is input
                         this.clearInput();
@@ -247,8 +249,10 @@
                 addConcatOp: function () {
                     var concatModel = new DataMapper.Models.Operator({title: "Concat", id: "concat" + new Date().getTime(), inputCount: 2, outputCount: 1});
                     var concatView = new DataMapper.Views.OperatorView({model: concatModel});
-                    //console.log(concatModel);
-                    DataMapper.Operators.push(concatView);
+                    this.addOperatorToArray(concatView);
+                },
+                addOperatorToArray: function (view) {
+                    DataMapper.Operators.push(view);
                 }
             });
             DataMapper.Views.CanvasView = Backbone.View.extend({
