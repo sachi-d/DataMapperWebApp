@@ -94,3 +94,7 @@
     /*padding: 10px;*/
     text-align: left;
 }
+.op-node-text{
+    color: yellow;
+    font-size:12px;
+}

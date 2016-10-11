@@ -114,10 +114,13 @@
                     console.log(this);
                 },
                 getMapping: function () {
+                    var a=0,b=0;
                     var head = "path", tail = "path";
                     if (this.get('sourceContainer').classed('operator')) {
                         head = this.get('sourceContainer').attr("id"); //+ " - " + this.get('sourceNode').attr("type");
+                        a=1;
                     } else {
+                        a=0;
                         var container = DataMapper.OutputView;
                         if (this.get("sourceNode").attr("type") === "input") {
                             container = DataMapper.InputView;
@@ -127,7 +130,9 @@
 
                     if (this.get('targetContainer').classed('operator')) {
                         tail = this.get('targetContainer').attr("id"); //+ " - " + this.get('targetNode').attr("type");
+                        b=1;
                     } else {
+                        b=0;
                         var container = DataMapper.OutputView;
                         if (this.get("targetNode").attr("type") === "input") {
                             container = DataMapper.InputView;
@@ -138,6 +143,17 @@
                     this.set("line", line);
                     this.set("sourcePath", head);
                     this.set("targetPath", tail);
+
+                    //set text to the operator container
+                    var opCon,text;
+                    if(a>b){
+                        opCon=this.get("sourceNode");
+                        text=tail;
+                    }if(a<b){
+                        opCon=this.get("targetNode");
+                        text=head;
+                    }
+                    opCon.select("text").text(text).classed("op-node-text",true);//.classed("op-node-text",true).attr("x",opCon.attr("x")).attr("y",15+Number(opCon.attr("y")));
                 },
                 removeMapping: function () { //TODO
                     this.get("line").remove();
@@ -300,6 +316,8 @@
                     var height = this.get('height'),
                             width = this.get('width');
                     var parent1 = this.get('parent').append("g").attr("class", "node-element")
+                            .attr("x",this.get("x"))
+                            .attr("y",this.get("y"))
                             .attr("height", height)
                             .attr("width", width);
                     this.set('node', parent1);
@@ -338,7 +356,7 @@
                             });
                     if (!isLeaf) {
                         obj.classed("parent-node", true);
-                        obj.classed("leanf-node", false);
+                        obj.classed("leaf-node", false);
                         obj.select(".drag-head").remove();
                     }
                 },
