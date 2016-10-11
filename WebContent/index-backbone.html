@@ -76,13 +76,13 @@
             </svg>
 
         </div>
-        <!--<button onclick="showMappings()">showMappings</button>-->
+        <button onclick="showMappings()">showMappings</button>
 
 
         <script>
             function showMappings() {
+                console.log("List of all mappings");
                 for (var i = 0; i < DataMapper.Mappings.length; i++) {
-                    console.log("mapping " + i);
                     console.log(DataMapper.Mappings[i]);
                 }
             }
@@ -109,10 +109,9 @@
                 targetNode: null,
                 status: 1,
                 initialize: function () {
-                    var map = this.getMapping();
-                    var mapObj = {source: map[0], target: map[1], status: 1};
-                    DataMapper.Mappings.push(mapObj);
-                    console.log(mapObj);
+                    this.getMapping(); 
+                    DataMapper.Mappings.push(this);
+                    console.log(this);
                 },
                 getMapping: function () {
                     var head = "path", tail = "path";
@@ -135,10 +134,13 @@
                         }
                         tail = container.model.getPath(this.get("targetNode").select("text").text());
                     }
-                    return [head, tail];
+                    var line = this.get("sourceContainer").select("line");
+                    this.set("line", line);
+                    this.set("sourcePath", head);
+                    this.set("targetPath", tail);
                 },
                 removeMapping: function () { //TODO
-                    this.set("status", 0);
+                    this.get("line").remove();
                 }
             });
             DataMapper.Views.LoadFileView = Backbone.View.extend({
@@ -173,7 +175,6 @@
                 fileChange: function (e) {
                     e.stopPropagation();
                     e.preventDefault();
-                    console.log(e);
                     e.dataTransfer = e.originalEvent.dataTransfer;
                     var files = e.target.files || e.dataTransfer.files;
                     if (d3.select(e.target).classed("input")) { //if the target is input
