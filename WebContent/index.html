@@ -441,7 +441,8 @@
                     })
                     .on("end", function (d) {
                         var sourceContainer = self.getParentContainer(d3.select(this));
-                        target = self.detectDropNode(xx, yy, d3.select(this).attr("type"), sourceContainer);
+                        var sourceNode=d3.select(d3.select(this)["_groups"][0][0].parentNode);
+                        target = self.detectDropNode(xx, yy, sourceNode.attr("type"), sourceContainer);
                         if (target) {
                             //limit the connections to one - in output targets
                             if(target.attr("type")==="output"){
@@ -461,7 +462,7 @@
                             var map = new DataMapper.Models.Connector({
                                 sourceContainer: sourceContainer,
                                 targetContainer: oppositeContainer,
-                                sourceNode: d3.select(d3.select(this)["_groups"][0][0].parentNode),
+                                sourceNode: sourceNode,
                                 targetNode: target
                             });
                             var dotx = Number(target.select(".drag-head").attr("cx")) + self.getTranslateX(oppositeContainer) - self.getTranslateX(sourceContainer);
@@ -538,6 +539,7 @@
             var flag = false, self = this;
             d3.select("#canvas").selectAll(".leaf-node").each(function () { //assuming every leaf node has an anchor
                 if (!flag && d3.select(this).attr("type") !== type) {
+                    console.log(type +"-"+d3.select(this).attr("type"));
                     var anchor = d3.select(this).select(".drag-head");
                     if (anchor !== null) {
                         var x = Number(anchor.attr("cx")) + self.getTranslateX(self.getParentContainer(d3.select(this))) - self.getTranslateX(sourceContainer);
