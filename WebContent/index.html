@@ -106,7 +106,7 @@
             };
 
             function showMappings() {
-                 console.log(DataMapper.Connectors.getMappings()); 
+                console.log(DataMapper.Connectors.getMappings());
             }
 
             //views
@@ -223,7 +223,7 @@
                     });
                     var concatView = new DataMapper.Views.OperatorView({model: concatModel});
                     DataMapper.Operators.add(concatModel);
-                } 
+                }
             });
             DataMapper.Views.CanvasView = Backbone.View.extend({
                 el: "#canvas",
@@ -261,6 +261,7 @@
                 val: 5,
                 initialize: function () {
                     this.getConnectorValues();
+//                    console.log(this.get('val'));
                     DataMapper.Connectors.add(this);
                 },
                 getConnectorValues: function () {
@@ -436,8 +437,8 @@
                                     //limit the connections to one - in output targets
                                     if (target.attr("type") === "output") {
                                         //loop through connectors to find targetNode=target and remove line
-                                        var duplicate=DataMapper.Connectors.findFromTarget(target) || null; 
-                                        if(duplicate!==null){
+                                        var duplicate = DataMapper.Connectors.findFromTarget(target) || null;
+                                        if (duplicate !== null) {
                                             duplicate.get('line').remove();
                                             DataMapper.Connectors.remove(duplicate);
                                         }
@@ -560,8 +561,8 @@
                 id: "id",
                 inputCount: 0,
                 outputCount: 0,
-                inputs:[],
-                outputs:[],
+                inputs: [],
+                outputs: [],
                 parent: d3.select("canvas"),
                 defaults: {
                     x: 400,
@@ -589,8 +590,8 @@
                             });
                 },
                 drawContainer: function () {
-                    this.set('inputs',[]);
-                    this.set('outputs',[]);
+                    this.set('inputs', []);
+                    this.set('outputs', []);
                     var canvas = DataMapper.Canvas;
                     var parent = canvas.append("g").attr("class", "operator container")
                             .attr("id", this.get('id'))
@@ -639,8 +640,8 @@
                                 height: tempHeight,
                                 width: this.get('width')
                             });
-                            var obj=node.drawNode();
-                            obj.attr("rank",i);
+                            var obj = node.drawNode();
+                            obj.attr("rank", i);
                             this.get('inputs').push(obj);
                         }
 
@@ -663,8 +664,8 @@
                                 height: tempHeight,
                                 width: this.get('width')
                             });
-                            var obj=node.drawNode();
-                            obj.attr("rank",i);
+                            var obj = node.drawNode();
+                            obj.attr("rank", i);
                             this.get('outputs').push(obj);
                         }
 
@@ -880,14 +881,14 @@
 
 
             });
-            
+
             //collections
-            DataMapper.Collections.Operators=Backbone.Collection.extend({
-                model:DataMapper.Models.Operator,
-                url:"/operators",
-                findOperator:function(id){
-                    return this.find(function(item){
-                        return item.get("id")===id;
+            DataMapper.Collections.Operators = Backbone.Collection.extend({
+                model: DataMapper.Models.Operator,
+                url: "/operators",
+                findOperator: function (id) {
+                    return this.find(function (item) {
+                        return item.get("id") === id;
                     });
                 }
             });
@@ -898,51 +899,56 @@
                     return   this.filter(d => d.get('val') === 1);
                 },
                 filterInToOut: function () {
-                    return   this.filter(d => d.get('val') === 2);
+                    return   this.filter(d => d.get('val') === 3);
                 },
                 filterInToOp: function () {
                     return   this.filter(d => d.get('val') === 0);
                 },
                 filterOpToOp: function () {
-                    return   this.filter(d => d.get('val') === 3);
+                    return   this.filter(d => d.get('val') === 2);
                 },
-                filterToOp:function(id){
-                    var array=this.filter(d => d.get('targetContainer').attr("id") === id);//loop
+                filterToOp: function (id) {
+                    var array = this.filter(d => d.get('targetContainer').attr("id") === id);//loop
                     return   array;
                 },
-                findFromTarget:function(targetNode){
-                   return this.find(function(item){
+                findFromTarget: function (targetNode) {
+                    return this.find(function (item) {
                         return item.get("targetNode").node().isSameNode(targetNode.node());
                     });
                 },
                 getMappings: function () {
-                    var collection=this;
+                    var collection = this;
                     var mappings = [];
                     this.filterInToOut().map(function (connector) {
                         collection.pushMapping(mappings, [connector.get("sourcePath")], null, connector.get("targetPath"));
-                        console.log("in to out");
+//                        console.log("in to out");
                     });
                     this.filterOpToOut().map(function (connector) {
-                        var inputs=[];
-                        var operatorContainer=connector.get('sourceContainer');
-                       var operator = DataMapper.Operators.findOperator(operatorContainer.attr("id")) ;
-                       operator.get('inputs').map(function(node){
-                           console.log(node);
-                           inputs.push(collection.findFromTarget(node));
-                       });
-                       collection.pushMapping(mappings, inputs, operator, connector.get("targetPath"));
-                       console.log("op to out");
+                        var inputs = [];
+                        var operatorContainer = connector.get('sourceContainer');
+                        var operator = DataMapper.Operators.findOperator(operatorContainer.attr("id"));
+                        operator.get('inputs').map(function (node) {
+                            var conn = collection.findFromTarget(node) || null;
+                            if (conn !== null) {
+                                inputs.push(conn.get('sourcePath'));
+                            }
+//                           console.log("op to out inputs");
+                        });
+                        collection.pushMapping(mappings, inputs, operator, connector.get("targetPath"));
+//                       console.log("op to out");
                     });
                     this.filterOpToOp().map(function (connector) {
-                        var inputs=[];
-                        var operatorContainer=connector.get('sourceContainer');
-                       var operator = DataMapper.Operators.findOperator(operatorContainer.attr("id"));
-                       operator.get('inputs').map(function(node){
-                           console.log(node);
-                           inputs.push(collection.findFromTarget(node));
-                       });
-                       collection.pushMapping(mappings, inputs, operator, connector.get("targetPath"));
-                       console.log("op to op");
+                        var inputs = [];
+                        var operatorContainer = connector.get('sourceContainer');
+                        var operator = DataMapper.Operators.findOperator(operatorContainer.attr("id"));
+                        operator.get('inputs').map(function (node) {
+                            var conn=collection.findFromTarget(node) || null;
+                            if(conn!==null){
+                                inputs.push(conn.get('sourcePath') );
+                            }
+                        });
+                        collection.pushMapping(mappings, inputs, operator, connector.get("targetPath"));
+//                       console.log("op to op");
                     });
                     return mappings;
                 },
