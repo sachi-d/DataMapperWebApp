@@ -106,7 +106,10 @@
             };
 
             function showMappings() {
-                console.log(DataMapper.Connectors.getMappings());
+                var a = d3.select("#canvas").append("g").attr("x", 10).attr("y", 10).classed("rr", true);
+                var b = d3.select("#canvas").append("g").attr("x", 20).attr("y", 20).classed("rr", true);
+                console.log(a.node().isSameNode(b.node()));
+//                console.log(DataMapper.Connectors.getMappings());
             }
 
             //views
@@ -294,8 +297,6 @@
                         tail = this.get('targetContainer').attr("id");
                         val = 2;
                     }
-                    var line = this.get("sourceContainer").select("line");
-                    this.set("line", line);
                     this.set("sourcePath", head);
                     this.set("targetPath", tail);
                     //set text to the operator container
@@ -304,7 +305,7 @@
                     }
                     this.set('val', val);
                 },
-                removeMapping: function () { //TODO
+                removeMapping: function () {
                     this.get("line").remove();
                 }
             });
@@ -436,21 +437,12 @@
                                 if (target) {
                                     //limit the connections to one - in output targets
                                     if (target.attr("type") === "output") {
-                                        console.log(target);
                                         //loop through connectors to find targetNode=target and remove line
                                         var duplicate = DataMapper.Connectors.findFromTarget(target) || null;
                                         if (duplicate !== null) {
                                             duplicate.get('line').remove();
                                             DataMapper.Connectors.remove(duplicate);
                                         }
-//                                        for (var i = 0; i < DataMapper.Connectors.length; i++) {
-//                                            if (DataMapper.Connectors[i].get('targetNode').node().isSameNode(target.node())) {
-//                                                console.log("1");
-//                                                console.log("Duplicat target detected - removing earlier version");
-//                                                //                                        console.log()
-//                                                DataMapper.Connectors[i].get('line').remove();
-//                                            }
-//                                        } 
                                     }
                                     var oppositeContainer = self.getParentContainer(target);
                                     var dotx = Number(target.select(".drag-head").attr("cx")) + self.getTranslateX(oppositeContainer) - self.getTranslateX(sourceContainer);
@@ -464,7 +456,8 @@
                                         sourceContainer: sourceContainer,
                                         targetContainer: oppositeContainer,
                                         sourceNode: sourceNode,
-                                        targetNode: target
+                                        targetNode: target,
+                                        line: dragLine
                                     });
                                 } else {
                                     //d3.select("#inputnode").text("");
@@ -947,9 +940,9 @@
                         var operatorContainer = connector.get('sourceContainer');
                         var operator = DataMapper.Operators.findOperator(operatorContainer.attr("id"));
                         operator.get('inputs').map(function (node) {
-                            var conn=collection.findFromTarget(node) || null;
-                            if(conn!==null){
-                                inputs.push(conn.get('sourcePath') );
+                            var conn = collection.findFromTarget(node) || null;
+                            if (conn !== null) {
+                                inputs.push(conn.get('sourcePath'));
                             }
                         });
                         collection.pushMapping(mappings, inputs, operator, connector.get("targetPath"));
