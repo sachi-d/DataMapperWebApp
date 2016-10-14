@@ -436,6 +436,7 @@
                                 if (target) {
                                     //limit the connections to one - in output targets
                                     if (target.attr("type") === "output") {
+                                        console.log(target);
                                         //loop through connectors to find targetNode=target and remove line
                                         var duplicate = DataMapper.Connectors.findFromTarget(target) || null;
                                         if (duplicate !== null) {
@@ -913,7 +914,11 @@
                 },
                 findFromTarget: function (targetNode) {
                     return this.find(function (item) {
-                        return item.get("targetNode").node().isSameNode(targetNode.node());
+//                        console.log("item and targetNode");
+//                        console.log(item);
+//                        console.log(item.get("targetNode"));
+//                        console.log(targetNode);
+                        return item.get("targetNode").node().isSameNode(targetNode.node()); //BUG returns true even if not
                     });
                 },
                 getMappings: function () {
