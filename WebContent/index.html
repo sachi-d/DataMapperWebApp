@@ -110,20 +110,23 @@
                 [DataMapper.InputView.model,DataMapper.OutputView.model].map(function(model){
                             model.get('nodeCollection').models.map(function (node){
                     variableList.push({text:model.getPath(node.get('text')),type: node.get('textType')});
-                    nodeList.push(node);
                     node.set('id',count);
+                    nodeList.push(node);
                     count++;
                             });
                 });
                 DataMapper.Operators.models.map(function (model){
                             model.get('nodeCollection').models.map(function (node){
                         variableList.push({text:node.get('text'),type: node.get('textType')});
-                        nodeList.push(node);
                         node.set('id',count);
                         count++;
+                        nodeList.push(node);
                         });
             });
-                console.log(variableList.length);
+            
+            var m=DataMapper.Connectors.findFromSource(nodeList[1].get('node'));
+            
+                console.log(m);
 //                console.log(DataMapper.Connectors.getMappings());
             }
 
@@ -941,12 +944,12 @@
                 },
                 findFromTarget: function (targetNode) {
                     return this.find(function (item) { 
-                        return item.get("targetNode").node().isSameNode(targetNode.node()); //BUG returns true even if not
+                        return item.get("targetNode").node().isSameNode(targetNode.node()); 
                     });
                 },
-                findFromSource: function (sourceNode) {
+                findFromSource: function (sourceNode) { //TODO should return an array
                     return this.find(function (item) { 
-                        return item.get("sourceNode").node().isSameNode(sourceNode.node()); //BUG returns true even if not
+                        return item.get("sourceNode").node().isSameNode(sourceNode.node()); 
                     });
                 },
                 getMappings: function () {
