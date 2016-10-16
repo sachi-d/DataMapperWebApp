@@ -106,27 +106,56 @@
             };
 
             function showMappings() {
-                var variableList=[],count=0,nodeList=[];
-                [DataMapper.InputView.model,DataMapper.OutputView.model].map(function(model){
-                            model.get('nodeCollection').models.map(function (node){
-                    variableList.push({text:model.getPath(node.get('text')),type: node.get('textType')});
-                    node.set('id',count);
-                    nodeList.push(node);
-                    count++;
-                            });
-                });
-                DataMapper.Operators.models.map(function (model){
-                            model.get('nodeCollection').models.map(function (node){
-                        variableList.push({text:node.get('text'),type: node.get('textType')});
-                        node.set('id',count);
+                var variableList = [], count = 0,
+                        nodeList = new DataMapper.Collections.NodeList(),
+                        inputAdjList = [],
+                        outputAdjList = [];
+                [DataMapper.InputView.model, DataMapper.OutputView.model].map(function (model) {
+                    model.get('nodeCollection').models.map(function (node) {
+                        variableList.push({id: count, text: model.getPath(node.get('text')), type: node.get('textType')});
+                        node.set('id', count);
+                        nodeList.add(node);
                         count++;
-                        nodeList.push(node);
-                        });
-            });
-            
-            var m=DataMapper.Connectors.findFromSource(nodeList[1].get('node'));
-            
-                console.log(m);
+                    });
+                });
+                DataMapper.Operators.models.map(function (model) {
+                    model.get('nodeCollection').models.map(function (node) {
+                        variableList.push({id: count, text: node.get('text'), type: node.get('textType')});
+                        node.set('id', count);
+                        count++;
+                        nodeList.add(node);
+                    });
+                });
+                DataMapper.Operators.models.map(function (model) {
+                    var inputs = [], outputs = [];
+                    model.get('nodeCollection').models.map(function (node) {
+                        var type = node.get('type'); console.log("type = "+type);
+                        if (type === "output") {
+                            var connector = DataMapper.Connectors.findFromTarget(node.get('node')) || null;
+                            if (connector !== null) {
+                                var opposite = connector.get('sourceNode'); //d3 node object
+                                var oppositeNode = nodeList.getNodeFromDOMObject(opposite.node()); //backbone model
+                                inputs.push(oppositeNode.get('id'));
+                            }
+                        } else if (type === "input") {
+                            var connectors = DataMapper.Connectors.findFromSource(node.get('node'));
+                            var targets = [];
+                            if (connectors.length > 0) {
+                                connectors.map(function (connector) {
+                                    var opposite = connector.get('targetNode'); //d3 node object
+                                    var oppositeNode = nodeList.getNodeFromDOMObject(opposite.node()); //backbone model
+                                    targets.push(oppositeNode.get('id'));
+                                });
+                            }
+                            outputs.push(targets);
+                        }
+                    });
+                    inputAdjList.push({operator: model, inputs: inputs});
+                    outputAdjList.push({operator: model, outputs: outputs});
+                });
+
+                console.log(inputAdjList);
+                console.log(outputAdjList);
 //                console.log(DataMapper.Connectors.getMappings());
             }
 
@@ -241,8 +270,8 @@
                         id: "concat" + new Date().getTime(),
                         inputCount: 2,
                         outputCount: 2,
-                        inputType:"String",
-                        outputType:"String"
+                        inputType: "String",
+                        outputType: "String"
                     });
                     var concatView = new DataMapper.Views.OperatorView({model: concatModel});
                     DataMapper.Operators.add(concatModel);
@@ -260,7 +289,7 @@
                     new DataMapper.Views.LoadFileView();
                     new DataMapper.Views.OperatorPanelView();
                     DataMapper.Connectors = new DataMapper.Collections.Connectors();
-                    DataMapper.VariableList=new DataMapper.Collections.NodeList();
+                    DataMapper.VariableList = new DataMapper.Collections.NodeList();
                     DataMapper.Operators = new DataMapper.Collections.Operators();
                     var inputModel = new DataMapper.Models.TreeContainer({type: "input", x: 40});
                     DataMapper.InputView = new DataMapper.Views.TreeContainerView({el: "#input-container", model: inputModel});
@@ -283,10 +312,9 @@
                 line: null,
                 status: 1,
                 val: 5,
-               
                 initialize: function () {
                     this.setConnectorValues();
-                   DataMapper.Connectors.add(this);
+                    DataMapper.Connectors.add(this);
                 },
                 setConnectorValues: function () {
                     var opCon = null, text = null, val;
@@ -332,14 +360,14 @@
             });
             DataMapper.Models.Node = Backbone.Model.extend({//set parent, text, x,y, type,category
                 defaults: {
-                    arrayId:0,
+                    arrayId: 0,
                     parent: d3.select("#canvas"),
                     text: "",
                     x: 0,
                     y: 0,
                     width: 170,
                     height: 20,
-                    textType:"String",
+                    textType: "String",
                     type: "", //input or output or null
                     category: "leaf", //object, array or endType or operator,
                     dotPosition: [],
@@ -373,7 +401,7 @@
                     parent1.append("text").attr("class", "node-element-text")
                             .attr("x", this.get('x') + 12)
                             .attr("y", this.get('y') + (3 * height / 4))
-                            .text(this.get('text')+":"+this.get('textType'));
+                            .text(this.get('text') + ":" + this.get('textType'));
                     if (this.get('dotPosition').length === 2) {
                         parent1.classed("leaf-node", true);
                         parent1.attr("type", this.get('type'));
@@ -403,7 +431,7 @@
                                 } else if (model.get('category') === "array") {
                                     return "assets/images/array-icon.png";
                                 }
-                                 return "assets/images/leaf-icon.png";
+                                return "assets/images/leaf-icon.png";
                             });
                     if (!isLeaf) {
                         obj.classed("parent-node", true);
@@ -579,8 +607,8 @@
                 id: "id",
                 inputCount: 0,
                 outputCount: 0,
-                inputType:"String",
-                outputType:"String",
+                inputType: "String",
+                outputType: "String",
                 inputs: [],
                 outputs: [],
                 parent: d3.select("canvas"),
@@ -591,9 +619,9 @@
                     height: 20,
                     width: 120
                 },
-                nodeCollection:null,
-                initialize:function(){
-                    this.set('nodeCollection',new DataMapper.Collections.NodeList());
+                nodeCollection: null,
+                initialize: function () {
+                    this.set('nodeCollection', new DataMapper.Collections.NodeList());
                 },
                 dragContainer: function () {
                     var self = this;
@@ -657,7 +685,7 @@
                             var node = new DataMapper.Models.Node({
                                 parent: inputs,
                                 text: "",
-                                textType:this.get('inputType'),
+                                textType: this.get('inputType'),
                                 x: x,
                                 y: tempY,
                                 type: "output",
@@ -683,7 +711,7 @@
                             var node = new DataMapper.Models.Node({
                                 parent: outputs,
                                 text: "",
-                                textType:this.get('outputType'),
+                                textType: this.get('outputType'),
                                 x: x,
                                 y: tempY,
                                 type: "input",
@@ -747,7 +775,7 @@
                 drawContainer: function () {
                     this.set('tempParent', this.get('parent'));
                     this.readFile();
-                    
+
                 },
                 readFile: function () {
                     var model = this;
@@ -816,11 +844,11 @@
                     var tempParent = resultPane.append("g").attr("class", "nested-group");
                     if (root.type === "object") {
                         if (rootName !== "") {
-                            var nodeText = rootName ;
+                            var nodeText = rootName;
                             var node = new DataMapper.Models.Node({
                                 parent: tempParent,
                                 text: nodeText,
-                                textType:root.type,
+                                textType: root.type,
                                 x: x,
                                 y: y,
                                 type: this.get('type'),
@@ -844,11 +872,11 @@
                     } else if (root.type === "array") {
                         var keys = root.items; //select ITEMS
                         if (rootName !== "") {
-                            var nodeText = rootName ;
+                            var nodeText = rootName;
                             var node = new DataMapper.Models.Node({
                                 parent: tempParent,
                                 text: nodeText,
-                                textType:root.type + "[" + keys.type + "]",
+                                textType: root.type + "[" + keys.type + "]",
                                 x: x,
                                 y: y,
                                 type: this.get('type'),
@@ -868,11 +896,11 @@
                         //                        resultPane.classed("nested-group", false);
                         tempParent.remove();
                         if (rootName !== "") {
-                            var nodeText = rootName ;
+                            var nodeText = rootName;
                             var node = new DataMapper.Models.Node({
                                 parent: resultPane,
                                 text: nodeText,
-                                textType:root.type,
+                                textType: root.type,
                                 x: x,
                                 y: y,
                                 type: this.get('type'),
@@ -891,7 +919,7 @@
                 getPath: function (search) {
                     function iter(o, p) {
                         return Object.keys(o).some(function (k) {
-                            if (k === search && o[k] ) {
+                            if (k === search && o[k]) {
                                 path = p.concat(k).join('.');
                                 return true;
                             }
@@ -905,14 +933,14 @@
                         });
                     }
 
-                    var                             path;
+                    var path;
                     iter(this.get('data'), []);
                     return path;
                 }
 
 
             });
-            
+
             //collections
             DataMapper.Collections.Operators = Backbone.Collection.extend({
                 model: DataMapper.Models.Operator,
@@ -942,24 +970,28 @@
                     var array = this.filter(d => d.get('targetContainer').attr("id") === id);//loop
                     return   array;
                 },
-                findFromTarget: function (targetNode) {
-                    return this.find(function (item) { 
-                        return item.get("targetNode").node().isSameNode(targetNode.node()); 
+                findFromTarget: function (targetNode) { //know the target 
+                    return this.find(function (item) { //assuming target can have only one source 
+                        if (item.get("targetNode").node().isSameNode(targetNode.node()))
+                            return item;
                     });
                 },
-                findFromSource: function (sourceNode) { //TODO should return an array
-                    return this.find(function (item) { 
-                        return item.get("sourceNode").node().isSameNode(sourceNode.node()); 
+                findFromSource: function (sourceNode) { //know the source
+                    var array = this.filter(function (d) { //assuming a source can have multiple targets
+                        if (d.get('sourceNode').node().isSameNode(sourceNode.node())) {
+                            return d;
+                        }
                     });
+                    return array;
                 },
                 getMappings: function () {
                     var collection = this;
                     var mappings = [];
                     this.filterInToOut().map(function (connector) {
-                         collection.pushMapping(mappings, [connector.get("sourcePath")], null, connector.get("targetPath"));
-                     });
+                        collection.pushMapping(mappings, [connector.get("sourcePath")], null, connector.get("targetPath"));
+                    });
                     this.filterOpToOut().map(function (connector) {
-                        var inputs = [],outputs=[];
+                        var inputs = [], outputs = [];
                         var operatorContainer = connector.get('sourceContainer');
                         var operator = DataMapper.Operators.findOperator(operatorContainer.attr("id"));
                         operator.get('inputs').map(function (node) {
@@ -967,13 +999,13 @@
                             if (conn !== null) {
                                 inputs.push(conn.get('sourcePath'));
                             }
-                         });
-                         operator.get('outputs').map(function (node) {
+                        });
+                        operator.get('outputs').map(function (node) {
                             var conn = collection.findFromSource(node) || null; //more than one source CLONE
                             if (conn !== null) {
-                               outputs.push(conn.get('targetPath'));
+                                outputs.push(conn.get('targetPath'));
                             }
-                         });
+                        });
                         collection.pushMapping(mappings, inputs, operator, outputs);
 //                       console.log("op to out");
                     });
@@ -991,22 +1023,24 @@
 //                       console.log("op to op");
                     });
                     return mappings;
-                },                
+                },
                 pushMapping: function (array, inputArray, operator, output) {
                     array.push({inputs: inputArray, operator: operator, output: output});
                 }
-               
+
             });
-            DataMapper.Collections.NodeList=Backbone.Collection.extend({
-                model:DataMapper.Models.Node,
-                url:"/nodelist",
-                setVariableList:function(){
-                    
+            DataMapper.Collections.NodeList = Backbone.Collection.extend({
+                model: DataMapper.Models.Node,
+                url: "/nodelist",
+                getNodeFromDOMObject: function (object) {
+                    return this.find(function (node) {
+                        return node.get("node").node().isSameNode(object);
+                    });
                 }
             });
-            
+
             new DataMapper.Views.CanvasView();
- 
+
 
         </script>
 
