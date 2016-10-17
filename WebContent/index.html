@@ -47,6 +47,7 @@
 
         <div id="op-panel">
             <button id="concat-op-btn">Add concat operator <br> 2 to 1</button>
+            <button id="split-op-btn">Add split operator <br> 1 to 3</button>
         </div>
 
         <div id="canvas-container">
@@ -129,8 +130,8 @@
                 DataMapper.Operators.models.map(function (model) {
                     var inputs = [], outputs = [];
                     model.get('nodeCollection').models.map(function (node) {
-                        var type = node.get('type'); console.log("type = "+type);
-                        if (type === "output") {
+                        var type = node.get('type');
+                         if (type === "output") {
                             var connector = DataMapper.Connectors.findFromTarget(node.get('node')) || null;
                             if (connector !== null) {
                                 var opposite = connector.get('sourceNode'); //d3 node object
@@ -153,7 +154,8 @@
                     inputAdjList.push({operator: model, inputs: inputs});
                     outputAdjList.push({operator: model, outputs: outputs});
                 });
-
+                console.log(variableList);
+                console.log(DataMapper.Operators.models);
                 console.log(inputAdjList);
                 console.log(outputAdjList);
 //                console.log(DataMapper.Connectors.getMappings());
@@ -269,12 +271,24 @@
                         title: "Concat",
                         id: "concat" + new Date().getTime(),
                         inputCount: 2,
-                        outputCount: 2,
+                        outputCount: 1,
                         inputType: "String",
                         outputType: "String"
                     });
                     var concatView = new DataMapper.Views.OperatorView({model: concatModel});
                     DataMapper.Operators.add(concatModel);
+                },
+                addSplitOp:function(){
+                    var splitModel = new DataMapper.Models.Operator({
+                        title: "Split",
+                        id: "split" + new Date().getTime(),
+                        inputCount: 1,
+                        outputCount: 3,
+                        inputType: "String",
+                        outputType: "String"
+                    });
+                    var splitView = new DataMapper.Views.OperatorView({model: splitModel});
+                    DataMapper.Operators.add(splitModel);
                 }
             });
             DataMapper.Views.CanvasView = Backbone.View.extend({
