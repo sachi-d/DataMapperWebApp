@@ -55,7 +55,7 @@
             <g id="input-container" transform="translate(40,40)" class="tree-container container">
 
             <g id="input-container-fo" class="container-fo">
-            <rect class="container-title-outline" id="input-container-title-outline" height="20" fill="#77C1C0"
+            <rect class="container-title-outline" id="input-container-title-outline" height="20" fill="#D3DA7B"
                   stroke="black"></rect>
             <text class="container-title" id="input-container-title" font-weight="bold">Input</text>
             <rect class="container-outline" id="input-container-outline" height="10" fill="none"
@@ -64,9 +64,9 @@
             </g>
 
 
-            <g id="output-container" transform="translate(800,40)" class="tree-container container">
+            <g id="output-container" transform="translate(1300,40)" class="tree-container container">
             <g id="output-container-fo" class="container-fo">
-            <rect class="container-title-outline" id="output-container-title-outline" height="20" fill="#E59CA5"
+            <rect class="container-title-outline" id="output-container-title-outline" height="20" fill="#FCE0D3"
                   stroke="black"></rect>
             <text class="container-title" id="output-container-title" font-weight="bold">Output</text>
             <rect class="container-outline" id="output-container-outline" height="10" fill="none"
@@ -79,25 +79,15 @@
 
         </div>
         <button onclick="showMappings()">showMappings</button>
-        <!--<svg width="220" height="120" viewBox="0 0 220 120" id="package">-->
-        <!--<rect x="10" y="10" width="200" height="100" fill="none" stroke="black"/>-->
-        <!--&lt;!&ndash;<foreignObject x="15" y="15" width="190" height="90">&ndash;&gt;-->
-        <!--&lt;!&ndash;<div xmlns="http://www.w3.org/1999/xhtml" style="width:190px; height:90px; overflow-y:auto"><b>This</b> is the <i>text</i> I wish to fit inside <code>rect</code></div>&ndash;&gt;-->
-        <!--&lt;!&ndash;</foreignObject>&ndash;&gt;-->
-        <!--</svg>-->
 
         <script>
-            //    var group = d3.select("#package");
-            //    var fo = group.append("foreignObject").attr("x", 15).attr("y", 15).attr("width", 190).attr("height", 40);
-            //    fo.append("xhtml:div").attr("style","overflow-y:hidden").attr("xmlns", "http://www.w3.org/1999/xhtml").text("Thiggfis the dgdexsgsggs wish to fit insidegssgsgs");
 
-            //app object
             var DataMapper = {
                 Canvas: d3.select("#canvas"),
-//                Operators: [],
+                Operators: {},
                 InputView: {},
                 OutputView: {},
-//                Connectors: {}, //  4 possible maps are:input to op - 0,op to output - 1,op to op - 2,input to output - 3
+                Connectors: {}, //  4 possible maps are:input to op - 0,op to output - 1,op to op - 2,input to output - 3
                 Mappings: [],
                 //for namespace purposes------
                 Models: {},
@@ -154,9 +144,13 @@
                     inputAdjList.push({operator: model, inputs: inputs});
                     outputAdjList.push({operator: model, outputs: outputs});
                 });
+                console.log("variable list:");
                 console.log(variableList);
+                console.log("operators:");
                 console.log(DataMapper.Operators.models);
+                console.log("input adjacency list:");
                 console.log(inputAdjList);
+                console.log("output adjacency list:");
                 console.log(outputAdjList);
 //                console.log(DataMapper.Connectors.getMappings());
             }
@@ -270,7 +264,7 @@
                 addConcatOp: function () {
                     var concatModel = new DataMapper.Models.Operator({
                         title: "Concat",
-                        id: "concat" + new Date().getTime(),
+                        id: "concat" + DataMapper.Operators.length,
                         inputCount: 2,
                         outputCount: 1,
                         inputType: "String",
@@ -282,7 +276,7 @@
                 addSplitOp: function () {
                     var splitModel = new DataMapper.Models.Operator({
                         title: "Split",
-                        id: "split" + new Date().getTime(),
+                        id: "split" + DataMapper.Operators.length,
                         inputCount: 1,
                         outputCount: 3,
                         inputType: "String",
@@ -332,24 +326,19 @@
                     //if the line is direct
                     if (null !== this.get('line') && this.get('sourceContainer').classed("tree-container") && this.get('targetContainer').classed("tree-container")) {
                         this.addDirectOperator();
-                        console.log("added direct op");
                     }
                 },
                 addDirectOperator: function () {
 //                    var self = this;
-                    console.log("ini - add");
                     var operator = new DataMapper.Models.Operator({
                         title: "directOperator",
-                        id: "direct" + new Date().getTime(),
+                        id: "direct" + DataMapper.Operators.length,
                         inputCount: 1,
                         outputCount: 1
                     });
-                    console.log("new operator added"); //use clone!
                     var head = DataMapper.InputView.model.get('nodeCollection').getNodeFromDOMObject(this.get('sourceNode').node()).clone();
                     var tail = DataMapper.OutputView.model.get('nodeCollection').getNodeFromDOMObject(this.get('targetNode').node()).clone();
                     operator.get('nodeCollection').add([head, tail]);
-                    console.log("operators func");
-                      console.log("new connector introduced");
                     DataMapper.Operators.add(operator);
                 },
                 removeConnector: function () {
@@ -576,7 +565,7 @@
                 detectDropNode: function (xx, yy, type, sourceContainer) { //detect if a drop is near opposite type of drag-head
                     var flag = false, self = this;
                     d3.select("#canvas").selectAll(".leaf-node").each(function () { //assuming every leaf node has an anchor
-                        if (!flag && d3.select(this).attr("type") !== type) {
+                        if (!flag && d3.select(this).attr("type") === "output") {
                             var anchor = d3.select(this).select(".drag-head");
                             if (anchor !== null) {
                                 var x = Number(anchor.attr("cx")) + self.getTranslateX(self.getParentContainer(d3.select(this))) - self.getTranslateX(sourceContainer);
@@ -740,10 +729,13 @@
                             var opposite = d3.select(this);
                             opposite.selectAll(".drag-line").each(function () {
                                 if (d3.select(this).attr("target-container") === sourceContainer.attr("id")) {
-                                    d3.select(this).attr("x2", function () {
-                                        return Number(d3.select(this).attr("x2")) + Number(newX);
-                                    })
-                                            .attr("y2", function () {
+                                    d3.select(this)
+                                            .attr("x2", function () {
+                                                return Number(d3.select(this).attr("x2")) + Number(newX);
+                                            })
+                                            .attr("y2", function () { //TODO drag misplaces the new y value
+//                                                console.log(newY);
+//                                                console.log(Number(d3.select(this).attr("y2")) + Number(newY));
                                                 return Number(d3.select(this).attr("y2")) + Number(newY);
                                             });
                                 }
@@ -954,7 +946,6 @@
                 model: DataMapper.Models.Connector,
                 url: "/connectors",
                 findFromTarget: function (targetNode) { //know the target 
-                    console.log(targetNode);
                     return this.find(function (item) { //assuming target can have only one source 
                         if (item.get("targetNode").node().isSameNode(targetNode.node()))
                             return item;
