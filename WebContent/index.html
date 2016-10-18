@@ -3,7 +3,7 @@
 
     <head>
         <meta charset="UTF-8">
-        <title>Data Mapper tooling</title>
+        <title>Data Mapper</title>
         <script src="assets/lib/d3/d3.js"></script>
         <script src="assets/lib/jQuery/jquery-3.1.0.js"></script>
 
@@ -52,7 +52,7 @@
 
         <div id="canvas-container">
             <svg id="canvas" class="canvas" width="1800" height="500">
-            <g id="input-container" transform="translate(40,40)" class="container">
+            <g id="input-container" transform="translate(40,40)" class="tree-container container">
 
             <g id="input-container-fo" class="container-fo">
             <rect class="container-title-outline" id="input-container-title-outline" height="20" fill="#77C1C0"
@@ -64,7 +64,7 @@
             </g>
 
 
-            <g id="output-container" transform="translate(800,40)" class="container">
+            <g id="output-container" transform="translate(800,40)" class="tree-container container">
             <g id="output-container-fo" class="container-fo">
             <rect class="container-title-outline" id="output-container-title-outline" height="20" fill="#E59CA5"
                   stroke="black"></rect>
@@ -131,7 +131,7 @@
                     var inputs = [], outputs = [];
                     model.get('nodeCollection').models.map(function (node) {
                         var type = node.get('type');
-                         if (type === "output") {
+                        if (type === "output") {
                             var connector = DataMapper.Connectors.findFromTarget(node.get('node')) || null;
                             if (connector !== null) {
                                 var opposite = connector.get('sourceNode'); //d3 node object
@@ -264,7 +264,8 @@
             DataMapper.Views.OperatorPanelView = Backbone.View.extend({
                 el: "#op-panel",
                 events: {
-                    "click #concat-op-btn": "addConcatOp"
+                    "click #concat-op-btn": "addConcatOp",
+                    "click #split-op-btn": "addSplitOp"
                 },
                 addConcatOp: function () {
                     var concatModel = new DataMapper.Models.Operator({
@@ -278,7 +279,7 @@
                     var concatView = new DataMapper.Views.OperatorView({model: concatModel});
                     DataMapper.Operators.add(concatModel);
                 },
-                addSplitOp:function(){
+                addSplitOp: function () {
                     var splitModel = new DataMapper.Models.Operator({
                         title: "Split",
                         id: "split" + new Date().getTime(),
@@ -327,49 +328,33 @@
                 status: 1,
                 val: 5,
                 initialize: function () {
-                    this.setConnectorValues();
                     DataMapper.Connectors.add(this);
-                },
-                setConnectorValues: function () {
-                    var opCon = null, text = null, val;
-                    var head = "path", tail = "path";
-                    //  4 possible maps are:
-                    // input to op - 0,
-                    // op to output - 1,
-                    // op to op - 2,
-                    // input to output - 3
-                    if (!this.get('sourceContainer').classed('operator')) { //input to something
-                        head = DataMapper.InputView.model.getPath(this.get("sourceNode").select("text").text());
-                        text = head;
-                        if (this.get('targetContainer').classed('operator')) { //input to op
-                            tail = this.get('targetContainer').attr("id");
-                            opCon = this.get('targetNode');
-                            val = 0;
-                        } else {  //input to output
-                            tail = DataMapper.OutputView.model.getPath(this.get("targetNode").select("text").text());
-                            val = 3;
-                        }
-                    } else if (!this.get('targetContainer').classed('operator')) { //op to output
-                        head = this.get('sourceContainer').attr("id"); //+ " - " + this.get('targetNode').attr("type");
-                        tail = DataMapper.OutputView.model.getPath(this.get("targetNode").select("text").text());
-                        opCon = this.get('sourceNode');
-                        text = tail;
-                        val = 1;
-                    } else { //op to op
-                        head = this.get('sourceContainer').attr("id"); //+ " - " + this.get('targetNode').attr("type");
-                        tail = this.get('targetContainer').attr("id");
-                        val = 2;
+                    //if the line is direct
+                    if (null !== this.get('line') && this.get('sourceContainer').classed("tree-container") && this.get('targetContainer').classed("tree-container")) {
+                        this.addDirectOperator();
+                        console.log("added direct op");
                     }
-                    this.set("sourcePath", head);
-                    this.set("targetPath", tail);
-                    //set text to the operator container
-                    if (opCon !== null && text !== null) {
-                        opCon.select("text").text(text).classed("op-node-text", true);
-                    }
-                    this.set('val', val);
                 },
-                removeMapping: function () {
+                addDirectOperator: function () {
+//                    var self = this;
+                    console.log("ini - add");
+                    var operator = new DataMapper.Models.Operator({
+                        title: "directOperator",
+                        id: "direct" + new Date().getTime(),
+                        inputCount: 1,
+                        outputCount: 1
+                    });
+                    console.log("new operator added"); //use clone!
+                    var head = DataMapper.InputView.model.get('nodeCollection').getNodeFromDOMObject(this.get('sourceNode').node()).clone();
+                    var tail = DataMapper.OutputView.model.get('nodeCollection').getNodeFromDOMObject(this.get('targetNode').node()).clone();
+                    operator.get('nodeCollection').add([head, tail]);
+                    console.log("operators func");
+                      console.log("new connector introduced");
+                    DataMapper.Operators.add(operator);
+                },
+                removeConnector: function () {
                     this.get("line").remove();
+                    //TODO DataMapper.Connectors.remove(this);
                 }
             });
             DataMapper.Models.Node = Backbone.Model.extend({//set parent, text, x,y, type,category
@@ -536,10 +521,10 @@
                     var newArrow = this.get('parent').append("polygon").attr("class", "drag-head");
                     this.moveArrow(newArrow, this.get('cx'), this.get('cy'));
                     if (this.get('type') === "input") {
-                        newArrow.attr("fill", "#01321F");
+                        newArrow.attr("fill", "#019999");
                         newArrow.call(this.dragAnchor());
                     } else {
-                        newArrow.attr("fill", "#731115");
+                        newArrow.attr("fill", "#c9c9c9");
                     }
                 },
                 drawDragArrow: function (parent, cx, cy) {
@@ -968,23 +953,8 @@
             DataMapper.Collections.Connectors = Backbone.Collection.extend({
                 model: DataMapper.Models.Connector,
                 url: "/connectors",
-                filterOpToOut: function () {
-                    return   this.filter(d => d.get('val') === 1);
-                },
-                filterInToOut: function () {
-                    return   this.filter(d => d.get('val') === 3);
-                },
-                filterInToOp: function () {
-                    return   this.filter(d => d.get('val') === 0);
-                },
-                filterOpToOp: function () {
-                    return   this.filter(d => d.get('val') === 2);
-                },
-                filterToOp: function (id) {
-                    var array = this.filter(d => d.get('targetContainer').attr("id") === id);//loop
-                    return   array;
-                },
                 findFromTarget: function (targetNode) { //know the target 
+                    console.log(targetNode);
                     return this.find(function (item) { //assuming target can have only one source 
                         if (item.get("targetNode").node().isSameNode(targetNode.node()))
                             return item;
@@ -997,49 +967,6 @@
                         }
                     });
                     return array;
-                },
-                getMappings: function () {
-                    var collection = this;
-                    var mappings = [];
-                    this.filterInToOut().map(function (connector) {
-                        collection.pushMapping(mappings, [connector.get("sourcePath")], null, connector.get("targetPath"));
-                    });
-                    this.filterOpToOut().map(function (connector) {
-                        var inputs = [], outputs = [];
-                        var operatorContainer = connector.get('sourceContainer');
-                        var operator = DataMapper.Operators.findOperator(operatorContainer.attr("id"));
-                        operator.get('inputs').map(function (node) {
-                            var conn = collection.findFromTarget(node) || null;
-                            if (conn !== null) {
-                                inputs.push(conn.get('sourcePath'));
-                            }
-                        });
-                        operator.get('outputs').map(function (node) {
-                            var conn = collection.findFromSource(node) || null; //more than one source CLONE
-                            if (conn !== null) {
-                                outputs.push(conn.get('targetPath'));
-                            }
-                        });
-                        collection.pushMapping(mappings, inputs, operator, outputs);
-//                       console.log("op to out");
-                    });
-                    this.filterOpToOp().map(function (connector) {
-                        var inputs = [];
-                        var operatorContainer = connector.get('sourceContainer');
-                        var operator = DataMapper.Operators.findOperator(operatorContainer.attr("id"));
-                        operator.get('inputs').map(function (node) {
-                            var conn = collection.findFromTarget(node) || null;
-                            if (conn !== null) {
-                                inputs.push(conn.get('sourcePath'));
-                            }
-                        });
-                        collection.pushMapping(mappings, inputs, operator, connector.get("targetPath"));
-//                       console.log("op to op");
-                    });
-                    return mappings;
-                },
-                pushMapping: function (array, inputArray, operator, output) {
-                    array.push({inputs: inputArray, operator: operator, output: output});
                 }
 
             });
