@@ -302,7 +302,7 @@
                     DataMapper.Operators = new DataMapper.Collections.Operators();
                     var inputModel = new DataMapper.Models.TreeContainer({type: "input", x: 40});
                     DataMapper.InputView = new DataMapper.Views.TreeContainerView({el: "#input-container", model: inputModel});
-                    var outputModel = new DataMapper.Models.TreeContainer({type: "output", x: 800});
+                    var outputModel = new DataMapper.Models.TreeContainer({type: "output", x: 1300});
                     DataMapper.OutputView = new DataMapper.Views.TreeContainerView({
                         el: "#output-container",
                         model: outputModel
@@ -380,16 +380,18 @@
                             .attr("height", height)
                             .attr("width", width);
                     this.set('node', parent1);
-                    if (this.get('category') === "operator") {
-                        this.drawOutline();
-                    }
+                    
                     //                    <foreignObject x="15" y="15" width="190" height="90">
                     //                            <div xmlns="http://www.w3.org/1999/xhtml" style="width:190px; height:90px; overflow-y:auto"><b>This</b> is the <i>text</i> I wish to fit inside <code>rect</code></div>
                     //                    </foreignObject>
-                    parent1.append("text").attr("class", "node-element-text")
+                    var text=parent1.append("text").attr("class", "node-element-text")
                             .attr("x", this.get('x') + 12)
                             .attr("y", this.get('y') + (3 * height / 4))
                             .text(this.get('text') + ":" + this.get('textType'));
+                    if (this.get('category') === "operator") {
+                        this.drawOutline();
+                        text.attr("fill","#989898");
+                    }
                     if (this.get('dotPosition').length === 2) {
                         parent1.classed("leaf-node", true);
                         parent1.attr("type", this.get('type'));
@@ -499,6 +501,9 @@
                                         targetNode: target,
                                         line: dragLine
                                     });
+                                    if(oppositeContainer.classed("operator")){
+                                        target.select("text").text(sourceNode.select("text").text().split(":")[0]).classed("op-node-text",true);
+                                    }
                                 } else {
                                     //d3.select("#inputnode").text("");
                                     dragLine.remove();
