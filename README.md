@@ -38,7 +38,7 @@ At the event of calculating the mappings, the app outputs four arrays:
 <li><b>Variable list – </b>an array of nodes. The id of the node in the array is used for the adjacency list.</li>
 <li><b>Operators – </b>a list of operators in the model, including direct operators.</li>
 <li><b>Input adjacency list – </b>each entry of the array corresponds to each operator and the inputs connected to the operator. Assumed that each node has only one input.</li>
-[input-nodes-of-op1, input-nodes-of-op2, ….] →  [2, 3] , [1, 2] …..
+[input-nodes-of-op1, input-nodes-of-op2, ….] →  [[2], [3]] , [[1], [2]] …..
 <li><b>Output adjacency list – </b>each entry of the array corresponds to each operator and the outputs connected to the operator. Assumed that each node can have multiple outputs, which is again an array. </li>
 [ [output-nodes-of-op1, output-nodes-of-op2, …... ]  → [ [9], [10, 11] ] , [ [7, 8], [10] ]….
 </ol>
