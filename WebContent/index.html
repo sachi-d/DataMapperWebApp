@@ -85,13 +85,19 @@
 <script>
 
     var DataMapper = {
+        //the editor = svg
         Canvas: d3.select("#canvas"),
+        //a Backbone collection of all the operators in the app
         Operators: {},
+        // Backbone view corresponding to Input/Output container
+        // the model contains the loaded schema as a JSON object and a collection of nodes
         InputView: {},
         OutputView: {},
+        //all the 'lines' drawn in the application
+        //each connector contains information on sourceNode, targetNode, sourceContainer, targetContainer and the d3 line object
         Connectors: {},
 
-        //for namespace purposes------
+     //Definitions
         Models: {},
         Collections: {},
         Views: {}
