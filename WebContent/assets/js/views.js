@@ -4,7 +4,7 @@
 DataMapper.Views.LoadFileView = Backbone.View.extend({
     el: "#file-load",
     events: {
-        "change .file-select": "fileChange",
+        "click .file-select": "fileChange",
         "dragenter .file-drag": "dragEnter",
         "dragleave .file-drag": "dragLeave",
         "dragover .file-drag": "dragOver",
@@ -32,23 +32,7 @@ DataMapper.Views.LoadFileView = Backbone.View.extend({
         this.dragLeave(e);
         this.fileChange(e);
     },
-    fileChange: function (e) {
-        e.stopPropagation();
-        e.preventDefault();
-        e.dataTransfer = e.originalEvent.dataTransfer;
-        var files = e.target.files || e.dataTransfer.files;
-        if (d3.select(e.target).classed("input")) { //if the target is input
-            this.clearInput();
-            DataMapper.InputView.model.set('file', files[0]);
-            DataMapper.InputView.render();
-            this.slideInput();
-        } else if (d3.select(e.target).classed("output")) {
-            this.clearOutput();
-            DataMapper.OutputView.model.set('file', files[0]);
-            DataMapper.OutputView.render();
-            this.slideOutput();
-        }
-    },
+
     dragEnter: function (e) {
         d3.select(e.target).classed("file-drag-hover", true);
     },
@@ -84,14 +68,24 @@ DataMapper.Views.OperatorView = Backbone.View.extend({
 });
 DataMapper.Views.TreeContainerView = Backbone.View.extend({
     initialize: function () {
+
         d3.select(this.el).call(this.model.dragContainer());
         this.model.set('parent', d3.select(this.el));
         this.drawInitContainer();
+
+        this.bindMenu();
+
         //this.model.onchange updateContainer
-    },
+    }
+    ,
     render: function () {
         this.model.drawContainer();
-    },
+    }
+    ,
+    events: {
+        "click .file-select": "fileChange",
+    }
+    ,
     drawInitContainer: function () {
         var parent = d3.select(this.el);
         var height = this.model.get("nodeHeight") || this.model.nodeHeight;
@@ -101,7 +95,69 @@ DataMapper.Views.TreeContainerView = Backbone.View.extend({
         parent.select(".container-outline").attr("x", 0).attr("y", 0).attr("height", height).attr("width", width);
         this.model.updateContainerHeight();
     }
-});
+    ,
+    bindMenu: function () {
+        var self = this;
+        var id = d3.select(this.el).select(".container-title-outline").attr("id");
+        console.log("init con");
+        $("#" + id).bind("contextmenu", function (event) {
+
+            // Avoid the real one
+            event.preventDefault();
+
+            // Show contextmenu
+            $("#container-menu").finish().toggle(100).// In the right position (the mouse)
+            css({
+                top: event.pageY + "px",
+                left: event.pageX + "px"
+            });
+        });
+        // If the document is clicked somewhere
+        $(document).bind("mousedown", function (e) {
+
+            // If the clicked element is not the menu
+            if (!$(e.target).parents(".custom-menu").length > 0) {
+
+                // Hide it
+                $(".custom-menu").hide(100);
+            }
+        });
+
+
+// If the menu element is clicked
+        $("#container-menu li").click(function () {
+            // This is the triggered action name
+            switch ($(this).attr("data-action")) {
+
+                // A case for each action. Your actions here
+                case "load":
+                    $(".file-select").trigger("click");
+                    break;
+                case "clear":
+                    alert("second");
+                    break;
+            }
+
+            // Hide it AFTER the action was triggered
+            $(".custom-menu").hide(100);
+        });
+
+    }
+    ,
+    fileChange: function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        e.dataTransfer = e.originalEvent.dataTransfer;
+        var files = e.target.files || e.dataTransfer.files;
+        this.get('model').set('file', files[0]);
+        this.render();
+    },
+    clearContainer: function () {
+        this.get('model').get('parent').selectAll(".nested-group").remove();
+        this.get('model').set('nodeCollection', new DataMapper.Collections.NodeList());
+    }
+})
+;
 DataMapper.Views.OperatorPanelView = Backbone.View.extend({
     el: "#op-panel",
     events: {

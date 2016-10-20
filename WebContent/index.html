@@ -12,7 +12,9 @@
     <script src="assets/lib/underscore/underscore_1.8.3.js" type="text/javascript"></script>
     <script src="assets/lib/backbone/backbone_1.3.3.js" type="text/javascript"></script>
     <script src="assets/fileHandler.js"></script>
-    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/context-menu.css">
+    <link rel="stylesheet" href="assets/css/diagram-tool-bar.css">
 
 
 </head>
@@ -20,31 +22,15 @@
 <body>
 
 
-<div id="file-load">
-    <div class="file-load-container" id="input-file-load-container">
-        <button id="load-input-btn">Load input</button>
-        <button id="clear-input-btn">Clear input</button>
-
-        <div class="load-file" id="load-input">
-            <input type="file" class="file-select input" id="input-file-select" name="input-select[]"
-                   accept="application/json"/>
-            <div class="file-drag input" id="input-file-drag">or drop files here</div>
-        </div>
-
-    </div>
-
-    <div class="file-load-container" id="output-file-load-container">
-        <button id="load-output-btn">Load output</button>
-        <button id="clear-output-btn">Clear output</button>
-
-        <div class="load-file" id="load-output">
-            <input type="file" class="file-select output" id="output-file-select" name="output-select[]"
-                   accept=".json"/>
-            <div class="file-drag output" id="output-file-drag">or drop files here</div>
-        </div>
-
-    </div>
+<div id="right-click-menu">
+    <input type="file" class="file-select input" id="input-file-select" name="input-select[]"
+           accept="application/json"/>
+    <ul class='custom-menu' id="container-menu">
+        <li data-action="load">Load Schema</li>
+        <li data-action="clear">Clear container</li>
+    </ul>
 </div>
+
 
 <div id="op-panel">
     <button id="concat-op-btn">Add concat operator <br> 2 to 1</button>
@@ -77,7 +63,9 @@
         </g>
 
     </svg>
+    <div id="tool-palette">
 
+    </div>
 </div>
 <button onclick="showMappings()">showMappings</button>
 
@@ -97,7 +85,7 @@
         //each connector contains information on sourceNode, targetNode, sourceContainer, targetContainer and the d3 line object
         Connectors: {},
 
-     //Definitions
+        //Definitions
         Models: {},
         Collections: {},
         Views: {}
@@ -106,6 +94,12 @@
 <script src="assets/js/views.js"></script>
 <script src="assets/js/models.js"></script>
 <script src="assets/js/collections.js"></script>
+<script src="assets/js/tool-palette/tool-view.js"></script>
+<script src="assets/js/tool-palette/tool.js"></script>
+<script src="assets/js/tool-palette/toolgroup-view.js"></script>
+<script src="assets/js/tool-palette/toolgroup.js"></script>
+<script src="assets/js/tool-palette/toolpalette-view.js"></script>
+<script src="assets/js/tool-palette/toolpalette.js"></script>
 <script>
     function showMappings() {
         var variableList = [], count = 0,
@@ -170,6 +164,61 @@
 
     new DataMapper.Views.CanvasView();
 
+    //Create tools
+    var dataMapperLinkTool = new Tools.Models.Tool({
+        id: "0",
+        title: "Data Mapper Link",
+        icon: "assets/images/tool-icons/sample-tool-icon"
+    });
+    var concatTool = new Tools.Models.Tool({
+        id: "1",
+        title: "Concat",
+        icon: "assets/images/tool-icons/sample-tool-icon"
+    });
+    var splitTool = new Tools.Models.Tool({id: "2", title: "Split", icon: "assets/images/tool-icons/sample-tool-icon"});
+    var andTool = new Tools.Models.Tool({id: "3", title: "And", icon: "assets/images/tool-icons/sample-tool-icon"});
+
+    // Create tool groups
+    var linkToolGroup = new Tools.Models.ToolGroup({
+        toolGroupName: "Link",
+        toolGroupID: "link-tool-group"
+    });
+    linkToolGroup.toolCollection.add(dataMapperLinkTool);
+
+    var commonToolGroup = new Tools.Models.ToolGroup({
+        toolGroupName: "Common",
+        toolGroupID: "common-tool-group"
+    });
+    var arithmeticToolGroup = new Tools.Models.ToolGroup({
+        toolGroupName: "Arithmetic",
+        toolGroupID: "arithmetic-tool-group"
+    });
+    var conditionalToolGroup = new Tools.Models.ToolGroup({
+        toolGroupName: "Conditional",
+        toolGroupID: "conditional-tool-group"
+    });
+    var booleanToolGroup = new Tools.Models.ToolGroup({
+        toolGroupName: "Boolean",
+        toolGroupID: "boolean-tool-group"
+    });
+    booleanToolGroup.toolCollection.add(andTool);
+
+    var typeConversionToolGroup = new Tools.Models.ToolGroup({
+        toolGroupName: "Type Conversion",
+        toolGroupID: "typeConversion-tool-group"
+    });
+    var stringToolGroup = new Tools.Models.ToolGroup({
+        toolGroupName: "String",
+        toolGroupID: "string-tool-group"
+    });
+    stringToolGroup.toolCollection.add([concatTool, splitTool]);
+
+    // Create tool palette
+    var toolPalette = new Tools.Models.ToolPalatte();
+    toolPalette.add([linkToolGroup, commonToolGroup, arithmeticToolGroup, conditionalToolGroup, booleanToolGroup, typeConversionToolGroup, stringToolGroup]);
+
+    var paletteView = new Tools.Views.ToolPalatteView({collection: toolPalette});
+    paletteView.render();
 
 </script>
 
