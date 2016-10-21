@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Data Mapper</title>
-    <script src="assets/lib/d3/d3.js"></script>
-    <script src="assets/lib/jQuery/jquery-3.1.0.js"></script>
+    <script src="assets/lib/d3_v4.2.2/d3.js"></script>
+    <script src="assets/lib/jQuery_v3.1.0/jquery-3.1.0.js"></script>
 
-    <script src="assets/lib/jquery-ui-1.12.0.custom/jquery-ui.js"></script>
+    <script src="assets/lib/jquery-ui_v1.12.0/jquery-ui.js"></script>
 
-    <script src="assets/lib/underscore/underscore_1.8.3.js" type="text/javascript"></script>
-    <script src="assets/lib/backbone/backbone_1.3.3.js" type="text/javascript"></script>
+    <script src="assets/lib/underscore_v1.83/underscore_1.8.3.js" type="text/javascript"></script>
+    <script src="assets/lib/backbone_v1.3.3/backbone_1.3.3.js" type="text/javascript"></script>
     <script src="assets/fileHandler.js"></script>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/context-menu.css">
@@ -38,7 +38,8 @@
 </div>
 
 <div id="canvas-container">
-    <svg id="canvas" class="canvas" width="1800" height="500">
+    <div id="tool-palette" style="background: #232323;"></div>
+    <svg id="canvas" class="canvas" width="1800" height="500" >
         <g id="input-container" transform="translate(40,40)" class="tree-container container">
 
             <g id="input-container-fo" class="container-fo">
@@ -63,9 +64,9 @@
         </g>
 
     </svg>
-    <div id="tool-palette">
+   
 
-    </div>
+
 </div>
 <button onclick="showMappings()">showMappings</button>
 
@@ -84,6 +85,7 @@
         //all the 'lines' drawn in the application
         //each connector contains information on sourceNode, targetNode, sourceContainer, targetContainer and the d3 line object
         Connectors: {},
+        PalleteView:{},
 
         //Definitions
         Models: {},
@@ -100,6 +102,7 @@
 <script src="assets/js/tool-palette/toolgroup.js"></script>
 <script src="assets/js/tool-palette/toolpalette-view.js"></script>
 <script src="assets/js/tool-palette/toolpalette.js"></script>
+<script src="assets/js/tool-palette/definitions/tools-init.js"></script>
 <script>
     function showMappings() {
         var variableList = [], count = 0,
@@ -164,61 +167,11 @@
 
     new DataMapper.Views.CanvasView();
 
-    //Create tools
-    var dataMapperLinkTool = new Tools.Models.Tool({
-        id: "0",
-        title: "Data Mapper Link",
-        icon: "assets/images/tool-icons/sample-tool-icon"
-    });
-    var concatTool = new Tools.Models.Tool({
-        id: "1",
-        title: "Concat",
-        icon: "assets/images/tool-icons/sample-tool-icon"
-    });
-    var splitTool = new Tools.Models.Tool({id: "2", title: "Split", icon: "assets/images/tool-icons/sample-tool-icon"});
-    var andTool = new Tools.Models.Tool({id: "3", title: "And", icon: "assets/images/tool-icons/sample-tool-icon"});
 
-    // Create tool groups
-    var linkToolGroup = new Tools.Models.ToolGroup({
-        toolGroupName: "Link",
-        toolGroupID: "link-tool-group"
-    });
-    linkToolGroup.toolCollection.add(dataMapperLinkTool);
 
-    var commonToolGroup = new Tools.Models.ToolGroup({
-        toolGroupName: "Common",
-        toolGroupID: "common-tool-group"
-    });
-    var arithmeticToolGroup = new Tools.Models.ToolGroup({
-        toolGroupName: "Arithmetic",
-        toolGroupID: "arithmetic-tool-group"
-    });
-    var conditionalToolGroup = new Tools.Models.ToolGroup({
-        toolGroupName: "Conditional",
-        toolGroupID: "conditional-tool-group"
-    });
-    var booleanToolGroup = new Tools.Models.ToolGroup({
-        toolGroupName: "Boolean",
-        toolGroupID: "boolean-tool-group"
-    });
-    booleanToolGroup.toolCollection.add(andTool);
 
-    var typeConversionToolGroup = new Tools.Models.ToolGroup({
-        toolGroupName: "Type Conversion",
-        toolGroupID: "typeConversion-tool-group"
-    });
-    var stringToolGroup = new Tools.Models.ToolGroup({
-        toolGroupName: "String",
-        toolGroupID: "string-tool-group"
-    });
-    stringToolGroup.toolCollection.add([concatTool, splitTool]);
 
-    // Create tool palette
-    var toolPalette = new Tools.Models.ToolPalatte();
-    toolPalette.add([linkToolGroup, commonToolGroup, arithmeticToolGroup, conditionalToolGroup, booleanToolGroup, typeConversionToolGroup, stringToolGroup]);
 
-    var paletteView = new Tools.Views.ToolPalatteView({collection: toolPalette});
-    paletteView.render();
 
 </script>
 
