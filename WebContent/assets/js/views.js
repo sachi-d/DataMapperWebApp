@@ -90,15 +90,15 @@ DataMapper.Views.TreeContainerView = Backbone.View.extend({
         var parent = d3.select(this.el);
         var height = this.model.get("nodeHeight") || this.model.nodeHeight;
         var width = this.model.get("containerWidth") || this.model.containerWidth;
-        parent.select(".container-title-outline").attr("x", 0).attr("y", -height).attr("height", height).attr("width", width);
-        parent.select(".container-title").attr("x", 0).attr("y", -5);
-        parent.select(".container-outline").attr("x", 0).attr("y", 0).attr("height", height).attr("width", width);
+        parent.select(".dmcontainer-title-outline").attr("x", 0).attr("y", -height).attr("height", height).attr("width", width);
+        parent.select(".dmcontainer-title").attr("x", 0).attr("y", -5);
+        parent.select(".dmcontainer-outline").attr("x", 0).attr("y", 0).attr("height", height).attr("width", width);
         this.model.updateContainerHeight();
     }
     ,
     bindMenu: function () {
         var self = this;
-        var id = d3.select(this.el).select(".container-title-outline").attr("id");
+        var id = d3.select(this.el).select(".dmcontainer-title-outline").attr("id");
         console.log("init con");
         $("#" + id).bind("contextmenu", function (event) {
 
@@ -106,7 +106,7 @@ DataMapper.Views.TreeContainerView = Backbone.View.extend({
             event.preventDefault();
 
             // Show contextmenu
-            $("#container-menu").finish().toggle(100).// In the right position (the mouse)
+            $("#dmcontainer-menu").finish().toggle(100).// In the right position (the mouse)
             css({
                 top: event.pageY + "px",
                 left: event.pageX + "px"
@@ -125,7 +125,7 @@ DataMapper.Views.TreeContainerView = Backbone.View.extend({
 
 
 // If the menu element is clicked
-        $("#container-menu li").click(function () {
+        $("#dmcontainer-menu li").click(function () {
             // This is the triggered action name
             switch ($(this).attr("data-action")) {
 
@@ -204,10 +204,10 @@ DataMapper.Views.CanvasView = Backbone.View.extend({
         DataMapper.VariableList = new DataMapper.Collections.NodeList();
         DataMapper.Operators = new DataMapper.Collections.Operators();
         var inputModel = new DataMapper.Models.TreeContainer({type: "input", x: 40});
-        DataMapper.InputView = new DataMapper.Views.TreeContainerView({el: "#input-container", model: inputModel});
+        DataMapper.InputView = new DataMapper.Views.TreeContainerView({el: "#input-dmcontainer", model: inputModel});
         var outputModel = new DataMapper.Models.TreeContainer({type: "output", x: 1300});
         DataMapper.OutputView = new DataMapper.Views.TreeContainerView({
-            el: "#output-container",
+            el: "#output-dmcontainer",
             model: outputModel
         });
         //                    this.render();

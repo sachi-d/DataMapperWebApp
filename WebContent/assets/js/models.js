@@ -14,7 +14,7 @@ DataMapper.Models.Connector = Backbone.Model.extend({
     initialize: function () {
         DataMapper.Connectors.add(this);
         //if the line is direct
-        if (null !== this.get('line') && this.get('sourceContainer').classed("tree-container") && this.get('targetContainer').classed("tree-container")) {
+        if (null !== this.get('line') && this.get('sourceContainer').classed("tree-dmcontainer") && this.get('targetContainer').classed("tree-dmcontainer")) {
             this.addDirectOperator();
         }
     },
@@ -182,7 +182,7 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
                     dragLine
                         .attr("x2", dotx)
                         .attr("y2", doty)
-                        .attr("target-container", oppositeContainer.attr("id"));
+                        .attr("target-dmcontainer", oppositeContainer.attr("id"));
                     dragHead2.remove();
                     var map = new DataMapper.Models.Connector({
                         sourceContainer: sourceContainer,
@@ -251,7 +251,7 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
         return Number(this.getTranslation(sourceContainer.attr("transform"))[1]);
     },
     getParentContainer: function (nodeElement) { //a recursive method to find g.container of an element
-        if (nodeElement.classed("container")) {
+        if (nodeElement.classed("dmcontainer")) {
             return nodeElement;
         } else {
             return this.getParentContainer(d3.select(nodeElement["_groups"][0][0].parentNode));
@@ -328,26 +328,26 @@ DataMapper.Models.Operator = Backbone.Model.extend({
         this.set('inputs', []);
         this.set('outputs', []);
         var canvas = DataMapper.Canvas;
-        var parent = canvas.append("g").attr("class", "operator container")
+        var parent = canvas.append("g").attr("class", "operator dmcontainer")
             .attr("id", this.get('id'))
             .attr("transform", "translate(" + this.get('x') + "," + this.get('y') + ")");
         this.set('parent', parent);
         var inputCount = this.get('inputCount'),
             outputCount = this.get('outputCount');
         var max = d3.max([inputCount, outputCount]);
-        var opTitleOutline = parent.append("rect").attr("class", "container-title-outline")
+        var opTitleOutline = parent.append("rect").attr("class", "dmcontainer-title-outline")
             .attr("width", 2 * this.get('width'))
             .attr("height", 20) //height of the rect title=20
             .attr("x", 0)
             .attr("y", 0)
             .attr("fill", "#C5E3FF")
             .attr("stroke", "black");
-        var opTitle = parent.append("text").attr("class", "container-title")
+        var opTitle = parent.append("text").attr("class", "dmcontainer-title")
             .attr("font-weight", "bold")
             .attr("x", 0)
             .attr("y", 15)
             .text(this.get('title'));
-        var opContainerOutline = parent.append("rect").attr("class", "container-outline")
+        var opContainerOutline = parent.append("rect").attr("class", "dmcontainer-outline")
             .attr("width", 2 * this.get('width'))
             .attr("height", max * this.get('height'))
             .attr("x", 0)
@@ -419,11 +419,11 @@ DataMapper.Models.Operator = Backbone.Model.extend({
             .attr("y2", function () {
                 return d3.select(this).attr("y2") - newY;
             });
-        d3.select("#canvas").selectAll(".container").each(function () {
+        d3.select("#canvas").selectAll(".dmcontainer").each(function () {
             if (d3.select(this).attr("id") !== sourceContainer.attr("id")) {
                 var opposite = d3.select(this);
                 opposite.selectAll(".drag-line").each(function () {
-                    if (d3.select(this).attr("target-container") === sourceContainer.attr("id")) {
+                    if (d3.select(this).attr("target-dmcontainer") === sourceContainer.attr("id")) {
                         d3.select(this)
                             .attr("x2", function () {
                                 return Number(d3.select(this).attr("x2")) + Number(newX);
@@ -439,8 +439,8 @@ DataMapper.Models.Operator = Backbone.Model.extend({
         });
     },
     resizeCanvas: function (x, y) {
-        var tempY = Number(this.get('parent').select(".container-outline").attr("height")) + y,
-            tempX = Number(this.get('parent').select(".container-outline").attr("width")) + x;
+        var tempY = Number(this.get('parent').select(".dmcontainer-outline").attr("height")) + y,
+            tempX = Number(this.get('parent').select(".dmcontainer-outline").attr("width")) + x;
         if (d3.select("#canvas").attr("width") < tempX) {
             d3.select("#canvas").attr("width", tempX);
         }
@@ -488,7 +488,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Operator.extend({
         this.updateContainerWidth();
     },
     updateContainerHeight: function () {
-        var outline = this.get('parent').select(".container-outline");
+        var outline = this.get('parent').select(".dmcontainer-outline");
         var model = this;
         outline.attr("height", function () {
             var count = model.get('elementCount') || model.elementCount,
@@ -504,8 +504,8 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Operator.extend({
             var len = d3.select(this).node().getComputedTextLength();
             maxLength = d3.max([maxLength, x + len]);
         });
-        parent.select(".container-outline").attr("width", maxLength);
-        parent.select(".container-title-outline").attr("width", maxLength);
+        parent.select(".dmcontainer-outline").attr("width", maxLength);
+        parent.select(".dmcontainer-title-outline").attr("width", maxLength);
         if (this.get('type') === "input") {
             parent.selectAll(".drag-head").each(function () {
                 var cx = maxLength, cy = d3.select(this).attr("cy");

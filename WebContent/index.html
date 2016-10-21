@@ -31,24 +31,24 @@
     <div id="tool-palette" style="background: #232323;"></div>
     <svg id="canvas" class="canvas" width="1800" height="500">
 
-        <g id="input-container" transform="translate(40,40)" class="tree-container container">
-            <g id="input-container-fo" class="container-fo">
-                <rect class="container-title-outline" id="input-container-title-outline" fill="#D3DA7B"
+        <g id="input-dmcontainer" transform="translate(40,40)" class="tree-dmcontainer dmcontainer">
+            <g id="input-dmcontainer-fo" class="dmcontainer-fo">
+                <rect class="dmcontainer-title-outline" id="input-dmcontainer-title-outline" fill="#D3DA7B"
                       stroke="black"></rect>
-                <text class="container-title" id="input-container-title" y="0" font-weight="bold">Input</text>
-                <rect class="container-outline" id="input-container-outline" height="200" width="300" fill="none" x="0"
+                <text class="dmcontainer-title" id="input-dmcontainer-title" y="0" font-weight="bold">Input</text>
+                <rect class="dmcontainer-outline" id="input-dmcontainer-outline" height="200" width="300" fill="none" x="0"
                       y="20"
                       stroke="black"></rect>
             </g>
         </g>
 
 
-        <g id="output-container" transform="translate(1300,40)" class="tree-container container">
-            <g id="output-container-fo" class="container-fo">
-                <rect class="container-title-outline" id="output-container-title-outline" fill="#FCE0D3"
+        <g id="output-dmcontainer" transform="translate(1300,40)" class="tree-dmcontainer dmcontainer">
+            <g id="output-dmcontainer-fo" class="dmcontainer-fo">
+                <rect class="dmcontainer-title-outline" id="output-dmcontainer-title-outline" fill="#FCE0D3"
                       stroke="black"></rect>
-                <text class="container-title" id="output-container-title" font-weight="bold">Output</text>
-                <rect class="container-outline" id="output-container-outline" height="10" fill="none"
+                <text class="dmcontainer-title" id="output-dmcontainer-title" font-weight="bold">Output</text>
+                <rect class="dmcontainer-outline" id="output-dmcontainer-outline" height="10" fill="none"
                       stroke="black"></rect>
             </g>
 
@@ -62,7 +62,7 @@
 <div id="right-click-menu">
     <input type="file" class="file-select input" id="input-file-select" name="input-select[]"
            accept="application/json"/>
-    <ul class='custom-menu' id="container-menu">
+    <ul class='custom-menu' id="dmcontainer-menu">
         <li data-action="load">Load Schema</li>
         <li data-action="clear">Clear container</li>
     </ul>

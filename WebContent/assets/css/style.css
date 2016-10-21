@@ -17,15 +17,6 @@
     margin: 0 auto;
 }
 
-.container-div {
-    border: 1px solid black;
-}
-
-.container-div-title {
-    text-align: center;
-    background-color: #CCE9FF;
-}
-
 .leaf {
     display: block;
     /*     /////////////////////////////width and height are used in drawing svg circles*/
@@ -45,8 +36,6 @@
 .leaf-node:hover {
     opacity: 0.5;
 }
-
-
 
 .op-node-text {
     color: yellow;
