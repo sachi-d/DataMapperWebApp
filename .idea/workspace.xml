@@ -2,54 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="24f06e61-b6af-412b-a694-8a0f481401ed" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/backbone/backbone.localStorage_1.1.16.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/backbone/backbone_1.3.3.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/backbone/hjstory.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/bootstrap/css/bootstrap-theme.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/bootstrap/css/bootstrap-theme.css.map" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/bootstrap/css/bootstrap-theme.min.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/bootstrap/css/bootstrap-theme.min.css.map" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/bootstrap/css/bootstrap.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/bootstrap/css/bootstrap.css.map" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/bootstrap/css/bootstrap.min.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/bootstrap/css/bootstrap.min.css.map" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/bootstrap/fonts/glyphicons-halflings-regular.eot" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/bootstrap/fonts/glyphicons-halflings-regular.svg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/bootstrap/fonts/glyphicons-halflings-regular.ttf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/bootstrap/fonts/glyphicons-halflings-regular.woff" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/bootstrap/fonts/glyphicons-halflings-regular.woff2" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/bootstrap/js/bootstrap.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/bootstrap/js/bootstrap.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/bootstrap/js/npm.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/d3/API.md" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/d3/CHANGES.md" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/d3/LICENSE" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/d3/README.md" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/d3/d3.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/d3/d3.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/jQuery/jquery-3.1.0.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/jquery-ui-1.12.0.custom/AUTHORS.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/jquery-ui-1.12.0.custom/LICENSE.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/jquery-ui-1.12.0.custom/external/jquery/jquery.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/jquery-ui-1.12.0.custom/images/ui-icons_444444_256x240.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/jquery-ui-1.12.0.custom/images/ui-icons_555555_256x240.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/jquery-ui-1.12.0.custom/images/ui-icons_777620_256x240.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/jquery-ui-1.12.0.custom/images/ui-icons_777777_256x240.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/jquery-ui-1.12.0.custom/images/ui-icons_cc0000_256x240.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/jquery-ui-1.12.0.custom/images/ui-icons_ffffff_256x240.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/jquery-ui-1.12.0.custom/index.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/jquery-ui-1.12.0.custom/jquery-ui.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/jquery-ui-1.12.0.custom/jquery-ui.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/jquery-ui-1.12.0.custom/jquery-ui.min.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/jquery-ui-1.12.0.custom/jquery-ui.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/jquery-ui-1.12.0.custom/jquery-ui.structure.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/jquery-ui-1.12.0.custom/jquery-ui.structure.min.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/jquery-ui-1.12.0.custom/jquery-ui.theme.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/jquery-ui-1.12.0.custom/jquery-ui.theme.min.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/jquery-ui-1.12.0.custom/package.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/jsPlumb/jsPlumb-2.1.5.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/WebContent/assets/lib/underscore/underscore_1.8.3.js" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebContent/index.html" afterPath="$PROJECT_DIR$/WebContent/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebContent/assets/js/tool-palette/toolgroup-view.js" afterPath="$PROJECT_DIR$/WebContent/assets/js/tool-palette/toolgroup-view.js" />
     </list>
     <ignored path="DataMapper.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -85,7 +39,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="tools-init.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="tools-init.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/WebContent/assets/js/tool-palette/definitions/tools-init.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="480">
@@ -161,11 +115,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="toolgroup-view.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="toolgroup-view.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/WebContent/assets/js/tool-palette/toolgroup-view.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="726">
+              <caret line="64" column="66" selection-start-line="64" selection-start-column="66" selection-end-line="64" selection-end-column="66" />
               <folding />
             </state>
           </provider>
@@ -174,8 +128,8 @@
       <file leaf-file-name="toolgroup.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/WebContent/assets/js/tool-palette/toolgroup.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="405">
+              <caret line="27" column="42" selection-start-line="27" selection-start-column="42" selection-end-line="27" selection-end-column="42" />
               <folding />
             </state>
           </provider>
@@ -215,6 +169,7 @@
         <option value="$PROJECT_DIR$/WebContent/assets/css/style.css" />
         <option value="$PROJECT_DIR$/WebContent/index.html" />
         <option value="$PROJECT_DIR$/WebContent/assets/js/tool-palette/definitions/tools-init.js" />
+        <option value="$PROJECT_DIR$/WebContent/assets/js/tool-palette/toolgroup-view.js" />
       </list>
     </option>
   </component>
@@ -471,12 +426,12 @@
       <workItem from="1476173828280" duration="19718000" />
       <workItem from="1476336033656" duration="338000" />
       <workItem from="1476852994275" duration="2589000" />
-      <workItem from="1476856022323" duration="27036000" />
+      <workItem from="1476856022323" duration="28362000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="53053000" />
+    <option name="totallyTimeSpent" value="54379000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="71" y="24" width="1849" height="1056" extended-state="6" />
@@ -709,7 +664,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/WebContent/assets/js/tool-palette/toolgroup-view.js">
+    <entry file="file://$PROJECT_DIR$/WebContent/assets/js/tool-palette/toolpalette-view.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="18" column="31" selection-start-line="18" selection-start-column="31" selection-end-line="18" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/WebContent/assets/js/tool-palette/definitions/tools-init.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="480">
+          <caret line="217" column="21" selection-start-line="217" selection-start-column="21" selection-end-line="217" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#44#0" expanded="false" />
+            <element signature="e#105#6358#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/WebContent/assets/js/tool-palette/tool.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -725,38 +699,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/WebContent/assets/js/tool-palette/tool.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/WebContent/assets/js/tool-palette/toolpalette-view.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="18" column="31" selection-start-line="18" selection-start-column="31" selection-end-line="18" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/WebContent/assets/js/tool-palette/toolgroup.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="405">
+          <caret line="27" column="42" selection-start-line="27" selection-start-column="42" selection-end-line="27" selection-end-column="42" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/WebContent/assets/js/tool-palette/definitions/tools-init.js">
+    <entry file="file://$PROJECT_DIR$/WebContent/assets/js/tool-palette/toolgroup-view.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="217" column="21" selection-start-line="217" selection-start-column="21" selection-end-line="217" selection-end-column="21" />
-          <folding>
-            <element signature="e#0#44#0" expanded="false" />
-            <element signature="e#105#6358#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="726">
+          <caret line="64" column="66" selection-start-line="64" selection-start-column="66" selection-end-line="64" selection-end-column="66" />
+          <folding />
         </state>
       </provider>
     </entry>

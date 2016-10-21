@@ -62,6 +62,7 @@ var Tools = (function (tools) {
                                             .toggleClass("glyphicon-chevron-down");
                     });
             });
+            groupBodyDiv.hide(); //to keep them collapsed at start
             return this;
         }
     });
