@@ -8,7 +8,7 @@ var toolGroupDefs = [
             toolGroupID: "link-tool-group",
             tools: [
                 {
-                    title: "Data Mapper Link",
+                    title: "DataMapperLink",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg"
                 }
             ]
@@ -189,7 +189,7 @@ var toolGroupDefs = [
 
 
 
-function renderToolPalette(toolPalette, definitions){
+var toolPalette=(function renderToolPalette(toolPalette, definitions){
     var idCount=0;
 
     definitions.map(function(toolGroup){
@@ -208,11 +208,9 @@ function renderToolPalette(toolPalette, definitions){
         });
         toolPalette.add(tempToolGroup);
     });
-}
+    return toolPalette;
+})(new Tools.Models.ToolPalatte(), toolGroupDefs);
 
-// Create tool palette
-var toolPalette = new Tools.Models.ToolPalatte();
-renderToolPalette(toolPalette,toolGroupDefs);
 
 var paletteView = new Tools.Views.ToolPalatteView({collection: toolPalette});
 paletteView.render();
