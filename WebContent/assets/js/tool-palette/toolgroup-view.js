@@ -38,7 +38,7 @@ var Tools = (function (tools) {
             var groupTitle = $("<a></a>");
             groupHeaderDiv.append(groupTitle)
             groupTitle.attr('class', "tool-group-header-title")
-                      .text(this.model.attributes.toolGroupName);
+                .text(this.model.attributes.toolGroupName);
 
             var groupCollapseIcon = $("<span></span>");
             groupHeaderDiv.append(groupCollapseIcon);
@@ -53,16 +53,15 @@ var Tools = (function (tools) {
                 toolView.render(groupBodyDiv);
             });
 
-            this.el =  groupDiv[0].outerHTML;
+            this.el = groupDiv[0].outerHTML;
             this.$el = groupDiv;
 
-            groupHeaderDiv.click(function(){
-                groupBodyDiv.slideToggle(500, function () {
-                        groupCollapseIcon.toggleClass("glyphicon-chevron-up")
-                                            .toggleClass("glyphicon-chevron-down");
-                    });
-            });
-            groupBodyDiv.hide(); //to keep them collapsed at start
+            // groupHeaderDiv.click(function(){
+            //     groupBodyDiv.slideToggle(500, function () {
+            //             groupCollapseIcon.toggleClass("glyphicon-chevron-up")
+            //                                 .toggleClass("glyphicon-chevron-down");
+            //         });
+            // });
             return this;
         }
     });

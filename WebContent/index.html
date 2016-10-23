@@ -4,65 +4,70 @@
 <head>
     <meta charset="UTF-8">
     <title>Data Mapper</title>
-    <script src="assets/lib/d3_v4.2.2/d3.js"></script>
-    <script src="assets/lib/jQuery_v3.1.0/jquery-3.1.0.js"></script>
-
-    <script src="assets/lib/jquery-ui_v1.12.0/jquery-ui.js"></script>
-
-    <script src="assets/lib/underscore_v1.83/underscore_1.8.3.js" type="text/javascript"></script>
-    <script src="assets/lib/backbone_v1.3.3/backbone_1.3.3.js" type="text/javascript"></script>
-    <script src="assets/fileHandler.js"></script>
+    <link rel="stylesheet" href="assets/lib/bootstrap_v3.3.6/css/bootstrap.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/context-menu.css">
     <link rel="stylesheet" href="assets/css/diagram-tool-bar.css">
 
+    <script src="assets/lib/d3_v4.2.2/d3.js"></script>
+    <script src="assets/lib/jQuery_v3.1.0/jquery-3.1.0.js"></script>
+    <script src="assets/lib/jquery-ui_v1.12.0/jquery-ui.js"></script>
+    <script src="assets/lib/underscore_v1.83/underscore_1.8.3.js" type="text/javascript"></script>
+    <script src="assets/lib/backbone_v1.3.3/backbone_1.3.3.js" type="text/javascript"></script>
+    <script src="assets/fileHandler.js"></script>
 
 </head>
 
 <body>
 
 
-<div id="op-panel">
-    <button id="concat-op-btn">Add concat operator <br> 2 to 1</button>
-    <button id="split-op-btn">Add split operator <br> 1 to 3</button>
+<div id="page-content" class="container" style="width:100vw;">
+    <!--<div class="row">-->
+    <!--<div id="op-panel">-->
+    <!--<button id="concat-op-btn">Add concat operator <br> 2 to 1</button>-->
+    <!--<button id="split-op-btn">Add split operator <br> 1 to 3</button>-->
+    <!--</div>-->
+    <!--</div>-->
+    <div class="row">
+        <div id="tool-palette" style="background: #232323;" class="col-md-2"></div>
+        <div id="canvas-container" class="col-md-10">
+            <svg id="canvas" class="canvas" width="1500" height="500">
+                <!--<g id="input-dmcontainer" transform="translate(40,40)" class="tree-dmcontainer dmcontainer">-->
+                <!--<g id="input-dmcontainer-fo" class="dmcontainer-fo">-->
+                <!--<rect class="dmcontainer-title-outline" id="input-dmcontainer-title-outline" fill="#D3DA7B"-->
+                <!--stroke="black"></rect>-->
+                <!--<text class="dmcontainer-title" id="input-dmcontainer-title" y="0" font-weight="bold">Input-->
+                <!--</text>-->
+                <!--<rect class="dmcontainer-outline" id="input-dmcontainer-outline" height="200" width="300"-->
+                <!--fill="none"-->
+                <!--x="0"-->
+                <!--y="20"-->
+                <!--stroke="black"></rect>-->
+                <!--</g>-->
+                <!--</g>-->
+
+
+                <!--<g id="output-dmcontainer" transform="translate(1000,40)" class="tree-dmcontainer dmcontainer">-->
+                <!--<g id="output-dmcontainer-fo" class="dmcontainer-fo">-->
+                <!--<rect class="dmcontainer-title-outline" id="output-dmcontainer-title-outline" fill="#FCE0D3"-->
+                <!--stroke="black"></rect>-->
+                <!--<text class="dmcontainer-title" id="output-dmcontainer-title" font-weight="bold">Output</text>-->
+                <!--<rect class="dmcontainer-outline" id="output-dmcontainer-outline" height="10" fill="none"-->
+                <!--stroke="black"></rect>-->
+                <!--</g>-->
+                <!--</g>-->
+            </svg>
+        </div>
+    </div>
+    <!--<div class="row">-->
+    <!--<button onclick="showMappings()">showMappings</button>-->
+    <!--</div>-->
 </div>
 
-<div id="canvas-container">
-    <div id="tool-palette" style="background: #232323;"></div>
-    <svg id="canvas" class="canvas" width="1800" height="500">
-
-        <g id="input-dmcontainer" transform="translate(40,40)" class="tree-dmcontainer dmcontainer">
-            <g id="input-dmcontainer-fo" class="dmcontainer-fo">
-                <rect class="dmcontainer-title-outline" id="input-dmcontainer-title-outline" fill="#D3DA7B"
-                      stroke="black"></rect>
-                <text class="dmcontainer-title" id="input-dmcontainer-title" y="0" font-weight="bold">Input</text>
-                <rect class="dmcontainer-outline" id="input-dmcontainer-outline" height="200" width="300" fill="none" x="0"
-                      y="20"
-                      stroke="black"></rect>
-            </g>
-        </g>
-
-
-        <g id="output-dmcontainer" transform="translate(1300,40)" class="tree-dmcontainer dmcontainer">
-            <g id="output-dmcontainer-fo" class="dmcontainer-fo">
-                <rect class="dmcontainer-title-outline" id="output-dmcontainer-title-outline" fill="#FCE0D3"
-                      stroke="black"></rect>
-                <text class="dmcontainer-title" id="output-dmcontainer-title" font-weight="bold">Output</text>
-                <rect class="dmcontainer-outline" id="output-dmcontainer-outline" height="10" fill="none"
-                      stroke="black"></rect>
-            </g>
-
-        </g>
-
-    </svg>
-
-
-</div>
-<button onclick="showMappings()">showMappings</button>
 <div id="right-click-menu">
     <input type="file" class="file-select input" id="input-file-select" name="input-select[]"
            accept="application/json"/>
-    <ul class='custom-menu' id="dmcontainer-menu">
+    <ul class='custom-menu dropdown-menu' id="dmcontainer-menu">
         <li data-action="load">Load Schema</li>
         <li data-action="clear">Clear container</li>
     </ul>
@@ -162,7 +167,8 @@
 //                console.log(DataMapper.Connectors.getMappings());
     }
 
-    new DataMapper.Views.CanvasView();
+        new DataMapper.Views.CanvasView();
+
 
 
 </script>

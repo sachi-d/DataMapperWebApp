@@ -67,11 +67,14 @@ DataMapper.Views.OperatorView = Backbone.View.extend({
     }
 });
 DataMapper.Views.TreeContainerView = Backbone.View.extend({
+    id: "id",
+    color: "red",
+    text: "cont",
     initialize: function () {
-
+        // this.el = "#" + this.id;
+        this.drawInitContainer();
         d3.select(this.el).call(this.model.dragContainer());
         this.model.set('parent', d3.select(this.el));
-        this.drawInitContainer();
 
         this.bindMenu();
 
@@ -87,13 +90,16 @@ DataMapper.Views.TreeContainerView = Backbone.View.extend({
     }
     ,
     drawInitContainer: function () {
-        var parent = d3.select(this.el);
+        var parent = d3.select("#canvas").append("g").attr("id", this.id).attr("class", "tree-dmcontainer dmcontainer");
+        parent.attr("transform", "translate(" + this.model.get('x') + "," + this.model.get('y') + ")");
+
         var height = this.model.get("nodeHeight") || this.model.nodeHeight;
         var width = this.model.get("containerWidth") || this.model.containerWidth;
-        parent.select(".dmcontainer-title-outline").attr("x", 0).attr("y", -height).attr("height", height).attr("width", width);
-        parent.select(".dmcontainer-title").attr("x", 0).attr("y", -5);
-        parent.select(".dmcontainer-outline").attr("x", 0).attr("y", 0).attr("height", height).attr("width", width);
-        this.model.updateContainerHeight();
+        console.log("dddd");
+        var titleOutline = parent.append("rect").classed(".dmcontainer-title-outline", true).attr("x", 0).attr("y", -height).attr("height", height).attr("width", width).attr("fill", this.color).attr("stroke", "#000");
+        var title = parent.append("text").classed(".dmcontainer-title", true).attr("x", 0).attr("y", -5).attr("font-weight", "bold").text(this.get('text'));
+        var containerOutline = parent.append("rect").classed(".dmcontainer-outline", true).attr("x", 0).attr("y", 0).attr("height", height * 10).attr("width", width).attr("fill", "none").attr("stroke", "#000");
+        console.log("eeeee");
     }
     ,
     bindMenu: function () {
@@ -194,7 +200,7 @@ DataMapper.Views.CanvasView = Backbone.View.extend({
     params: {
         inputStartX: 40,
         inputStartY: 40,
-        outputStartX: 800,
+        outputStartX: 1000,
         outputStartY: 40
     },
     initialize: function () {
@@ -203,12 +209,27 @@ DataMapper.Views.CanvasView = Backbone.View.extend({
         DataMapper.Connectors = new DataMapper.Collections.Connectors();
         DataMapper.VariableList = new DataMapper.Collections.NodeList();
         DataMapper.Operators = new DataMapper.Collections.Operators();
-        var inputModel = new DataMapper.Models.TreeContainer({type: "input", x: 40});
-        DataMapper.InputView = new DataMapper.Views.TreeContainerView({el: "#input-dmcontainer", model: inputModel});
-        var outputModel = new DataMapper.Models.TreeContainer({type: "output", x: 1300});
+        var inputModel = new DataMapper.Models.TreeContainer({
+            type: "input",
+            x: this.inputStartX,
+            y: this.inputStartY
+        });
+        DataMapper.InputView = new DataMapper.Views.TreeContainerView({
+            id: "input-dmcontainer",
+            model: inputModel,
+            text: "Input",
+            color: "#D3DA7B"
+        });
+        var outputModel = new DataMapper.Models.TreeContainer({
+            type: "output",
+            x: this.outputStartX,
+            y: this.outputStartY
+        });
         DataMapper.OutputView = new DataMapper.Views.TreeContainerView({
-            el: "#output-dmcontainer",
-            model: outputModel
+            id: "output-dmcontainer",
+            model: outputModel,
+            text: "Output",
+            color: "#FCE0D3"
         });
         //                    this.render();
     }

@@ -23,6 +23,7 @@ var Tools = (function (tools) {
         el: '#tool-palette',
 
         initialize: function () {
+
         },
 
         render: function () {
@@ -32,6 +33,13 @@ var Tools = (function (tools) {
                 groupView.render(self.$el);
                 self.$el.addClass('non-user-selectable');
             });
+
+            $("#tool-palette").accordion({ //to get accordion collapsibility
+                header: ".tool-group-header",
+                collapsible: true,
+                heightStyle: "content"
+            });
+
             return this;
         }
     });
