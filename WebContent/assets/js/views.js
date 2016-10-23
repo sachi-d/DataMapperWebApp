@@ -67,17 +67,19 @@ DataMapper.Views.OperatorView = Backbone.View.extend({
     }
 });
 DataMapper.Views.TreeContainerView = Backbone.View.extend({
+    el: "#canvas",
     id: "id",
     color: "red",
     text: "cont",
-    initialize: function () {
-        // this.el = "#" + this.id;
-        this.drawInitContainer();
-        d3.select(this.el).call(this.model.dragContainer());
-        this.model.set('parent', d3.select(this.el));
-
+    model: null,
+    initialize: function (options) {
+        this.text = options.text;
+        this.color = options.color;
+        var el = this.drawInitContainer();
+        this.el = "#" + this.id;
+        el.call(this.model.dragContainer());
+        this.model.set('parent', el);
         this.bindMenu();
-
         //this.model.onchange updateContainer
     }
     ,
@@ -86,26 +88,25 @@ DataMapper.Views.TreeContainerView = Backbone.View.extend({
     }
     ,
     events: {
-        "click .file-select": "fileChange",
+        // "click .file-select": "fileChange",
     }
     ,
     drawInitContainer: function () {
+
         var parent = d3.select("#canvas").append("g").attr("id", this.id).attr("class", "tree-dmcontainer dmcontainer");
         parent.attr("transform", "translate(" + this.model.get('x') + "," + this.model.get('y') + ")");
 
         var height = this.model.get("nodeHeight") || this.model.nodeHeight;
         var width = this.model.get("containerWidth") || this.model.containerWidth;
-        console.log("dddd");
-        var titleOutline = parent.append("rect").classed(".dmcontainer-title-outline", true).attr("x", 0).attr("y", -height).attr("height", height).attr("width", width).attr("fill", this.color).attr("stroke", "#000");
-        var title = parent.append("text").classed(".dmcontainer-title", true).attr("x", 0).attr("y", -5).attr("font-weight", "bold").text(this.get('text'));
-        var containerOutline = parent.append("rect").classed(".dmcontainer-outline", true).attr("x", 0).attr("y", 0).attr("height", height * 10).attr("width", width).attr("fill", "none").attr("stroke", "#000");
-        console.log("eeeee");
+        var titleOutline = parent.append("rect").classed("dmcontainer-title-outline", true).attr("x", 0).attr("y", -height).attr("height", height).attr("width", width).attr("fill", this.color).attr("stroke", "#000").attr("id",this.id+"-title-outline");
+        var title = parent.append("text").classed("dmcontainer-title", true).attr("x", 0).attr("y", -5).attr("font-weight", "bold").text(this.text);
+        var containerOutline = parent.append("rect").classed("dmcontainer-outline", true).attr("x", 0).attr("y", 0).attr("height", height * 10).attr("width", width).attr("fill", "none").attr("stroke", "#000");
+        return parent;
     }
     ,
     bindMenu: function () {
         var self = this;
         var id = d3.select(this.el).select(".dmcontainer-title-outline").attr("id");
-        console.log("init con");
         $("#" + id).bind("contextmenu", function (event) {
 
             // Avoid the real one
@@ -197,15 +198,13 @@ DataMapper.Views.OperatorPanelView = Backbone.View.extend({
 });
 DataMapper.Views.CanvasView = Backbone.View.extend({
     el: "#canvas",
-    params: {
-        inputStartX: 40,
-        inputStartY: 40,
-        outputStartX: 1000,
-        outputStartY: 40
-    },
+    inputStartX: 40,
+    inputStartY: 40,
+    outputStartX: 1000,
+    outputStartY: 40,
     initialize: function () {
-        new DataMapper.Views.LoadFileView();
-        new DataMapper.Views.OperatorPanelView();
+        // new DataMapper.Views.LoadFileView();
+        // new DataMapper.Views.OperatorPanelView();
         DataMapper.Connectors = new DataMapper.Collections.Connectors();
         DataMapper.VariableList = new DataMapper.Collections.NodeList();
         DataMapper.Operators = new DataMapper.Collections.Operators();
