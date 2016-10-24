@@ -42,9 +42,9 @@
     <!--</div>-->
     <div id="right-click-menu">
         <!--<input type="file" class="schema-select input-schema-select"  name="input-select[]"-->
-               <!--accept="application/json"/>-->
+        <!--accept="application/json"/>-->
         <!--<input type="file" class="schema-select output-schema-select"  name="input-select[]"-->
-               <!--accept="application/json"/>-->
+        <!--accept="application/json"/>-->
         <ul class='custom-menu dropdown-menu' id="dmcontainer-menu">
             <li data-action="load">Load Schema</li>
             <li data-action="clear">Clear container</li>
@@ -66,6 +66,7 @@
         OutputView: {},
         //all the 'lines' drawn in the application
         //each connector contains information on sourceNode, targetNode, sourceContainer, targetContainer and the d3 line object
+        ToolList: {},
         Connectors: {},
         PalleteView: {},
 
@@ -75,9 +76,15 @@
         Views: {}
     };
 </script>
-<script src="assets/js/views.js"></script>
-<script src="assets/js/models.js"></script>
-<script src="assets/js/collections.js"></script>
+<script src="assets/js/canvas/elements/connector.js"></script>
+<script src="assets/js/canvas/elements/anchor.js"></script>
+<script src="assets/js/canvas/elements/element-node.js"></script>
+<script src="assets/js/canvas/elements/tree-container-view.js"></script>
+<script src="assets/js/canvas/elements/tree-container.js"></script>
+
+<script src="assets/js/canvas/canvas-view.js"></script>
+<script src="assets/js/canvas/canvas.js"></script>
+
 <script src="assets/js/tool-palette/tool-view.js"></script>
 <script src="assets/js/tool-palette/tool.js"></script>
 <script src="assets/js/tool-palette/toolgroup-view.js"></script>
@@ -147,7 +154,14 @@
 //                console.log(DataMapper.Connectors.getMappings());
     }
 
-    new DataMapper.Views.CanvasView();
+    new DataMapper.Views.CanvasView().initCanvas();
+
+    $("#canvas-container").droppable({
+
+        drop: function (event, ui) {
+            console.log(ui.draggable);
+        }
+    });
 
 
 </script>

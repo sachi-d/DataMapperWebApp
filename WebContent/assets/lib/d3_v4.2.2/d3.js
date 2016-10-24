@@ -9834,7 +9834,7 @@ var   keyPrefix$1 = "$";
     return tree;
   }
 
-  // Node-link tree diagram using the Reingold-Tilford "tidy" algorithm
+  // Node-link tree canvas using the Reingold-Tilford "tidy" algorithm
   function tree() {
     var separation = defaultSeparation$1,
         dx = 1,
