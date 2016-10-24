@@ -79,6 +79,7 @@ DataMapper.Views.TreeContainerView = Backbone.View.extend({
         this.el = "#" + this.id;
         el.call(this.model.dragContainer());
         this.model.set('parent', el);
+
         this.bindMenu();
         //this.model.onchange updateContainer
     }
@@ -86,29 +87,64 @@ DataMapper.Views.TreeContainerView = Backbone.View.extend({
     render: function () {
         this.model.drawContainer();
     }
-    ,
-    events: {
-        // "click .file-select": "fileChange",
-    }
+    // ,
+    // events: {
+    //     "change .schema-select": "fileChange",
+    // }
     ,
     drawInitContainer: function () {
-
-        var parent = d3.select("#canvas").append("g").attr("id", this.id).attr("class", "tree-dmcontainer dmcontainer");
-        parent.attr("transform", "translate(" + this.model.get('x') + "," + this.model.get('y') + ")");
+        var self = this;
+        var parent = d3.select("#canvas").append("g")
+            .attr("id", this.id)
+            .attr("class", "tree-dmcontainer dmcontainer")
+            .attr("transform", "translate(" + this.model.get('x') + "," + this.model.get('y') + ")");
 
         var height = this.model.get("nodeHeight") || this.model.nodeHeight;
         var width = this.model.get("containerWidth") || this.model.containerWidth;
-        var titleOutline = parent.append("rect").classed("dmcontainer-title-outline", true).attr("x", 0).attr("y", -height).attr("height", height).attr("width", width).attr("fill", this.color).attr("stroke", "#000").attr("id",this.id+"-title-outline");
-        var title = parent.append("text").classed("dmcontainer-title", true).attr("x", 0).attr("y", -5).attr("font-weight", "bold").text(this.text);
-        var containerOutline = parent.append("rect").classed("dmcontainer-outline", true).attr("x", 0).attr("y", 0).attr("height", height * 10).attr("width", width).attr("fill", "none").attr("stroke", "#000");
+
+        var titleOutline = parent.append("rect")
+            .classed("dmcontainer-title-outline", true)
+            .attr("x", 0).attr("y", -height)
+            .attr("height", height)
+            .attr("width", width)
+            .attr("fill", this.color)
+            .attr("stroke", "#000")
+            .attr("id", this.id + "-title-outline");
+
+        var title = parent.append("text")
+            .classed("dmcontainer-title", true)
+            .attr("x", 0).attr("y", -5)
+            .attr("font-weight", "bold")
+            .text(this.text);
+
+        var containerOutline = parent.append("rect")
+            .classed("dmcontainer-outline", true)
+            .attr("x", 0).attr("y", 0)
+            .attr("height", height * 10)
+            .attr("width", width)
+            .attr("fill", "none")
+            .attr("stroke", "#000");
+        var fo = parent.append("foreignObject").attr("x", 0).attr("y", 0).attr("height", 100).attr("width", 100);
+        var input = fo.append("xhtml:input")
+            .attr("type", "file")
+            .classed("schema-select", true)
+            .attr("name", "input-select[]")
+            .attr("id", this.id + "-schema-select")
+            .attr("accept", "application/json")
+            .style("display", "none")
+            .on("change", function(){
+               self.fileChange();
+            });
+        this.schemaSelect = input;
         return parent;
     }
     ,
     bindMenu: function () {
         var self = this;
         var id = d3.select(this.el).select(".dmcontainer-title-outline").attr("id");
-        $("#" + id).bind("contextmenu", function (event) {
-
+        var classClicked = id + "-clicked";
+        $("#" + id).on("contextmenu", function (event) {
+            console.log(self.id);
             // Avoid the real one
             event.preventDefault();
 
@@ -117,32 +153,35 @@ DataMapper.Views.TreeContainerView = Backbone.View.extend({
             css({
                 top: event.pageY + "px",
                 left: event.pageX + "px"
-            });
+            }).addClass(classClicked);
         });
         // If the document is clicked somewhere
-        $(document).bind("mousedown", function (e) {
+        $(document).on("mousedown", function (e) {
 
             // If the clicked element is not the menu
             if (!$(e.target).parents(".custom-menu").length > 0) {
 
                 // Hide it
+                $("#dmcontainer-menu").removeClass(classClicked);
                 $(".custom-menu").hide(100);
             }
         });
 
 
 // If the menu element is clicked
-        $("#dmcontainer-menu li").click(function () {
+        $("#dmcontainer-menu li").on("click", function () {
             // This is the triggered action name
-            switch ($(this).attr("data-action")) {
+            if ($("#dmcontainer-menu").hasClass(classClicked)) {
+                switch ($(this).attr("data-action")) {
 
-                // A case for each action. Your actions here
-                case "load":
-                    $(".file-select").trigger("click");
-                    break;
-                case "clear":
-                    alert("second");
-                    break;
+                    // A case for each action. Your actions here
+                    case "load":
+                        $("#" + self.schemaSelect.attr("id")).trigger("click");
+                        break;
+                    case "clear":
+                        self.clearContainer();
+                        break;
+                }
             }
 
             // Hide it AFTER the action was triggered
@@ -151,17 +190,23 @@ DataMapper.Views.TreeContainerView = Backbone.View.extend({
 
     }
     ,
-    fileChange: function (e) {
+    triggerInput: function () {
+
+    }
+    ,
+    fileChange: function () {
+        var e=d3.event;
         e.stopPropagation();
         e.preventDefault();
-        e.dataTransfer = e.originalEvent.dataTransfer;
+         // e.dataTransfer = e.originalTarget.dataTransfer;
         var files = e.target.files || e.dataTransfer.files;
-        this.get('model').set('file', files[0]);
+        this.model.set('file', files[0]);
         this.render();
-    },
+    }
+    ,
     clearContainer: function () {
-        this.get('model').get('parent').selectAll(".nested-group").remove();
-        this.get('model').set('nodeCollection', new DataMapper.Collections.NodeList());
+        this.model.get('parent').selectAll(".nested-group").remove();
+        this.model.set('nodeCollection', new DataMapper.Collections.NodeList());
     }
 })
 ;

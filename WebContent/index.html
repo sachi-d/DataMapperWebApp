@@ -32,46 +32,26 @@
         <div id="tool-palette" style="background: #232323;" class="col-md-2"></div>
         <div id="canvas-container" class="col-md-10">
             <svg id="canvas" class="canvas" width="1500" height="500">
-                <!--<g id="input-dmcontainer" transform="translate(40,40)" class="tree-dmcontainer dmcontainer">-->
-                <!--<g id="input-dmcontainer-fo" class="dmcontainer-fo">-->
-                <!--<rect class="dmcontainer-title-outline" id="input-dmcontainer-title-outline" fill="#D3DA7B"-->
-                <!--stroke="black"></rect>-->
-                <!--<text class="dmcontainer-title" id="input-dmcontainer-title" y="0" font-weight="bold">Input-->
-                <!--</text>-->
-                <!--<rect class="dmcontainer-outline" id="input-dmcontainer-outline" height="200" width="300"-->
-                <!--fill="none"-->
-                <!--x="0"-->
-                <!--y="20"-->
-                <!--stroke="black"></rect>-->
-                <!--</g>-->
-                <!--</g>-->
 
-
-                <!--<g id="output-dmcontainer" transform="translate(1000,40)" class="tree-dmcontainer dmcontainer">-->
-                <!--<g id="output-dmcontainer-fo" class="dmcontainer-fo">-->
-                <!--<rect class="dmcontainer-title-outline" id="output-dmcontainer-title-outline" fill="#FCE0D3"-->
-                <!--stroke="black"></rect>-->
-                <!--<text class="dmcontainer-title" id="output-dmcontainer-title" font-weight="bold">Output</text>-->
-                <!--<rect class="dmcontainer-outline" id="output-dmcontainer-outline" height="10" fill="none"-->
-                <!--stroke="black"></rect>-->
-                <!--</g>-->
-                <!--</g>-->
             </svg>
+
         </div>
     </div>
     <!--<div class="row">-->
     <!--<button onclick="showMappings()">showMappings</button>-->
     <!--</div>-->
+    <div id="right-click-menu">
+        <!--<input type="file" class="schema-select input-schema-select"  name="input-select[]"-->
+               <!--accept="application/json"/>-->
+        <!--<input type="file" class="schema-select output-schema-select"  name="input-select[]"-->
+               <!--accept="application/json"/>-->
+        <ul class='custom-menu dropdown-menu' id="dmcontainer-menu">
+            <li data-action="load">Load Schema</li>
+            <li data-action="clear">Clear container</li>
+        </ul>
+    </div>
 </div>
 
-<div id="right-click-menu">
-    <input type="file" class="file-select input" id="input-file-select" name="input-select[]"
-           accept="application/json"/>
-    <ul class='custom-menu dropdown-menu' id="dmcontainer-menu">
-        <li data-action="load">Load Schema</li>
-        <li data-action="clear">Clear container</li>
-    </ul>
-</div>
 
 <script>
 
@@ -167,8 +147,7 @@
 //                console.log(DataMapper.Connectors.getMappings());
     }
 
-        new DataMapper.Views.CanvasView();
-
+    new DataMapper.Views.CanvasView();
 
 
 </script>
