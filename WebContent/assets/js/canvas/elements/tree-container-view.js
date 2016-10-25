@@ -4,10 +4,66 @@
 DataMapper.Views.OperatorView = Backbone.View.extend({
     el: "#op-panel",
     initialize: function () {
-        // this.render();
+        this.el = "#" + this.id;
     },
     render: function () {
         this.model.drawContainer();
+        this.bindMenu();
+    },
+    bindMenu: function () {
+        var self = this;
+        var id = this.el;
+        var classClicked = id + "-clicked";
+        $(id + " .dmcontainer-title-outline").on("contextmenu", function (event) {
+            // Avoid the real one
+            event.preventDefault();
+
+            // Show contextmenu
+            $("#operator-menu").finish().toggle(100)
+                .css({ // In the right position (the mouse)
+                    top: event.pageY + "px",
+                    left: event.pageX + "px"
+                })
+                .addClass(classClicked);
+        });
+        // If the document is clicked somewhere
+        $(document).on("mousedown", function (e) {
+
+            // If the clicked element is not the menu
+            if (!$(e.target).parents(".custom-menu").length > 0) {
+
+                // Hide it
+                $("#operator-menu").removeClass(classClicked);
+                $(".custom-menu").hide(100);
+            }
+        });
+
+
+// If the menu element is clicked
+        $("#operator-menu li").on("click", function () {
+            // This is the triggered action name
+            if ($("#operator-menu").hasClass(classClicked)) {
+                switch ($(this).attr("data-action")) {
+
+                    // A case for each action. Your actions here
+                    case "load":
+                        $("#" + self.schemaSelect.attr("id")).trigger("click");
+                        break;
+                    case "clear":
+                        self.clearContainer();
+                        break;
+                }
+            }
+
+            // Hide it AFTER the action was triggered
+            $(".custom-menu").hide(100);
+        });
+
+    },
+    clearContainer: function () {
+        this.model.get('parent').remove();
+        Diagram.Operators.remove(this.model);
+        console.log(Diagram.Operators);
     }
 });
 
@@ -56,7 +112,8 @@ DataMapper.Views.TreeContainerView = Backbone.View.extend({
             .classed("dmcontainer-title", true)
             .attr("x", 0).attr("y", -5)
             .attr("font-weight", "bold")
-            .text(this.text);
+            .text(this.text)
+            .attr("cursor", "move");
 
         var containerOutline = parent.append("rect")
             .classed("dmcontainer-outline", true)
@@ -82,10 +139,9 @@ DataMapper.Views.TreeContainerView = Backbone.View.extend({
     ,
     bindMenu: function () {
         var self = this;
-        var id = d3.select(this.el).select(".dmcontainer-title-outline").attr("id");
+        var id = this.el;
         var classClicked = id + "-clicked";
-        $("#" + id).on("contextmenu", function (event) {
-            console.log(self.id);
+        $(id + " .dmcontainer-title-outline").on("contextmenu", function (event) {
             // Avoid the real one
             event.preventDefault();
 

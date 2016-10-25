@@ -49,6 +49,10 @@
             <li data-action="load">Load Schema</li>
             <li data-action="clear">Clear container</li>
         </ul>
+
+        <ul class='custom-menu dropdown-menu' id="operator-menu">
+            <li data-action="clear">Delete</li>
+        </ul>
     </div>
 </div>
 
@@ -76,7 +80,7 @@
         PalleteView: {},
         //a Backbone collection of all the operators in the app - when a tool is dragged and dropped an operator is created and drawn
         Operators: {}
-    }
+    };
 </script>
 <script src="assets/js/canvas/elements/connector.js"></script>
 <script src="assets/js/canvas/elements/anchor.js"></script>

@@ -80,10 +80,10 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
             });
     },
     drawArrow: function () {
-        var newArrow = this.get('parent').append("polygon").attr("class", "drag-head").attr("cursor", "pointer");
+        var newArrow = this.get('parent').append("polygon").attr("class", "drag-head");
         this.moveArrow(newArrow, this.get('cx'), this.get('cy'));
         if (this.get('type') === "input") {
-            newArrow.attr("fill", "#019999");
+            newArrow.attr("fill", "#019999").attr("cursor", "pointer");
             newArrow.call(this.dragAnchor());
         } else {
             newArrow.attr("fill", "#c9c9c9");

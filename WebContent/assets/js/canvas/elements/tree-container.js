@@ -57,12 +57,14 @@ DataMapper.Models.Operator = Backbone.Model.extend({
             .attr("x", 0)
             .attr("y", 0)
             .attr("fill", "#C5E3FF")
-            .attr("stroke", "black");
+            .attr("stroke", "black")
+            .attr("cursor", "move");
         var opTitle = parent.append("text").attr("class", "dmcontainer-title")
             .attr("font-weight", "bold")
             .attr("x", 0)
             .attr("y", 15)
-            .text(this.get('title'));
+            .text(this.get('title'))
+            .attr("cursor", "move");
         var opContainerOutline = parent.append("rect").attr("class", "dmcontainer-outline")
             .attr("width", 2 * this.get('width'))
             .attr("height", max * this.get('height'))
@@ -331,6 +333,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Operator.extend({
                 }
             });
         }
+
         var path;
         iter(this.get('data'), []);
         return path;
