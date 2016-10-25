@@ -4,7 +4,7 @@
 DataMapper.Views.OperatorView = Backbone.View.extend({
     el: "#op-panel",
     initialize: function () {
-        this.render();
+        // this.render();
     },
     render: function () {
         this.model.drawContainer();

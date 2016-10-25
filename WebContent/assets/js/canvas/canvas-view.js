@@ -7,10 +7,10 @@ DataMapper.Views.CanvasView = Backbone.View.extend({
     inputStartY: 40,
     outputStartX: 1000,
     outputStartY: 40,
-    initElements: function () {
-        // new DataMapper.Views.LoadFileView();
-        // new DataMapper.Views.OperatorPanelView();
+    initialize: function () {
 
+    },
+    initElements: function () {
         Diagram.Connectors = new DataMapper.Collections.Connectors();
         Diagram.VariableList = new DataMapper.Collections.NodeList();
         Diagram.Operators = new DataMapper.Collections.Operators();
@@ -37,5 +37,38 @@ DataMapper.Views.CanvasView = Backbone.View.extend({
             color: "#FCE0D3"
         });
         //                    this.render();
+    },
+    render: function () {
+        this.initElements();
+
+        $("#canvas-container").droppable({
+            drop: this.handleDropEvent
+        });
+
+
+    },
+    handleDropEvent: function (event, ui) {
+        console.log("ddd");
+        var id = ui.draggable[0].lastChild.id;
+        console.log(this);
+        var addOperator = function (toolID) {
+            var tool = Diagram.ToolList.getToolByID(toolID);
+            var operator = new DataMapper.Models.Operator({
+                title: tool.get('title'),
+                id: tool.cid,
+                inputCount: tool.get('defaults').inputCount,
+                outputCount: tool.get('defaults').outputCount,
+                inputType: "String",
+                outputType: "String"
+            });
+            var operatorView = new DataMapper.Views.OperatorView({model: operator});
+            operatorView.render();
+            Diagram.Operators.add(operator);
+        };
+        addOperator(id);
+    },
+    addOdperator: function (toolID) {
+        console.log(toolID);
+        var tool = Diagram.ToolList.getToolByID(toolID);
     }
 });
