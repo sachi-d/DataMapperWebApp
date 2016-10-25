@@ -10,7 +10,7 @@ var toolGroupDefs = [
                 {
                     title: "DataMapperLink",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 }
             ]
         },
@@ -21,27 +21,27 @@ var toolGroupDefs = [
                 {
                     title: "Constant",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "CustomFunction",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "Properties",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "Compare",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "GlobalVariable",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
             ]
         },
@@ -52,57 +52,57 @@ var toolGroupDefs = [
                 {
                     title: "Add",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "Subtract",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "Multiply",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "Divide",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "Ceiling",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "Floor",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "Round",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "SetPrecision",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "AbsoluteValue",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "Min",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "Max",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 }
             ]
         },
@@ -113,7 +113,7 @@ var toolGroupDefs = [
                 {
                     title: "IfElse",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 }
             ]
         },
@@ -124,17 +124,17 @@ var toolGroupDefs = [
                 {
                     title: "AND",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "OR",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "NOT",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 }
             ]
         },
@@ -145,17 +145,17 @@ var toolGroupDefs = [
                 {
                     title: "StringToNumber",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "StringToBoolean",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "ToString",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 }
             ]
         },
@@ -166,57 +166,57 @@ var toolGroupDefs = [
                 {
                     title: "Concat",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "Split",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "LowerCase",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "UpperCase",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "StringLength",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "StartsWith",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "EndsWith",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "Substring",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "Trim",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "Replace",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 },
                 {
                     title: "Match",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2}
+                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
                 }
             ]
         }

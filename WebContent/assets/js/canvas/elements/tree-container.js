@@ -6,8 +6,6 @@ DataMapper.Models.Operator = Backbone.Model.extend({
     id: "id",
     inputCount: 0,
     outputCount: 0,
-    inputType: "String",
-    outputType: "String",
     inputs: [],
     outputs: [],
     parent: d3.select("canvas"),
@@ -86,7 +84,7 @@ DataMapper.Models.Operator = Backbone.Model.extend({
                 var node = new DataMapper.Models.Node({
                     parent: inputs,
                     text: "",
-                    textType: this.get('inputType'),
+                    textType: this.get('inputTypes')[i],
                     x: x,
                     y: tempY,
                     type: "output",
@@ -112,7 +110,7 @@ DataMapper.Models.Operator = Backbone.Model.extend({
                 var node = new DataMapper.Models.Node({
                     parent: outputs,
                     text: "",
-                    textType: this.get('outputType'),
+                    textType: this.get('outputTypes')[i],
                     x: x,
                     y: tempY,
                     type: "input",
