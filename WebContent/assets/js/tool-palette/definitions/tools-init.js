@@ -225,7 +225,7 @@ var toolGroupDefs = [
 
 var toolPalette = (function renderToolPalette(toolPalette, definitions) {
     var idCount = 0;
-    // var toolList = new DataMapper.Collections.ToolList();
+    var toolList = new DataMapper.Collections.ToolList();
     definitions.map(function (toolGroup) {
         var tempToolGroup = new Tools.Models.ToolGroup({
             toolGroupName: toolGroup.toolGroupName,
@@ -238,13 +238,13 @@ var toolPalette = (function renderToolPalette(toolPalette, definitions) {
                 icon: tool.icon,
                 defaults: tool.defaults
             });
-            // toolList.add(tempTool);
+            toolList.add(tempTool);
             idCount++;
             tempToolGroup.toolCollection.add(tempTool);
         });
         toolPalette.add(tempToolGroup);
     });
-    // DataMapper.ToolList = toolList;
+    Diagram.ToolList = toolList;
     return toolPalette;
 })(new Tools.Models.ToolPalatte(), toolGroupDefs);
 

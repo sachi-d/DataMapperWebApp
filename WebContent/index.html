@@ -56,8 +56,14 @@
 <script>
 
     var DataMapper = {
+        //Definitions
+        Models: {},
+        Collections: {},
+        Views: {}
+    };
+    var Diagram = {
         //the editor = svg
-        Canvas: d3.select("#canvas"),
+        Canvas: {},
         //a Backbone collection of all the operators in the app
         Operators: {},
         // Backbone view corresponding to Input/Output container
@@ -68,13 +74,8 @@
         //each connector contains information on sourceNode, targetNode, sourceContainer, targetContainer and the d3 line object
         ToolList: {},
         Connectors: {},
-        PalleteView: {},
-
-        //Definitions
-        Models: {},
-        Collections: {},
-        Views: {}
-    };
+        PalleteView: {}
+    }
 </script>
 <script src="assets/js/canvas/elements/connector.js"></script>
 <script src="assets/js/canvas/elements/anchor.js"></script>
@@ -154,12 +155,14 @@
 //                console.log(DataMapper.Connectors.getMappings());
     }
 
-    new DataMapper.Views.CanvasView().initCanvas();
+    Diagram.Canvas = new DataMapper.Views.CanvasView().initElements();
 
     $("#canvas-container").droppable({
 
         drop: function (event, ui) {
-            console.log(ui.draggable);
+            var id = ui.draggable[0].lastChild.id;
+            var tool = DataMapper.ToolList.getToolByID(id);
+            console.log(tool);
         }
     });
 

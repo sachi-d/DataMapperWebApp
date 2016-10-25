@@ -31,12 +31,7 @@ DataMapper.Views.TreeContainerView = Backbone.View.extend({
     ,
     render: function () {
         this.model.drawContainer();
-    }
-    // ,
-    // events: {
-    //     "change .schema-select": "fileChange",
-    // }
-    ,
+    },
     drawInitContainer: function () {
         var self = this;
         var parent = d3.select("#canvas").append("g")
@@ -54,7 +49,8 @@ DataMapper.Views.TreeContainerView = Backbone.View.extend({
             .attr("width", width)
             .attr("fill", this.color)
             .attr("stroke", "#000")
-            .attr("id", this.id + "-title-outline");
+            .attr("id", this.id + "-title-outline")
+            .attr("cursor", "move");
 
         var title = parent.append("text")
             .classed("dmcontainer-title", true)

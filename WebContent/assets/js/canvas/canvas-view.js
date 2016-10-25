@@ -7,19 +7,19 @@ DataMapper.Views.CanvasView = Backbone.View.extend({
     inputStartY: 40,
     outputStartX: 1000,
     outputStartY: 40,
-    initCanvas: function () {
+    initElements: function () {
         // new DataMapper.Views.LoadFileView();
         // new DataMapper.Views.OperatorPanelView();
 
-        DataMapper.Connectors = new DataMapper.Collections.Connectors();
-        DataMapper.VariableList = new DataMapper.Collections.NodeList();
-        DataMapper.Operators = new DataMapper.Collections.Operators();
+        Diagram.Connectors = new DataMapper.Collections.Connectors();
+        Diagram.VariableList = new DataMapper.Collections.NodeList();
+        Diagram.Operators = new DataMapper.Collections.Operators();
         var inputModel = new DataMapper.Models.TreeContainer({
             type: "input",
             x: this.inputStartX,
             y: this.inputStartY
         });
-        DataMapper.InputView = new DataMapper.Views.TreeContainerView({
+        Diagram.InputView = new DataMapper.Views.TreeContainerView({
             id: "input-dmcontainer",
             model: inputModel,
             text: "Input",
@@ -30,7 +30,7 @@ DataMapper.Views.CanvasView = Backbone.View.extend({
             x: this.outputStartX,
             y: this.outputStartY
         });
-        DataMapper.OutputView = new DataMapper.Views.TreeContainerView({
+        Diagram.OutputView = new DataMapper.Views.TreeContainerView({
             id: "output-dmcontainer",
             model: outputModel,
             text: "Output",

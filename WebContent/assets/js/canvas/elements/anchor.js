@@ -9,7 +9,7 @@ DataMapper.Views.AnchorView = Backbone.View.extend({
 });
 DataMapper.Models.Anchor = Backbone.Model.extend({
     defaults: {
-        parent: DataMapper.Canvas,
+        parent: d3.select(Diagram.Canvas.el),
         cx: 0,
         cy: 0,
         width: 10,
@@ -48,10 +48,10 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
                     //limit the connections to one - in output targets
                     if (target.attr("type") === "output") {
                         //loop through connectors to find targetNode=target and remove line
-                        var duplicate = DataMapper.Connectors.findFromTarget(target) || null;
+                        var duplicate = Diagram.Connectors.findFromTarget(target) || null;
                         if (duplicate !== null) {
                             duplicate.get('line').remove();
-                            DataMapper.Connectors.remove(duplicate);
+                            Diagram.Connectors.remove(duplicate);
                         }
                     }
                     var oppositeContainer = self.getParentContainer(target);
@@ -80,7 +80,7 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
             });
     },
     drawArrow: function () {
-        var newArrow = this.get('parent').append("polygon").attr("class", "drag-head");
+        var newArrow = this.get('parent').append("polygon").attr("class", "drag-head").attr("cursor", "pointer");
         this.moveArrow(newArrow, this.get('cx'), this.get('cy'));
         if (this.get('type') === "input") {
             newArrow.attr("fill", "#019999");

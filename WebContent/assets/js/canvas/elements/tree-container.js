@@ -43,7 +43,7 @@ DataMapper.Models.Operator = Backbone.Model.extend({
     drawContainer: function () {
         this.set('inputs', []);
         this.set('outputs', []);
-        var canvas = DataMapper.Canvas;
+        var canvas = d3.select(Diagram.Canvas.el);
         var parent = canvas.append("g").attr("class", "operator dmcontainer")
             .attr("id", this.get('id'))
             .attr("transform", "translate(" + this.get('x') + "," + this.get('y') + ")");

@@ -37,3 +37,13 @@ var Tools = (function (tools) {
     return tools;
 }(Tools || {}));
 
+
+DataMapper.Collections.ToolList = Backbone.Collection.extend({
+    model: Tools.Models.Tool,
+    url: "/tools",
+    getToolByID: function (id) {
+        return this.find(function (item) {
+            return item.get("id") == id;
+        });
+    }
+});
