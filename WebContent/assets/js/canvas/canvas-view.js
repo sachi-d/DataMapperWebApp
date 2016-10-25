@@ -40,35 +40,34 @@ DataMapper.Views.CanvasView = Backbone.View.extend({
     },
     render: function () {
         this.initElements();
-
+        var self = this;
         $("#canvas-container").droppable({
-            drop: this.handleDropEvent
+            drop: function (event, ui) {
+                var newPosX = ui.offset.left - $(this).offset().left;
+                var newPosY = ui.offset.top - $(this).offset().top;
+                var id = ui.draggable[0].lastChild.id || null;
+                if (id !== null) {
+                    self.addOperator(id, newPosX, newPosY);
+                }
+            }
         });
 
 
     },
-    handleDropEvent: function (event, ui) {
-        console.log("ddd");
-        var id = ui.draggable[0].lastChild.id;
-        console.log(this);
-        var addOperator = function (toolID) {
-            var tool = Diagram.ToolList.getToolByID(toolID);
-            var operator = new DataMapper.Models.Operator({
-                title: tool.get('title'),
-                id: tool.cid,
-                inputCount: tool.get('defaults').inputCount,
-                outputCount: tool.get('defaults').outputCount,
-                inputType: "String",
-                outputType: "String"
-            });
-            var operatorView = new DataMapper.Views.OperatorView({model: operator});
-            operatorView.render();
-            Diagram.Operators.add(operator);
-        };
-        addOperator(id);
-    },
-    addOdperator: function (toolID) {
-        console.log(toolID);
+    addOperator: function (toolID, x, y) {
         var tool = Diagram.ToolList.getToolByID(toolID);
+        var operator = new DataMapper.Models.Operator({
+            title: tool.get('title'),
+            id: tool.cid,
+            x: x,
+            y: y,
+            inputCount: tool.get('defaults').inputCount,
+            outputCount: tool.get('defaults').outputCount,
+            inputType: "String",
+            outputType: "String"
+        });
+        var operatorView = new DataMapper.Views.OperatorView({model: operator});
+        operatorView.render();
+        Diagram.Operators.add(operator);
     }
 });
