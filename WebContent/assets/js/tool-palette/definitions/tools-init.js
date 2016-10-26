@@ -124,17 +124,17 @@ var toolGroupDefs = [
                 {
                     title: "AND",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
+                    defaults: {inputCount: 2, outputCount: 1, inputTypes: ["String", "String"], outputTypes: ["String"]}
                 },
                 {
                     title: "OR",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
+                    defaults: {inputCount: 2, outputCount: 1, inputTypes: ["String", "String"], outputTypes: ["String"]}
                 },
                 {
                     title: "NOT",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
+                    defaults: {inputCount: 1, outputCount: 1, inputTypes: ["String"], outputTypes: ["String"]}
                 }
             ]
         },
@@ -166,7 +166,7 @@ var toolGroupDefs = [
                 {
                     title: "Concat",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
+                    defaults: {inputCount: 2, outputCount: 1, inputTypes: ["String", "String"], outputTypes: ["String"]}
                 },
                 {
                     title: "Split",
@@ -176,17 +176,17 @@ var toolGroupDefs = [
                 {
                     title: "LowerCase",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
+                    defaults: {inputCount: 1, outputCount: 1, inputTypes: ["String"], outputTypes: ["String"]}
                 },
                 {
                     title: "UpperCase",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
+                    defaults: {inputCount: 1, outputCount: 1, inputTypes: ["String"], outputTypes: ["String"]}
                 },
                 {
                     title: "StringLength",
                     icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
+                    defaults: {inputCount: 1, outputCount: 1, inputTypes: ["String"], outputTypes: ["Int"]}
                 },
                 {
                     title: "StartsWith",

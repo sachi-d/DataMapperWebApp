@@ -38,7 +38,7 @@ DataMapper.Models.Operator = Backbone.Model.extend({
                 // resizeCanvas();
             });
     },
-    drawContainer: function () {
+    drawOperatorContainer: function () {
         this.set('inputs', []);
         this.set('outputs', []);
         var canvas = d3.select(Diagram.Canvas.el);
@@ -49,7 +49,7 @@ DataMapper.Models.Operator = Backbone.Model.extend({
         var inputCount = this.get('inputCount'),
             outputCount = this.get('outputCount');
         var max = d3.max([inputCount, outputCount]);
-        var opTitleOutline = parent.append("rect").attr("class", "dmcontainer-title-outline")
+        var opTitleOutline = parent.append("rect").attr("class", "dmcontainer-title-outline dmcontainer-structure")
             .attr("width", 2 * this.get('width'))
             .attr("height", 20) //height of the rect title=20
             .attr("x", 0)
@@ -57,13 +57,13 @@ DataMapper.Models.Operator = Backbone.Model.extend({
             .attr("fill", "#C5E3FF")
             .attr("stroke", "black")
             .attr("cursor", "move");
-        var opTitle = parent.append("text").attr("class", "dmcontainer-title")
+        var opTitle = parent.append("text").attr("class", "dmcontainer-title dmcontainer-structure")
             .attr("font-weight", "bold")
             .attr("x", 0)
             .attr("y", 15)
             .text(this.get('title'))
             .attr("cursor", "move");
-        var opContainerOutline = parent.append("rect").attr("class", "dmcontainer-outline")
+        var opContainerOutline = parent.append("rect").attr("class", "dmcontainer-outline dmcontainer-structure")
             .attr("width", 2 * this.get('width'))
             .attr("height", max * this.get('height'))
             .attr("x", 0)
@@ -155,13 +155,15 @@ DataMapper.Models.Operator = Backbone.Model.extend({
         });
     },
     resizeCanvas: function (x, y) {
+        console.log(this.get('parent'));
         var tempY = Number(this.get('parent').select(".dmcontainer-outline").attr("height")) + y,
             tempX = Number(this.get('parent').select(".dmcontainer-outline").attr("width")) + x;
-        if (d3.select("#canvas").attr("width") < tempX) {
-            d3.select("#canvas").attr("width", tempX);
+        var canvas = d3.select(Diagram.Canvas.el);
+        if (canvas.attr("width") < tempX) {
+            canvas.attr("width", tempX);
         }
-        if (d3.select("#canvas").attr("height") < tempY) {
-            d3.select("#canvas").attr("height", tempY);
+        if (canvas.attr("height") < tempY) {
+            canvas.attr("height", tempY);
         }
     }
 });
@@ -211,6 +213,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Operator.extend({
                 height = model.get('nodeHeight') || model.nodeHeight;
             return (count) * height;
         });
+        this.resizeCanvas(outline.attr("x"), outline.attr("y"));
     },
     updateContainerWidth: function (t) {
         var maxLength = this.containerWidth || this.get('containerWidth');

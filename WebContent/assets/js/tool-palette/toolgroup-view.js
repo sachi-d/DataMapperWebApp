@@ -56,11 +56,11 @@ var Tools = (function (tools) {
             this.el = groupDiv[0].outerHTML;
             this.$el = groupDiv;
 
-            // groupHeaderDiv.click(function(){
-            //     groupBodyDiv.slideToggle(500, function () {
-            //             groupCollapseIcon.toggleClass("glyphicon-chevron-up")
-            //                                 .toggleClass("glyphicon-chevron-down");
-            //         });
+            // groupHeaderDiv.click(function () {
+            //     // groupBodyDiv.slideToggle(500, function () {
+            //     groupCollapseIcon.toggleClass("glyphicon-chevron-up")
+            //         .toggleClass("glyphicon-chevron-down");
+            //     // });
             // });
             return this;
         }
