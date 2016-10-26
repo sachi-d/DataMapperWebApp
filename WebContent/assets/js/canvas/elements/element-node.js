@@ -25,6 +25,7 @@ DataMapper.Models.Node = Backbone.Model.extend({//set parent, text, x,y, type,ca
         node: d3.select("#canvas")
     },
     initialize: function () {
+        this.set("id", "node-" + this.cid);
         if (this.get('type') === "input") {
             this.set('dotPosition', [this.get('x') + this.get('width'), this.get('y') + this.get('height') / 2]);
         } else if (this.get('type') === "output") {
@@ -41,7 +42,8 @@ DataMapper.Models.Node = Backbone.Model.extend({//set parent, text, x,y, type,ca
             .attr("x", this.get("x"))
             .attr("y", this.get("y"))
             .attr("height", height)
-            .attr("width", width);
+            .attr("width", width)
+            .attr("id", this.id);
         this.set('node', parent1);
 
         //                    <foreignObject x="15" y="15" width="190" height="90">

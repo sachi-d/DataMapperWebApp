@@ -11,7 +11,7 @@ DataMapper.Views.ConnectorView = Backbone.View.extend({
         var line = this.parent.append("line").attr("class", "drag-line")
             .style("stroke", "black")
             .style("stroke-width", "2")
-            .attr("id", this.cid);
+            .attr("id", "line-" + this.cid);
         this.el = "#" + line.attr("id");
         this.model.set('line', line);
         return line;

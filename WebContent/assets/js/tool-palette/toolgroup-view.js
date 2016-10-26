@@ -22,7 +22,7 @@ var Tools = (function (tools) {
     var toolGroupView = Backbone.View.extend({
 
         initialize: function () {
-            console.log("toolGroupWrapperView init");
+            // console.log("toolGroupWrapperView init");
         },
 
         render: function (parent) {
