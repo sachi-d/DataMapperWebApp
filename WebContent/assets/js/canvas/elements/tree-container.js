@@ -155,7 +155,6 @@ DataMapper.Models.Operator = Backbone.Model.extend({
         });
     },
     resizeCanvas: function (x, y) {
-        console.log(this.get('parent'));
         var tempY = Number(this.get('parent').select(".dmcontainer-outline").attr("height")) + y,
             tempX = Number(this.get('parent').select(".dmcontainer-outline").attr("width")) + x;
         var canvas = d3.select(Diagram.Canvas.el);
@@ -213,7 +212,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Operator.extend({
                 height = model.get('nodeHeight') || model.nodeHeight;
             return (count) * height;
         });
-        this.resizeCanvas(outline.attr("x"), outline.attr("y"));
+        //resize Canvas with the translate y value
     },
     updateContainerWidth: function (t) {
         var maxLength = this.containerWidth || this.get('containerWidth');

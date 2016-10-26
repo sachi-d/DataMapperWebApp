@@ -49,7 +49,7 @@ DataMapper.Views.OperatorView = Backbone.View.extend({
                     case "load-schema":
                         $("#" + self.schemaSelect.attr("id")).trigger("click");
                         break;
-                    case "clear":
+                    case "clear-container":
                         self.clearContainer();
                         break;
                 }
@@ -61,9 +61,12 @@ DataMapper.Views.OperatorView = Backbone.View.extend({
 
     },
     clearContainer: function () {
+        Diagram.Connectors.findFromTargetContainer(this.model.get('parent')).map(function (connector) {
+            connector.removeConnector();
+        });
+
         this.model.get('parent').remove();
         Diagram.Operators.remove(this.model);
-        console.log(Diagram.Operators);
     }
 });
 
@@ -81,7 +84,7 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.OperatorView.extend({
         el.call(this.model.dragContainer());
         this.model.set('parent', el);
 
-        this.bindMenu("#dmcontainer-menu"); 
+        this.bindMenu("#dmcontainer-menu");
     }
     ,
     render: function () {

@@ -25,9 +25,9 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
                 var thisDragX = d3.select(this).attr("cx");
                 var tempParent = d3.select(d3.select(this)["_groups"][0][0].parentNode);
                 dragHead2 = self.drawDragArrow(tempParent, thisDragX, thisDragY);
-                dragLine = tempParent.append("line").attr("class", "drag-line")
-                    .style("stroke", "black")
-                    .style("stroke-width", "2");
+                connector = new DataMapper.Models.Connector();
+                connectorView = new DataMapper.Views.ConnectorView({parent: tempParent, model: connector});
+                dragLine = connectorView.render();
                 dragLine.attr("x1", thisDragX)
                     .attr("x2", thisDragX)
                     .attr("y1", thisDragY)
@@ -48,7 +48,7 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
                     //limit the connections to one - in output targets
                     if (target.attr("type") === "output") {
                         //loop through connectors to find targetNode=target and remove line
-                        var duplicate = Diagram.Connectors.findFromTarget(target) || null;
+                        var duplicate = Diagram.Connectors.findFromTargetNode(target) || null;
                         if (duplicate !== null) {
                             duplicate.get('line').remove();
                             Diagram.Connectors.remove(duplicate);
@@ -62,13 +62,11 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
                         .attr("y2", doty)
                         .attr("target-dmcontainer", oppositeContainer.attr("id"));
                     dragHead2.remove();
-                    var map = new DataMapper.Models.Connector({
-                        sourceContainer: sourceContainer,
-                        targetContainer: oppositeContainer,
-                        sourceNode: sourceNode,
-                        targetNode: target,
-                        line: dragLine
-                    });
+                    connector.set("targetContainer", oppositeContainer);
+                    connector.set("targetNode", target);
+                    connector.set("sourceContainer", sourceContainer);
+                    connector.set("sourceNode", sourceNode);
+                    connectorView.dropFunction();
                     if (oppositeContainer.classed("operator")) {
                         target.select("text").text(sourceNode.select("text").text().split(":")[0]).classed("op-node-text", true);
                     }

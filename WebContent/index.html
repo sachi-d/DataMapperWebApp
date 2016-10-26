@@ -37,26 +37,25 @@
 
         </div>
     </div>
-    <!--<div class="row">-->
-    <!--<button onclick="showMappings()">showMappings</button>-->
-    <!--</div>-->
+
     <div id="right-click-menu">
-        <!--<input type="file" class="schema-select input-schema-select"  name="input-select[]"-->
-        <!--accept="application/json"/>-->
-        <!--<input type="file" class="schema-select output-schema-select"  name="input-select[]"-->
-        <!--accept="application/json"/>-->
+
         <ul class='custom-menu dropdown-menu' id="dmcontainer-menu">
             <li data-action="load-schema">Load Schema</li>
-            <li data-action="clear">Clear container</li>
+            <li data-action="clear-container">Clear container</li>
         </ul>
 
         <ul class='custom-menu dropdown-menu' id="operator-menu">
-            <li data-action="clear">Delete</li>
+            <li data-action="clear-container">Delete</li>
+        </ul>
+
+        <ul class='custom-menu dropdown-menu' id="connector-menu">
+            <li data-action="clear-connector">Delete</li>
         </ul>
     </div>
 </div>
 
-
+<button class="pull-right" onclick="showMappings()">showMappings</button>
 <script>
 
     var DataMapper = {
@@ -125,7 +124,7 @@
             model.get('nodeCollection').models.map(function (node) {
                 var type = node.get('type');
                 if (type === "output") {
-                    var connector = DataMapper.Connectors.findFromTarget(node.get('node')) || null;
+                    var connector = DataMapper.Connectors.findFromTargetNode(node.get('node')) || null;
                     if (connector !== null) {
                         var opposite = connector.get('sourceNode'); //d3 node object
                         var oppositeNode = nodeList.getNodeFromDOMObject(opposite.node()); //backbone model
@@ -134,7 +133,7 @@
                         inputs.push([]);
                     }
                 } else if (type === "input") {
-                    var connectors = DataMapper.Connectors.findFromSource(node.get('node'));
+                    var connectors = DataMapper.Connectors.findFromSourceNode(node.get('node'));
                     var targets = [];
                     if (connectors.length > 0) {
                         connectors.map(function (connector) {
