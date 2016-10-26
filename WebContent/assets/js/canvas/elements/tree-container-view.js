@@ -11,10 +11,12 @@ DataMapper.Views.OperatorView = Backbone.View.extend({
         this.bindMenu("#operator-menu");
     },
     bindMenu: function (menu) {
+        console.log(this.el);
         var self = this;
         var id = this.el;
         var classClicked = id + "-clicked";
         $(id + " .dmcontainer-structure").on("contextmenu", function (event) {
+            console.log("avoid");
             // Avoid the real one
             event.preventDefault();
 
@@ -56,7 +58,7 @@ DataMapper.Views.OperatorView = Backbone.View.extend({
             }
 
             // Hide it AFTER the action was triggered
-            $(".custom-menu").hide(100);
+            $(menu).hide(100);
         });
 
     },
@@ -83,7 +85,6 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.OperatorView.extend({
         this.el = "#" + this.id;
         el.call(this.model.dragContainer());
         this.model.set('parent', el);
-
         this.bindMenu("#dmcontainer-menu");
     }
     ,
@@ -154,6 +155,7 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.OperatorView.extend({
     }
     ,
     clearContainer: function () {
+        Diagram.Connectors.clearConnectionsFromContainer(this.model.get('parent'));
         this.model.get('parent').selectAll(".nested-group").remove();
         this.model.set('nodeCollection', new DataMapper.Collections.NodeList());
     }

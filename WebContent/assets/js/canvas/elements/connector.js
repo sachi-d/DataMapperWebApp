@@ -83,7 +83,6 @@ DataMapper.Models.Connector = Backbone.Model.extend({
 //                    var self = this;
         var operator = new DataMapper.Models.Operator({
             title: "directOperator",
-            id: "direct" + Diagram.Operators.length,
             inputCount: 1,
             outputCount: 1
         });
@@ -122,5 +121,22 @@ DataMapper.Collections.Connectors = Backbone.Collection.extend({
             }
         });
         return array;
+    },
+    findFromSourceContainer: function (sourceContainer) {
+        var array = this.filter(function (d) {
+            if (d.get('sourceContainer').node().isSameNode(sourceContainer.node())) {
+                return d;
+            }
+        });
+        return array;
+    },
+    clearConnectionsFromContainer: function (container) {
+        var collection = this;
+        this.findFromSourceContainer(container).map(function (item) {
+            item.removeConnector();
+        });
+        this.findFromTargetContainer(container).map(function (item) {
+            item.removeConnector();
+        });
     }
 });

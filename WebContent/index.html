@@ -15,13 +15,21 @@
     <script src="assets/lib/underscore_v1.83/underscore_1.8.3.js" type="text/javascript"></script>
     <script src="assets/lib/backbone_v1.3.3/backbone_1.3.3.js" type="text/javascript"></script>
     <script src="assets/fileHandler.js"></script>
+    <style>
+        #page-content {
+            width: 100vw;
+        }
 
+        #tool-palette {
+            background: #232323;
+        }
+    </style>
 </head>
 
 <body>
 
 
-<div id="page-content" class="container" style="width:100vw;">
+<div id="page-content" class="container">
     <!--<div class="row">-->
     <!--<div id="op-panel">-->
     <!--<button id="concat-op-btn">Add concat operator <br> 2 to 1</button>-->
@@ -29,7 +37,7 @@
     <!--</div>-->
     <!--</div>-->
     <div class="row">
-        <div id="tool-palette" style="background: #232323;" class="col-md-2"></div>
+        <div id="tool-palette" class="col-md-2"></div>
         <div id="canvas-container" class="col-md-10">
             <svg id="canvas" class="canvas" width="1500" height="500">
 
@@ -137,6 +145,7 @@
                 }
             });
         });
+        console.log(variableList);
         Diagram.Operators.models.map(function (model) {
             var inputs = [], outputs = [];
             model.get('nodeCollection').models.map(function (node) {
@@ -148,7 +157,6 @@
                         var oppositeNode = variableList.find(function (variable) {
                             return variable.refID == opposite.attr("id");
                         });
-//                        var oppositeNode = nodeList.getNodeFromDOMObject(opposite.node()); //backbone model
                         inputs.push([oppositeNode.id]);
                     } else {
                         inputs.push([]);
@@ -163,7 +171,7 @@
                                 return variable.refID == intermediateNode.attr("id");
                             });
 //                            var oppositeNode = nodeList.getNodeFromDOMObject(intermediateNode.node());
-                            targets.push(oppositeNode.get('variableID'));
+                            targets.push(oppositeNode.id);
                         });
                     }
                     outputs.push(targets);

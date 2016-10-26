@@ -14,10 +14,12 @@ DataMapper.Models.Operator = Backbone.Model.extend({
         y: 40,
         leaves: [],
         height: 20,
-        width: 120
+        width: 120,
+        color: "#f3f5f6"
     },
     nodeCollection: null,
     initialize: function () {
+        this.set('id', this.get('title') + "-" + Diagram.Operators.length);
         this.set('nodeCollection', new DataMapper.Collections.NodeList());
     },
     dragContainer: function () {
@@ -54,7 +56,7 @@ DataMapper.Models.Operator = Backbone.Model.extend({
             .attr("height", 20) //height of the rect title=20
             .attr("x", 0)
             .attr("y", 0)
-            .attr("fill", "#C5E3FF")
+            .attr("fill", this.get('color'))
             .attr("stroke", "black")
             .attr("cursor", "move");
         var opTitle = parent.append("text").attr("class", "dmcontainer-title dmcontainer-structure")
