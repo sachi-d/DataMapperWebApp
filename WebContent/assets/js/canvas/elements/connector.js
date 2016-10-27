@@ -97,7 +97,6 @@ DataMapper.Models.Connector = Backbone.Model.extend({
         Diagram.Operators.add(operator);
     },
     removeConnector: function () {
-        console.log("rem");
         if (this.isDirectConnector()) {
             Diagram.Operators.remove(this.operator);
         }
