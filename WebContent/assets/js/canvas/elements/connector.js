@@ -26,6 +26,7 @@ DataMapper.Views.ConnectorView = Backbone.View.extend({
     },
     bindMenu: function (menu) {
         var self = this;
+        var classClicked = self.el + "-clicked";
         $(this.el).on("contextmenu", function (event) {
             // Avoid the real one
             event.preventDefault();
@@ -36,6 +37,7 @@ DataMapper.Views.ConnectorView = Backbone.View.extend({
                     top: event.pageY + "px",
                     left: event.pageX + "px"
                 })
+                .addClass(classClicked);
         });
         // If the document is clicked somewhere
         $(document).on("mousedown", function (e) {
@@ -44,6 +46,7 @@ DataMapper.Views.ConnectorView = Backbone.View.extend({
             if (!$(e.target).parents(menu).length > 0) {
 
                 // Hide it
+                $(menu).removeClass(classClicked);
                 $(menu).hide(100);
             }
         });
@@ -52,12 +55,13 @@ DataMapper.Views.ConnectorView = Backbone.View.extend({
 // If the menu element is clicked
         $(menu + " li").on("click", function () {
             // This is the triggered action name
-            switch ($(this).attr("data-action")) {
-                case "clear-connector":
-                    self.model.removeConnector();
-                    break;
+            if ($(menu).hasClass(classClicked)) {
+                switch ($(this).attr("data-action")) {
+                    case "clear-connector":
+                        self.model.removeConnector();
+                        break;
+                }
             }
-
 
             // Hide it AFTER the action was triggered
             $(menu).hide(100);
@@ -93,6 +97,7 @@ DataMapper.Models.Connector = Backbone.Model.extend({
         Diagram.Operators.add(operator);
     },
     removeConnector: function () {
+        console.log("rem");
         if (this.isDirectConnector()) {
             Diagram.Operators.remove(this.operator);
         }

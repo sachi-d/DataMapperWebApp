@@ -5,7 +5,7 @@
 DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
     el: "#canvas",
     id: "id",
-    color: "#FCE0D3",
+    color: "#AABDBF",
     model: null,
     menu: "#dmcontainer-menu",
 
