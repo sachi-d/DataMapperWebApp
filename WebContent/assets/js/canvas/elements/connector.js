@@ -19,7 +19,7 @@ DataMapper.Views.ConnectorView = Backbone.View.extend({
     dropFunction: function () {
         Diagram.Connectors.add(this.model);
         //if the line is direct
-        if (null !== this.el && this.model.get('sourceContainer').classed("tree-dmcontainer") && this.model.get('targetContainer').classed("tree-dmcontainer")) {
+        if (this.model.isDirectConnector()) {
             this.model.addDirectOperator();
         }
         this.bindMenu("#connector-menu");
@@ -83,18 +83,25 @@ DataMapper.Models.Connector = Backbone.Model.extend({
 //                    var self = this;
         var operator = new DataMapper.Models.Operator({
             title: "directOperator",
-            inputCount: 1,
-            outputCount: 1
+            inputTypes: ["Direct"],
+            outputTypes: ["Direct"]
         });
         var head = Diagram.InputView.model.get('nodeCollection').getNodeFromDOMObject(this.get('sourceNode').node()).clone();
         var tail = Diagram.OutputView.model.get('nodeCollection').getNodeFromDOMObject(this.get('targetNode').node()).clone();
         operator.get('nodeCollection').add([head, tail]);
+        this.operator = operator;
         Diagram.Operators.add(operator);
     },
     removeConnector: function () {
+        if (this.isDirectConnector()) {
+            Diagram.Operators.remove(this.operator);
+        }
         this.get('line').remove();
         Diagram.Connectors.remove(this);
     },
+    isDirectConnector: function () {
+        return this.get('sourceContainer').classed("tree-dmcontainer") && this.get('targetContainer').classed("tree-dmcontainer");
+    }
 });
 
 DataMapper.Collections.Connectors = Backbone.Collection.extend({

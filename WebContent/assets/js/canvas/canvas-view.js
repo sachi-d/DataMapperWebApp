@@ -16,26 +16,26 @@ DataMapper.Views.CanvasView = Backbone.View.extend({
         Diagram.Operators = new DataMapper.Collections.Operators();
         var inputModel = new DataMapper.Models.TreeContainer({
             type: "input",
+            title: "Input",
             x: this.inputStartX,
             y: this.inputStartY
         });
         Diagram.InputView = new DataMapper.Views.TreeContainerView({
             id: "input-dmcontainer",
-            model: inputModel,
-            text: "Input",
-            color: "#D3DA7B"
+            model: inputModel
         });
+        Diagram.InputView.render();
         var outputModel = new DataMapper.Models.TreeContainer({
             type: "output",
+            title: "Output",
             x: this.outputStartX,
             y: this.outputStartY
         });
         Diagram.OutputView = new DataMapper.Views.TreeContainerView({
             id: "output-dmcontainer",
-            model: outputModel,
-            text: "Output",
-            color: "#FCE0D3"
+            model: outputModel
         });
+        Diagram.OutputView.render();
         //                    this.render();
     },
     render: function () {
@@ -60,14 +60,11 @@ DataMapper.Views.CanvasView = Backbone.View.extend({
             title: tool.get('title'),
             x: x,
             y: y,
-            inputCount: tool.get('defaults').inputCount,
-            outputCount: tool.get('defaults').outputCount,
             inputTypes: tool.get('defaults').inputTypes,
-            outputTypes: tool.get('defaults').outputTypes,
-            inputType: "String",
-            outputType: "String"
+            outputTypes: tool.get('defaults').outputTypes
         });
-        var operatorView = new DataMapper.Views.OperatorView({model: operator, id: operator.id});
+        var operatorView = new DataMapper.Views.OperatorView({id: operator.id, model: operator});
+
         operatorView.render();
         Diagram.Operators.add(operator);
     }
