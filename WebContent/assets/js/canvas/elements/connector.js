@@ -110,8 +110,7 @@ DataMapper.Models.Connector = Backbone.Model.extend({
     addPolyline: function () {
         var parent = this.get('sourceNode'),
             line = this.get('line');
-        console.log(line.node().attributes);
-         var polyLine = parent.append("polyline").attr("class", "drag-line")
+        var polyLine = parent.append("polyline").attr("class", "drag-line")
             .style("stroke", "black")
             .style("fill", "none")
             .style("stroke-width", "2")

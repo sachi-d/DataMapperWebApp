@@ -97,16 +97,10 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
             connector.setPoints();
         });
 
-        d3.select("#canvas").selectAll(".dmcontainer").each(function () {
-            if (d3.select(this).attr("id") !== sourceContainer.attr("id")) {
-                var opposite = d3.select(this);
-                Diagram.Connectors.findFromSourceContainer(opposite).map(function (connector) {
-                    if (connector.get('targetContainer').node().isSameNode(sourceContainer.node())) {
-                        connector.set("x2", Number(connector.get("x2")) + Number(newX));
-                        connector.set("y2", Number(connector.get("y2")) + Number(newY));
-                    }
-                });
-            }
+        Diagram.Connectors.findFromTargetContainer(sourceContainer).map(function (connector) {
+            connector.set("x2", Number(connector.get("x2")) + Number(newX));
+            connector.set("y2", Number(connector.get("y2")) + Number(newY));
+            connector.setPoints();
         });
     },
     resizeCanvas: function (x, y) {
