@@ -85,7 +85,7 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
             newArrow.attr("fill", "#019999").attr("cursor", "pointer");
             newArrow.call(this.dragAnchor());
         } else {
-            newArrow.attr("fill", "#c9c9c9");
+            newArrow.attr("fill", "#7c7c7c");
         }
     },
     drawDragArrow: function (parent, cx, cy) {

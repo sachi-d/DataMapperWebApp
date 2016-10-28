@@ -28,6 +28,7 @@ DataMapper.Views.ConnectorView = Backbone.View.extend({
     bindMenu: function (menu) {
         var self = this;
         var classClicked = self.el + "-clicked";
+        console.log(this.el);
         $(this.el).on("contextmenu", function (event) {
             // Avoid the real one
             event.preventDefault();
@@ -82,7 +83,9 @@ DataMapper.Models.Connector = Backbone.Model.extend({
     status: 1,
     val: 5,
     initialize: function () {
-
+        // this.on("change:x2", function (model) {
+        //     model.setPoints();
+        // });
     },
     addDirectOperator: function () {
 //                    var self = this;
@@ -114,7 +117,7 @@ DataMapper.Models.Connector = Backbone.Model.extend({
             .style("stroke", "black")
             .style("fill", "none")
             .style("stroke-width", "2")
-            .attr("id", "line-" + this.cid);
+            .attr("id", line.attr("id"));
         this.set('line', polyLine);
         this.set("x1", line.attr("x1"));
         this.set("x2", line.attr("x2"));
@@ -125,6 +128,7 @@ DataMapper.Models.Connector = Backbone.Model.extend({
         this.setPoints();
     },
     setPoints: function () {
+        console.log("setPoints");
         var self = this;
         this.get('line').attr("points", function () {
             var p1 = self.get('x1') + "," + self.get('y1'),
