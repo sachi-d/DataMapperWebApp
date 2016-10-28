@@ -20,22 +20,25 @@ DataMapper.Views.CanvasView = Backbone.View.extend({
             x: this.inputStartX,
             y: this.inputStartY
         });
-        Diagram.InputView = new DataMapper.Views.TreeContainerView({
+        var inputView1 = new DataMapper.Views.TreeContainerView({
             id: "input-dmcontainer",
             model: inputModel
         });
-        Diagram.InputView.render();
+        inputView1.render();
         var outputModel = new DataMapper.Models.TreeContainer({
             type: "output",
             title: "Output",
             x: this.outputStartX,
             y: this.outputStartY
         });
-        Diagram.OutputView = new DataMapper.Views.TreeContainerView({
+        var outputView1 = new DataMapper.Views.TreeContainerView({
             id: "output-dmcontainer",
             model: outputModel
         });
-        Diagram.OutputView.render();
+        outputView1.render();
+
+        Diagram.InputViews.push(inputView1);
+        Diagram.OutputViews.push(outputView1);
         //                    this.render();
     },
     render: function () {

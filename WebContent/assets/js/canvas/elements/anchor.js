@@ -28,6 +28,7 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
                 connector = new DataMapper.Models.Connector();
                 connectorView = new DataMapper.Views.ConnectorView({parent: tempParent, model: connector});
                 dragLine = connectorView.render();
+                // connector.setPoints(thisDragX,thisDragY,thisDragX,thisDragY);
                 dragLine.attr("x1", thisDragX)
                     .attr("x2", thisDragX)
                     .attr("y1", thisDragY)
@@ -37,7 +38,8 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
                 coordinates = d3.mouse(this);
                 xx = coordinates[0];
                 yy = coordinates[1];
-                dragLine.attr("x2", xx).attr("y2", yy);
+                dragLine.attr("x2", xx)
+                    .attr("y2", yy);
                 self.moveArrow(dragHead2, xx, yy);
             })
             .on("end", function (d) {
@@ -57,10 +59,9 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
                     var oppositeContainer = self.getParentContainer(target);
                     var dotx = Number(target.select(".drag-head").attr("cx")) + self.getTranslateX(oppositeContainer) - self.getTranslateX(sourceContainer);
                     var doty = Number(target.select(".drag-head").attr("cy")) + self.getTranslateY(oppositeContainer) - self.getTranslateY(sourceContainer);
-                    dragLine
-                        .attr("x2", dotx)
-                        .attr("y2", doty)
-                        .attr("target-dmcontainer", oppositeContainer.attr("id"));
+                    dragLine.attr("x2", dotx)
+                        .attr("y2", doty);
+                    // .attr("target-dmcontainer", oppositeContainer.attr("id"));
                     dragHead2.remove();
                     connector.set("targetContainer", oppositeContainer);
                     connector.set("targetNode", target);

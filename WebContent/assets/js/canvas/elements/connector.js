@@ -18,6 +18,7 @@ DataMapper.Views.ConnectorView = Backbone.View.extend({
     },
     dropFunction: function () {
         Diagram.Connectors.add(this.model);
+        this.model.addPolyline();
         //if the line is direct
         if (this.model.isDirectConnector()) {
             this.model.addDirectOperator();
@@ -90,8 +91,8 @@ DataMapper.Models.Connector = Backbone.Model.extend({
             inputTypes: ["Direct"],
             outputTypes: ["Direct"]
         });
-        var head = Diagram.InputView.model.get('nodeCollection').getNodeFromDOMObject(this.get('sourceNode').node()).clone();
-        var tail = Diagram.OutputView.model.get('nodeCollection').getNodeFromDOMObject(this.get('targetNode').node()).clone();
+        var head = Diagram.InputViews[0].model.get('nodeCollection').getNodeFromDOMObject(this.get('sourceNode').node()).clone();
+        var tail = Diagram.OutputViews[0].model.get('nodeCollection').getNodeFromDOMObject(this.get('targetNode').node()).clone();
         operator.get('nodeCollection').add([head, tail]);
         this.operator = operator;
         Diagram.Operators.add(operator);
@@ -105,6 +106,36 @@ DataMapper.Models.Connector = Backbone.Model.extend({
     },
     isDirectConnector: function () {
         return this.get('sourceContainer').classed("tree-dmcontainer") && this.get('targetContainer').classed("tree-dmcontainer");
+    },
+    addPolyline: function () {
+        var parent = this.get('sourceNode'),
+            line = this.get('line');
+        console.log(parent);
+        var polyLine = parent.append("polyline").attr("class", "drag-line")
+            .style("stroke", "black")
+            .style("fill", "none")
+            .style("stroke-width", "2")
+            .attr("id", "line-" + this.cid);
+        this.set('line', polyLine);
+        this.set("x1", line.attr("x1"));
+        this.set("x2", line.attr("x2"));
+        this.set("y1", line.attr("y1"));
+        this.set("y2", line.attr("y2"));
+        line.remove();
+        this.setPoints();
+    },
+    setPoints: function () {
+        var self = this;
+        this.get('line').attr("points", function () {
+            var p1 = self.get('x1') + "," + self.get('y1'),
+                p2 = (Number(self.get('x1')) + 15) + "," + self.get('y1'),
+                p3 = (Number(self.get('x2')) - 15) + "," + self.get('y2'),
+                p4 = self.get('x2') + "," + self.get('y2');
+            return p1 + " " + p2 + " " + p3 + " " + p4;
+        });
+    },
+    setTailPoints: function (x2, y2) {
+
     }
 });
 
