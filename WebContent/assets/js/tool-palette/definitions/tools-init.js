@@ -4,17 +4,6 @@
     //Tools and tool groups definitions
 var toolGroupDefs = [
         {
-            toolGroupName: "Link",
-            toolGroupID: "link-tool-group",
-            tools: [
-                {
-                    title: "DataMapperLink",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputCount: 1, outputCount: 2, inputTypes: ["String"], outputTypes: ["String", "String"]}
-                }
-            ]
-        },
-        {
             toolGroupName: "Common",
             toolGroupID: "common-tool-group",
             tools: [

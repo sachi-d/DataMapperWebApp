@@ -91,27 +91,19 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
     },
     updateConnections: function (newX, newY) {
         var sourceContainer = d3.select(this.el);
-        sourceContainer.selectAll(".drag-line")
-            .attr("x2", function () {
-                return d3.select(this).attr("x2") - newX;
-            })
-            .attr("y2", function () {
-                return d3.select(this).attr("y2") - newY;
-            });
+        Diagram.Connectors.findFromSourceContainer(sourceContainer).map(function (connector) {
+            connector.set("x2", connector.get("x2") - newX);
+            connector.set("y2", connector.get("y2") - newY);
+            connector.setPoints();
+        });
+
         d3.select("#canvas").selectAll(".dmcontainer").each(function () {
             if (d3.select(this).attr("id") !== sourceContainer.attr("id")) {
                 var opposite = d3.select(this);
-                opposite.selectAll(".drag-line").each(function () {
-                    if (d3.select(this).attr("target-dmcontainer") === sourceContainer.attr("id")) {
-                        d3.select(this)
-                            .attr("x2", function () {
-                                return Number(d3.select(this).attr("x2")) + Number(newX);
-                            })
-                            .attr("y2", function () { //TODO drag misplaces the new y value
-//                                                console.log(newY);
-//                                                console.log(Number(d3.select(this).attr("y2")) + Number(newY));
-                                return Number(d3.select(this).attr("y2")) + Number(newY);
-                            });
+                Diagram.Connectors.findFromSourceContainer(opposite).map(function (connector) {
+                    if (connector.get('targetContainer').node().isSameNode(sourceContainer.node())) {
+                        connector.set("x2", Number(connector.get("x2")) + Number(newX));
+                        connector.set("y2", Number(connector.get("y2")) + Number(newY));
                     }
                 });
             }

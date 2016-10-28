@@ -110,8 +110,8 @@ DataMapper.Models.Connector = Backbone.Model.extend({
     addPolyline: function () {
         var parent = this.get('sourceNode'),
             line = this.get('line');
-        console.log(parent);
-        var polyLine = parent.append("polyline").attr("class", "drag-line")
+        console.log(line.node().attributes);
+         var polyLine = parent.append("polyline").attr("class", "drag-line")
             .style("stroke", "black")
             .style("fill", "none")
             .style("stroke-width", "2")
@@ -121,6 +121,7 @@ DataMapper.Models.Connector = Backbone.Model.extend({
         this.set("x2", line.attr("x2"));
         this.set("y1", line.attr("y1"));
         this.set("y2", line.attr("y2"));
+
         line.remove();
         this.setPoints();
     },
@@ -133,9 +134,6 @@ DataMapper.Models.Connector = Backbone.Model.extend({
                 p4 = self.get('x2') + "," + self.get('y2');
             return p1 + " " + p2 + " " + p3 + " " + p4;
         });
-    },
-    setTailPoints: function (x2, y2) {
-
     }
 });
 

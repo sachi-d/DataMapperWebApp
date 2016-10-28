@@ -61,7 +61,7 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
                     var doty = Number(target.select(".drag-head").attr("cy")) + self.getTranslateY(oppositeContainer) - self.getTranslateY(sourceContainer);
                     dragLine.attr("x2", dotx)
                         .attr("y2", doty);
-                    // .attr("target-dmcontainer", oppositeContainer.attr("id"));
+                        // .attr("target-dmcontainer", oppositeContainer.attr("id"));
                     dragHead2.remove();
                     connector.set("targetContainer", oppositeContainer);
                     connector.set("targetNode", target);
