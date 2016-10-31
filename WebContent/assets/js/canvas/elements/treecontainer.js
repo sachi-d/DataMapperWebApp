@@ -11,51 +11,51 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
     drawInitContainer: function () {
         var self = this;
         var parent = d3.select("#canvas").append("g")
-                .attr("id", this.id)
-                .attr("class", "tree-dmcontainer dmcontainer dmcontainer-structure")
-                .attr("transform", "translate(" + this.model.get('x') + "," + this.model.get('y') + ")");
+            .attr("id", this.id)
+            .attr("class", "tree-dmcontainer dmcontainer dmcontainer-structure")
+            .attr("transform", "translate(" + this.model.get('x') + "," + this.model.get('y') + ")");
 
         var height = this.model.get("nodeHeight") || this.model.nodeHeight;
         var width = this.model.get("containerWidth") || this.model.containerWidth;
 
         var titleOutline = parent.append("rect")
-                .classed("dmcontainer-title-outline", true)
-                .classed("dmcontainer-structure", true)
-                .attr("x", 0).attr("y", -height)
-                .attr("height", height)
-                .attr("width", width)
-                .attr("fill", this.color)
-                .attr("stroke", "#000")
-                .attr("id", this.id + "-title-outline")
-                .attr("cursor", "move");
+            .classed("dmcontainer-title-outline", true)
+            .classed("dmcontainer-structure", true)
+            .attr("x", 0).attr("y", -height)
+            .attr("height", height)
+            .attr("width", width)
+            .attr("fill", this.color)
+            .attr("stroke", "#000")
+            .attr("id", this.id + "-title-outline")
+            .attr("cursor", "move");
 
         var title = parent.append("text")
-                .classed("dmcontainer-title", true)
-                .classed("dmcontainer-structure", true)
-                .attr("x", 0).attr("y", -5)
-                .attr("font-weight", "bold")
-                .text(this.model.get('title'))
-                .attr("cursor", "move");
+            .classed("dmcontainer-title", true)
+            .classed("dmcontainer-structure", true)
+            .attr("x", 0).attr("y", -5)
+            .attr("font-weight", "bold")
+            .text(this.model.get('title'))
+            .attr("cursor", "move");
 
         var containerOutline = parent.append("rect")
-                .classed("dmcontainer-outline", true)
-                .classed("dmcontainer-structure", true)
-                .attr("x", 0).attr("y", 0)
-                .attr("height", height * 10)
-                .attr("width", width)
-                .attr("fill", "none")
-                .attr("stroke", "#000");
+            .classed("dmcontainer-outline", true)
+            .classed("dmcontainer-structure", true)
+            .attr("x", 0).attr("y", 0)
+            .attr("height", height * 10)
+            .attr("width", width)
+            .attr("fill", "none")
+            .attr("stroke", "#000");
         var fo = parent.append("foreignObject").attr("x", 0).attr("y", 0).attr("height", 100).attr("width", 100);
         var input = fo.append("xhtml:input")
-                .attr("type", "file")
-                .classed("schema-select", true)
-                .attr("name", "input-select[]")
-                .attr("id", this.id + "-schema-select")
-                .attr("accept", "application/json")
-                .style("display", "none")
-                .on("change", function () {
-                    self.fileChange();
-                });
+            .attr("type", "file")
+            .classed("schema-select", true)
+            .attr("name", "input-select[]")
+            .attr("id", this.id + "-schema-select")
+            .attr("accept", "application/json")
+            .style("display", "none")
+            .on("change", function () {
+                self.fileChange();
+            });
         this.schemaSelect = input;
         return parent;
     }
@@ -68,19 +68,24 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
         // e.dataTransfer = e.originalTarget.dataTransfer;
         var files = e.target.files || e.dataTransfer.files;
         this.model.set('file', files[0]);
-        this.model.loadContainer();
+        this.model.readFile();
     }
     ,
     clearContainer: function () {
         Diagram.Connectors.clearConnectionsFromContainer(this.model.get('parent'));
         this.model.get('parent').selectAll(".nested-group").remove();
         this.model.set('nodeCollection', new DataMapper.Collections.NodeList());
+        this.model.set('elementCount', 0);
+        this.model.set('file',null);
+        this.model.set('data',null);
     }
 })
-        ;
+;
 
 DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
-    elementCount: 7,
+    defaults: {
+        elementCount: 0
+    },
     x: 0,
     y: 40,
     containerWidth: 300,
@@ -90,12 +95,9 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
     type: "input",
     initialize: function () {
         this.set('nodeCollection', new DataMapper.Collections.NodeList());
-    },
-    loadContainer: function () {
-        this.set('tempParent', this.get('parent'));
-        this.readFile();
 
     },
+
     readFile: function () {
         var model = this;
         // display text
@@ -107,15 +109,16 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 //parseJSON
                 var text = e.target.result;
                 data = JSON.parse(text);
-                model.set('data', data);
-                model.parseFile(data);
+
+                model.parseSchema(data);
             };
             reader.readAsText(this.get('file'));
         }
     },
-    parseFile: function (data) {
+    parseSchema: function (data) {
+        this.set('data', data);
         var title = data.title || "Root";
-        var count = this.traverseJSONSchema(data, title, 0, 0, this.get('tempParent'));
+        var count = this.traverseJSONSchema(data, title, 0, 0, this.get('parent'));
         this.set('elementCount', count);
         this.updateContainerHeight();
         this.updateContainerWidth();
@@ -125,7 +128,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         var model = this;
         outline.attr("height", function () {
             var count = model.get('elementCount') || model.elementCount,
-                    height = model.get('nodeHeight') || model.nodeHeight;
+                height = model.get('nodeHeight') || model.nodeHeight;
             return (count) * height;
         });
         //resize Canvas with the translate y value
@@ -145,22 +148,22 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 var cx = maxLength, cy = d3.select(this).attr("cy");
                 d3.select(this).attr("points", function () {
                     var p0 = [Number(cx) - 5, Number(cy) - 5],
-                            p1 = [Number(cx) + 5, Number(cy)],
-                            p2 = [Number(cx) - 5, Number(cy) + 5];
+                        p1 = [Number(cx) + 5, Number(cy)],
+                        p2 = [Number(cx) - 5, Number(cy) + 5];
                     return p0[0] + "," + p0[1] + " " + p1[0] + "," + p1[1] + " " + p2[0] + "," + p2[1];
                 })
-                        .attr("cx", cx)
-                        .attr("cy", cy);
+                    .attr("cx", cx)
+                    .attr("cy", cy);
             });
         }
     },
     traverseJSONSchema: function (root, rootName, level, rank, resultPane) {
         var height = this.nodeHeight,
-                width = this.containerWidth,
-                margin = width / 6,
-                x = 0,
-                overhead = rank * margin,
-                y = level * height;
+            width = this.containerWidth,
+            margin = width / 6,
+            x = 0,
+            overhead = rank * margin,
+            y = level * height;
         var tempParent = resultPane.append("g").attr("class", "nested-group");
         if (root.type === "object") {
             if (rootName !== "") {
@@ -185,7 +188,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 level++;
             }
             var nestedParent = tempParent.append("g").attr("class", "nested-group");
-            var keys = root.properties; //select PROPERTIES
+            var keys = root.properties || {}; //select PROPERTIES
             for (var i = 0; i < Object.keys(keys).length; i++) {   //traverse through each PROPERTY of the object
                 var keyName = Object.keys(keys)[i];
                 var key = keys[keyName];
@@ -193,7 +196,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             }
 
         } else if (root.type === "array") {
-            var keys = root.items; //select ITEMS
+            var keys = root.items || {}; //select ITEMS
             if (rootName !== "") {
                 var nodeText = rootName;
                 var node = new DataMapper.Models.Node({
@@ -255,7 +258,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 }
                 if (o[k] !== null && typeof o[k] === 'object') {
                     return iter(o[k],
-                            k === 'properties' && !o.title ? p : p.concat(k === 'properties' && o.title ? o.title : k));
+                        k === 'properties' && !o.title ? p : p.concat(k === 'properties' && o.title ? o.title : k));
                 }
             });
         }
@@ -265,6 +268,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         return path;
     },
     addRootElement: function () {
+        var self = this;
         BootstrapDialog.show({
             title: "Add root element",
             message: 'Title: <input id="title" type="text"><br>Type:<select id="type"><option value="object">Object</option><option value="array">Array</option></select>',
@@ -277,13 +281,13 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 }
             },
             buttons: [{
-                    label: 'Add',
-                    cssClass: "btn-primary",
-                    action: function (dialogRef) {
-                        alert(dialogRef.getModalBody().find('#title').val());
-                        dialogRef.close();
-                    }
-                },
+                label: 'Add root Element',
+                cssClass: "btn-primary",
+                action: function (dialogRef) {
+                    self.createSchema(dialogRef.getModalBody().find('#title').val(), dialogRef.getModalBody().find('#type').val())
+                    dialogRef.close();
+                }
+            },
                 {
                     label: 'Cancel',
                     action: function (dialogRef) {
@@ -291,5 +295,16 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                     }
                 }]
         });
+    },
+    createSchema: function (title, type) {
+        var helperObj = type.toLowerCase() === "array" ? "items" : "properties";
+        var newSchema = {
+            "title": title,
+            "type": type
+         };
+        newSchema[helperObj] = {};
+
+        this.set('file', null);
+        this.parseSchema(newSchema);
     }
 });

@@ -19,7 +19,6 @@ DataMapper.Views.NodeView = Backbone.View.extend({
     bindMenu: function (menu) {
         var self = this;
         var id = this.el;
-        console.log(this.el);
         var classClicked = id + "-clicked";
         $(id + " .node-element-text").on("contextmenu", function (event) {
 
