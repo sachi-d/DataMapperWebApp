@@ -8,55 +8,54 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
     color: "#AABDBF",
     model: null,
     menu: "#dmcontainer-menu",
-
     drawInitContainer: function () {
         var self = this;
         var parent = d3.select("#canvas").append("g")
-            .attr("id", this.id)
-            .attr("class", "tree-dmcontainer dmcontainer dmcontainer-structure")
-            .attr("transform", "translate(" + this.model.get('x') + "," + this.model.get('y') + ")");
+                .attr("id", this.id)
+                .attr("class", "tree-dmcontainer dmcontainer dmcontainer-structure")
+                .attr("transform", "translate(" + this.model.get('x') + "," + this.model.get('y') + ")");
 
         var height = this.model.get("nodeHeight") || this.model.nodeHeight;
         var width = this.model.get("containerWidth") || this.model.containerWidth;
 
         var titleOutline = parent.append("rect")
-            .classed("dmcontainer-title-outline", true)
-            .classed("dmcontainer-structure", true)
-            .attr("x", 0).attr("y", -height)
-            .attr("height", height)
-            .attr("width", width)
-            .attr("fill", this.color)
-            .attr("stroke", "#000")
-            .attr("id", this.id + "-title-outline")
-            .attr("cursor", "move");
+                .classed("dmcontainer-title-outline", true)
+                .classed("dmcontainer-structure", true)
+                .attr("x", 0).attr("y", -height)
+                .attr("height", height)
+                .attr("width", width)
+                .attr("fill", this.color)
+                .attr("stroke", "#000")
+                .attr("id", this.id + "-title-outline")
+                .attr("cursor", "move");
 
         var title = parent.append("text")
-            .classed("dmcontainer-title", true)
-            .classed("dmcontainer-structure", true)
-            .attr("x", 0).attr("y", -5)
-            .attr("font-weight", "bold")
-            .text(this.model.get('title'))
-            .attr("cursor", "move");
+                .classed("dmcontainer-title", true)
+                .classed("dmcontainer-structure", true)
+                .attr("x", 0).attr("y", -5)
+                .attr("font-weight", "bold")
+                .text(this.model.get('title'))
+                .attr("cursor", "move");
 
         var containerOutline = parent.append("rect")
-            .classed("dmcontainer-outline", true)
-            .classed("dmcontainer-structure", true)
-            .attr("x", 0).attr("y", 0)
-            .attr("height", height * 10)
-            .attr("width", width)
-            .attr("fill", "none")
-            .attr("stroke", "#000");
+                .classed("dmcontainer-outline", true)
+                .classed("dmcontainer-structure", true)
+                .attr("x", 0).attr("y", 0)
+                .attr("height", height * 10)
+                .attr("width", width)
+                .attr("fill", "none")
+                .attr("stroke", "#000");
         var fo = parent.append("foreignObject").attr("x", 0).attr("y", 0).attr("height", 100).attr("width", 100);
         var input = fo.append("xhtml:input")
-            .attr("type", "file")
-            .classed("schema-select", true)
-            .attr("name", "input-select[]")
-            .attr("id", this.id + "-schema-select")
-            .attr("accept", "application/json")
-            .style("display", "none")
-            .on("change", function () {
-                self.fileChange();
-            });
+                .attr("type", "file")
+                .classed("schema-select", true)
+                .attr("name", "input-select[]")
+                .attr("id", this.id + "-schema-select")
+                .attr("accept", "application/json")
+                .style("display", "none")
+                .on("change", function () {
+                    self.fileChange();
+                });
         this.schemaSelect = input;
         return parent;
     }
@@ -78,7 +77,7 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
         this.model.set('nodeCollection', new DataMapper.Collections.NodeList());
     }
 })
-;
+        ;
 
 DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
     elementCount: 7,
@@ -126,7 +125,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         var model = this;
         outline.attr("height", function () {
             var count = model.get('elementCount') || model.elementCount,
-                height = model.get('nodeHeight') || model.nodeHeight;
+                    height = model.get('nodeHeight') || model.nodeHeight;
             return (count) * height;
         });
         //resize Canvas with the translate y value
@@ -146,22 +145,22 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 var cx = maxLength, cy = d3.select(this).attr("cy");
                 d3.select(this).attr("points", function () {
                     var p0 = [Number(cx) - 5, Number(cy) - 5],
-                        p1 = [Number(cx) + 5, Number(cy)],
-                        p2 = [Number(cx) - 5, Number(cy) + 5];
+                            p1 = [Number(cx) + 5, Number(cy)],
+                            p2 = [Number(cx) - 5, Number(cy) + 5];
                     return p0[0] + "," + p0[1] + " " + p1[0] + "," + p1[1] + " " + p2[0] + "," + p2[1];
                 })
-                    .attr("cx", cx)
-                    .attr("cy", cy);
+                        .attr("cx", cx)
+                        .attr("cy", cy);
             });
         }
     },
     traverseJSONSchema: function (root, rootName, level, rank, resultPane) {
         var height = this.nodeHeight,
-            width = this.containerWidth,
-            margin = width / 6,
-            x = 0,
-            overhead = rank * margin,
-            y = level * height;
+                width = this.containerWidth,
+                margin = width / 6,
+                x = 0,
+                overhead = rank * margin,
+                y = level * height;
         var tempParent = resultPane.append("g").attr("class", "nested-group");
         if (root.type === "object") {
             if (rootName !== "") {
@@ -174,10 +173,13 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                     y: y,
                     type: this.get('type'),
                     category: "object",
+                    isLeaf: false,
                     height: height,
-                    width: width
+                    width: width,
+                    isSchema: true,
+                    overhead: overhead
                 });
-                node.drawContainerNode(overhead, false);
+                new DataMapper.Views.NodeView({model: node}).render();
                 this.get('nodeCollection').add(node);
                 rank++;
                 level++;
@@ -202,10 +204,14 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                     y: y,
                     type: this.get('type'),
                     category: "array",
+                    isLeaf: !keys.hasOwnProperty("properties"),
                     height: height,
-                    width: width
+                    width: width,
+                    isSchema: true,
+                    overhead: overhead
                 });
-                node.drawContainerNode(overhead, !keys.hasOwnProperty("properties"));
+                new DataMapper.Views.NodeView({model: node}).render();
+
                 this.get('nodeCollection').add(node);
                 rank++;
                 level++;
@@ -226,10 +232,13 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                     y: y,
                     type: this.get('type'),
                     category: "leaf",
+                    isLeaf: true,
                     height: height,
-                    width: width
+                    width: width,
+                    isSchema: true,
+                    overhead: overhead
                 });
-                node.drawContainerNode(overhead, true);
+                new DataMapper.Views.NodeView({model: node}).render();
                 this.get('nodeCollection').add(node);
                 rank++;
                 level++;
@@ -246,7 +255,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 }
                 if (o[k] !== null && typeof o[k] === 'object') {
                     return iter(o[k],
-                        k === 'properties' && !o.title ? p : p.concat(k === 'properties' && o.title ? o.title : k));
+                            k === 'properties' && !o.title ? p : p.concat(k === 'properties' && o.title ? o.title : k));
                 }
             });
         }
@@ -254,5 +263,33 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         var path;
         iter(this.get('data'), []);
         return path;
+    },
+    addRootElement: function () {
+        BootstrapDialog.show({
+            title: "Add root element",
+            message: 'Title: <input id="title" type="text"><br>Type:<select id="type"><option value="object">Object</option><option value="array">Array</option></select>',
+            draggable: true,
+            onhidde: function (dialogRef) {
+                var fruit = dialogRef.getModalBody().find('#title').val();
+                if ($.trim(fruit.toLowerCase()) !== 'banana') {
+                    alert('Need banana!');
+                    return false;
+                }
+            },
+            buttons: [{
+                    label: 'Add',
+                    cssClass: "btn-primary",
+                    action: function (dialogRef) {
+                        alert(dialogRef.getModalBody().find('#title').val());
+                        dialogRef.close();
+                    }
+                },
+                {
+                    label: 'Cancel',
+                    action: function (dialogRef) {
+                        dialogRef.close();
+                    }
+                }]
+        });
     }
 });

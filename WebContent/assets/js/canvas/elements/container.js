@@ -18,20 +18,20 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
         var self = this;
         var selfModel = this.model;
         return d3.drag()
-            .on("start", function () {
-            })
-            .on("drag", function (d, i) {
-                this.x = this.x || selfModel.get('x');
-                this.y = this.y || selfModel.get('y');
-                this.x += d3.event.dx;
-                this.y += d3.event.dy;
-                d3.select(this).attr("transform", "translate(" + this.x + "," + this.y + ")");
-                self.updateConnections(d3.event.dx, d3.event.dy);
-                self.resizeCanvas(this.x, this.y);
-            })
-            .on("end", function () {
-                // resizeCanvas();
-            });
+                .on("start", function () {
+                })
+                .on("drag", function (d, i) {
+                    this.x = this.x || selfModel.get('x');
+                    this.y = this.y || selfModel.get('y');
+                    this.x += d3.event.dx;
+                    this.y += d3.event.dy;
+                    d3.select(this).attr("transform", "translate(" + this.x + "," + this.y + ")");
+                    self.updateConnections(d3.event.dx, d3.event.dy);
+                    self.resizeCanvas(this.x, this.y);
+                })
+                .on("end", function () {
+                    // resizeCanvas();
+                });
     },
     bindMenu: function (menu) {
         var self = this;
@@ -44,11 +44,11 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
 
             // Show contextmenu
             $(menu).finish().toggle(100)
-                .css({ // In the right position (the mouse)
-                    top: event.pageY + "px",
-                    left: event.pageX + "px"
-                })
-                .addClass(classClicked);
+                    .css({// In the right position (the mouse)
+                        top: event.pageY + "px",
+                        left: event.pageX + "px"
+                    })
+                    .addClass(classClicked);
         });
         // If the document is clicked somewhere
         $(document).on("mousedown", function (e) {
@@ -75,6 +75,9 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
                         break;
                     case "clear-container":
                         self.clearContainer();
+                        break;
+                    case "add-root":
+                        self.model.addRootElement();
                         break;
                 }
             }
@@ -105,7 +108,7 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
     },
     resizeCanvas: function (x, y) {
         var tempY = Number(d3.select(this.el).select(".dmcontainer-outline").attr("height")) + y,
-            tempX = Number(d3.select(this.el).select(".dmcontainer-outline").attr("width")) + x;
+                tempX = Number(d3.select(this.el).select(".dmcontainer-outline").attr("width")) + x;
         var canvas = d3.select(Diagram.Canvas.el);
         if (canvas.attr("width") < tempX) {
             canvas.attr("width", tempX);

@@ -4,8 +4,118 @@
 
 DataMapper.Views.NodeView = Backbone.View.extend({
     el: ".node-element",
+    menu: "#container-node-menu",
     initialize: function () {
-        this.model.drawNode();
+
+    },
+    render: function () {
+        var obj = this.model.drawNode();
+        this.el = "#" + obj.attr("id");
+        if (this.model.get('isSchema')) {
+            this.bindMenu(this.menu);
+        }
+        return obj;
+    },
+    bindMenu: function (menu) {
+        var self = this;
+        var id = this.el;
+        console.log(this.el);
+        var classClicked = id + "-clicked";
+        $(id + " .node-element-text").on("contextmenu", function (event) {
+
+            // Avoid the real one
+            event.preventDefault();
+
+            // Show contextmenu
+            $(menu).finish().toggle(100)
+                .css({// In the right position (the mouse)
+                    top: event.pageY + "px",
+                    left: event.pageX + "px"
+                })
+                .addClass(classClicked);
+        });
+        // If the document is clicked somewhere
+        $(document).on("mousedown", function (e) {
+
+            // If the clicked element is not the menu
+            if (!$(e.target).parents(menu).length > 0) {
+
+                // Hide it
+                $(menu).removeClass(classClicked);
+                $(menu).hide(100);
+            }
+        });
+
+
+// If the menu element is clicked
+        $(menu + " li").on("click", function () {
+            // This is the triggered action name
+            if ($(menu).hasClass(classClicked)) {
+                switch ($(this).attr("data-action")) {
+
+                    // A case for each action. Your actions here
+                    case "add-node":
+                        self.addNode();
+                        break;
+                    case "edit-node":
+                        self.clearNode();
+                        break;
+                    case "clear-node":
+                        break;
+                }
+            }
+
+            // Hide it AFTER the action was triggered
+            $(menu).hide(100);
+        });
+
+    },
+    addNode: function () {
+//        $("#add-root-element-modal").show();
+//        BootstrapDialog.show({
+//            title: 'Draggable Dialog',
+//            message: 'Try to drag on dialog title to move your dialog.',
+//            draggable: true
+//        });
+//        var $msgBody = $('<form class="form-horizontal"></form>');
+//        var $titleBody = $('<div class="form-group"><label class="control-label col-sm-2" >Title:</label><div class="col-sm-10"><input type="text" class="form-control" id="title" ></div></div>');
+//        var $typeBody = $('<div class="form-group"></div>');
+//        $msgBody.append($titleBody).append($typeBody);
+//
+//        var $typeDiv = $('<div class="col-sm-10"></div>');
+//        var $select = $('<select id="type"   class="form-control" style="display:inline"></select>');
+//        $typeDiv.append($select);
+//        $typeBody.append($('<label class="control-label col-sm-2" >Type:</label>')).append($typeDiv);
+//
+//        $select.append("<option>Optijn 1n</option>");
+//        $select.append("<option>Option2222</option>");
+        BootstrapDialog.show({
+            title: "Add new node",
+            message: 'Title: <input id="title" type="text"><br>Type:<select id="type"><option value="object">Object</option><option value="array">Array</option><option value="string">String</option><option value="number">Number</option></select>',
+            draggable: true,
+            onhidde: function (dialogRef) {
+                var fruit = dialogRef.getModalBody().find('#title').val();
+                if ($.trim(fruit.toLowerCase()) !== 'banana') {
+                    alert('Need banana!');
+                    return false;
+                }
+            },
+            buttons: [{
+                label: 'Add',
+                action: function (dialogRef) {
+                    dialogRef.close();
+                }
+            },
+                {
+                    label: 'Cancel',
+                    action: function (dialogRef) {
+                        dialogRef.close();
+                    }
+                }]
+        });
+    },
+    clearNode: function () {
+
     }
 });
 
@@ -26,10 +136,12 @@ DataMapper.Models.Node = Backbone.Model.extend({//set parent, text, x,y, type,ca
     },
     initialize: function () {
         this.set("id", "node-" + this.cid);
-        if (this.get('type') === "input") {
-            this.set('dotPosition', [this.get('x') + this.get('width'), this.get('y') + this.get('height') / 2]);
-        } else if (this.get('type') === "output") {
-            this.set('dotPosition', [this.get('x'), this.get('y') + this.get('height') / 2]);
+        if (this.get('isLeaf')) {
+            if (this.get('type') === "input") {
+                this.set('dotPosition', [this.get('x') + this.get('width'), this.get('y') + this.get('height') / 2]);
+            } else if (this.get('type') === "output") {
+                this.set('dotPosition', [this.get('x'), this.get('y') + this.get('height') / 2]);
+            }
         }
 //                    this.set('textType',this.get('text').split(":"));
     },
@@ -46,9 +158,6 @@ DataMapper.Models.Node = Backbone.Model.extend({//set parent, text, x,y, type,ca
             .attr("id", this.id);
         this.set('node', parent1);
 
-        //                    <foreignObject x="15" y="15" width="190" height="90">
-        //                            <div xmlns="http://www.w3.org/1999/xhtml" style="width:190px; height:90px; overflow-y:auto"><b>This</b> is the <i>text</i> I wish to fit inside <code>rect</code></div>
-        //                    </foreignObject>
         var text = parent1.append("text").attr("class", "node-element-text")
             .attr("x", this.get('x') + 12)
             .attr("y", this.get('y') + (3 * height / 4))
@@ -68,31 +177,26 @@ DataMapper.Models.Node = Backbone.Model.extend({//set parent, text, x,y, type,ca
             });
             new DataMapper.Views.AnchorView({model: anchor});
         }
+        if (this.get('isSchema')) {
+            parent1.select("text").attr("x", this.get("x") + 12 + this.get('overhead'));
+            var model = this;
+            parent1.append("svg:image")
+                .attr("x", this.get('x') + this.get('overhead'))
+                .attr("y", this.get('y') + 4)
+                .attr("width", 11)
+                .attr("height", 11)
+                .attr("xlink:href", function () {
+                    if (model.get('category') === "object") {
+                        return "assets/images/object-icon.png";
+                    } else if (model.get('category') === "array") {
+                        return "assets/images/array-icon.png";
+                    }
+                    return "assets/images/leaf-icon.png";
+                });
+
+        }
 
         return parent1;
-    },
-    drawContainerNode: function (overhead, isLeaf) {
-        var obj = this.drawNode();
-        obj.select("text").attr("x", this.get("x") + 12 + overhead);
-        var model = this;
-        obj.append("svg:image")
-            .attr("x", this.get('x') + overhead)
-            .attr("y", this.get('y') + 4)
-            .attr("width", 11)
-            .attr("height", 11)
-            .attr("xlink:href", function () {
-                if (model.get('category') === "object") {
-                    return "assets/images/object-icon.png";
-                } else if (model.get('category') === "array") {
-                    return "assets/images/array-icon.png";
-                }
-                return "assets/images/leaf-icon.png";
-            });
-        if (!isLeaf) {
-            obj.classed("parent-node", true);
-            obj.classed("leaf-node", false);
-            obj.select(".drag-head").remove();
-        }
     },
     drawOutline: function () {
         this.get('node').append("rect")

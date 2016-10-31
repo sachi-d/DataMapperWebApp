@@ -61,7 +61,7 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
                     var doty = Number(target.select(".drag-head").attr("cy")) + self.getTranslateY(oppositeContainer) - self.getTranslateY(sourceContainer);
                     dragLine.attr("x2", dotx)
                         .attr("y2", doty);
-                        // .attr("target-dmcontainer", oppositeContainer.attr("id"));
+                    // .attr("target-dmcontainer", oppositeContainer.attr("id"));
                     dragHead2.remove();
                     connector.set("targetContainer", oppositeContainer);
                     connector.set("targetNode", target);
@@ -138,12 +138,16 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
         var flag = false, self = this;
         d3.select("#canvas").selectAll(".leaf-node").each(function () { //assuming every leaf node has an anchor
             if (!flag && d3.select(this).attr("type") === "output") {
-                var anchor = d3.select(this).select(".drag-head");
-                if (anchor !== null) {
-                    var x = Number(anchor.attr("cx")) + self.getTranslateX(self.getParentContainer(d3.select(this))) - self.getTranslateX(sourceContainer);
-                    var y = Number(anchor.attr("cy")) + self.getTranslateY(self.getParentContainer(d3.select(this))) - self.getTranslateY(sourceContainer);
-                    if (self.pointInRect([xx, yy], x - 10, x + 10, y - 10, y + 10)) {
-                        flag = d3.select(this);
+                var nodeElement = d3.select(this);
+                console.log(nodeElement);
+                if (nodeElement !== null) {
+                    var x = Number(nodeElement.attr("x")) + self.getTranslateX(self.getParentContainer(nodeElement)) - self.getTranslateX(sourceContainer);
+                    var y = Number(nodeElement.attr("y")) + self.getTranslateY(self.getParentContainer(nodeElement)) - self.getTranslateY(sourceContainer);
+                    var width = Number(nodeElement.attr("width"));
+                    var height = Number(nodeElement.attr("height"));
+                    // d3.select("#canvas").append("rect").attr("x", x).attr("y", y).attr("width", width).attr("height", height);
+                    if (self.pointInRect([xx, yy], x, x + width, y, y + height)) {
+                        flag = nodeElement;
                     }
                 }
             }

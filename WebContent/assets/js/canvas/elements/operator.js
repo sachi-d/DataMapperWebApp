@@ -92,10 +92,13 @@ DataMapper.Models.Operator = DataMapper.Models.Container.extend({
                     y: tempY,
                     type: "output",
                     category: "operator",
+                    isLeaf: true,
                     height: tempHeight,
-                    width: this.get('width')
+                    width: this.get('width'),
+                    isSchema: false,
+                    overhead: 0
                 });
-                var obj = node.drawNode();
+                var obj = new DataMapper.Views.NodeView({model: node}).render();
                 obj.attr("rank", i);
                 this.get('inputs').push(obj);
                 this.get('nodeCollection').add(node);
@@ -118,10 +121,13 @@ DataMapper.Models.Operator = DataMapper.Models.Container.extend({
                     y: tempY,
                     type: "input",
                     category: "operator",
+                    isLeaf: true,
                     height: tempHeight,
-                    width: this.get('width')
+                    width: this.get('width'),
+                    isSchema: false,
+                    overhead: 0
                 });
-                var obj = node.drawNode();
+                var obj = new DataMapper.Views.NodeView({model: node}).render();
                 obj.attr("rank", i);
                 this.get('outputs').push(obj);
                 this.get('nodeCollection').add(node);

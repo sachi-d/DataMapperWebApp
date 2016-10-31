@@ -9,11 +9,14 @@
     <link rel="stylesheet" href="assets/css/context-menu.css">
     <link rel="stylesheet" href="assets/css/diagram-tool-bar.css">
 
+
     <script src="assets/lib/d3_v4.2.2/d3.js"></script>
-    <script src="assets/lib/jQuery_v3.1.0/jquery-3.1.0.js"></script>
+    <script src="assets/lib/jQuery_v2.2.4/jquery.min.js"></script>
     <script src="assets/lib/jquery-ui_v1.12.0/jquery-ui.js"></script>
     <script src="assets/lib/underscore_v1.83/underscore_1.8.3.js" type="text/javascript"></script>
     <script src="assets/lib/backbone_v1.3.3/backbone_1.3.3.js" type="text/javascript"></script>
+    <script src="assets/lib/bootstrap_v3.3.6/js/bootstrap.min.js"></script>
+    <script src="assets/lib/bootstrap_v3.3.6/js/bootstrap-dialog.min.js"></script>
     <script src="assets/fileHandler.js"></script>
     <style>
         #page-content {
@@ -50,17 +53,46 @@
 
         <ul class='custom-menu dropdown-menu' id="dmcontainer-menu">
             <li data-action="load-schema">Load Schema</li>
-            <li data-action="add-schema">Add another schema</li>
+            <li data-action="add-root">Add new root element</li>
             <li data-action="clear-container">Clear container</li>
         </ul>
 
         <ul class='custom-menu dropdown-menu' id="operator-menu">
-            <li data-action="clear-container">Delete</li>
+            <li data-action="clear-container">Delete operator</li>
         </ul>
 
         <ul class='custom-menu dropdown-menu' id="connector-menu">
             <li data-action="clear-connector">Delete</li>
         </ul>
+        <ul class='custom-menu dropdown-menu' id="container-node-menu">
+            <li data-action="add-node">Add node</li>
+            <li data-action="edit-node">Edit node</li>
+            <li data-action="clear-node">Delete node</li>
+        </ul>
+    </div>
+</div>
+<div id="add-root-element-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add new root element</h4>
+            </div>
+            <div class="modal-body">
+                <label>Name:</label><input type="text">
+                <label>Type:</label>
+                <select>
+                    <option>object</option>
+                    <option>array</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
     </div>
 </div>
 

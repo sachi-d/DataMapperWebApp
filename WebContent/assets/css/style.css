@@ -29,11 +29,11 @@
     display: inline;
 }
 
-.leaf-node:active {
+.node-element :active {
     opacity: 0.5;
 }
 
-.leaf-node:hover {
+.node-element:hover {
     opacity: 0.5;
 }
 
