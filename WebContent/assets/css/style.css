@@ -33,7 +33,7 @@
     opacity: 0.5;
 }
 
-.node-element:hover {
+.node-element:hover, g.node-element:hover {
     opacity: 0.5;
 }
 

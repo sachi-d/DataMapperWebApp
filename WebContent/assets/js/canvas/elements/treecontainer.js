@@ -45,14 +45,17 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
             .attr("width", width)
             .attr("fill", "none")
             .attr("stroke", "#000");
-        var fo = parent.append("foreignObject").attr("x", 0).attr("y", 0).attr("height", 100).attr("width", 100);
+        var fo = parent.append("foreignObject")
+            .attr("x", 0).attr("y", 0)
+            .attr("height", 100)
+            .attr("width", 100)
+            // .style("display","none");
         var input = fo.append("xhtml:input")
             .attr("type", "file")
             .classed("schema-select", true)
             .attr("name", "input-select[]")
             .attr("id", this.id + "-schema-select")
-            .attr("accept", "application/json")
-            .style("display", "none")
+            .attr("accept", "application/json").style("display","none")
             .on("change", function () {
                 self.fileChange();
             });
@@ -288,12 +291,13 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                     dialogRef.close();
                 }
             },
-                {
-                    label: 'Cancel',
-                    action: function (dialogRef) {
-                        dialogRef.close();
-                    }
-                }]
+                // {
+                //     label: 'Cancel',
+                //     action: function (dialogRef) {
+                //         dialogRef.close();
+                //     }
+                // }
+                ]
         });
     },
     createSchema: function (title, type) {
@@ -306,5 +310,8 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
 
         this.set('file', null);
         this.parseSchema(newSchema);
+        console.log(newSchema);
     }
 });
+
+//BUG = LOADfILE ONCE, AGAIN LOAD FILE AGAIN AND CANCEL - TYPERROR - CAUSE "Onchange" listener

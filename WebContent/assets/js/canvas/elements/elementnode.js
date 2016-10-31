@@ -101,16 +101,18 @@ DataMapper.Views.NodeView = Backbone.View.extend({
             },
             buttons: [{
                 label: 'Add',
+                cssClass: "btn-primary",
                 action: function (dialogRef) {
                     dialogRef.close();
                 }
             },
-                {
-                    label: 'Cancel',
-                    action: function (dialogRef) {
-                        dialogRef.close();
-                    }
-                }]
+                // {
+                //     label: 'Cancel',
+                //     action: function (dialogRef) {
+                //         dialogRef.close();
+                //     }
+                // }
+            ]
         });
     },
     clearNode: function () {
