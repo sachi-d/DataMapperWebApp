@@ -103,43 +103,12 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
             .attr("cx", cx)
             .attr("cy", cy);
     },
-    getTranslation: function (transform) {
-        // Create a dummy g for calculation purposes only. This will never
-        // be appended to the DOM and will be discarded once this function
-        // returns.
-        var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        // Set the transform attribute to the provided string value.
-        g.setAttributeNS(null, "transform", transform);
-        // consolidate the SVGTransformList containing all transformations
-        // to a single SVGTransform of type SVG_TRANSFORM_MATRIX and get
-        // its SVGMatrix.
-        var matrix = g.transform.baseVal.consolidate().matrix;
-        // As per definition values e and f are the ones for the translation.
-        return [matrix.e, matrix.f];
-    },
-    getParentTransform: function (elementObject) { //parameter is an element in an object - inputs or outputs array
-        var transform = d3.select(elementObject["_groups"][0][0].parentNode).attr("transform");
-        return transform;
-    },
-    getTranslateX: function (sourceContainer) {
-        return Number(this.getTranslation(sourceContainer.attr("transform"))[0]);
-    },
-    getTranslateY: function (sourceContainer) {
-        return Number(this.getTranslation(sourceContainer.attr("transform"))[1]);
-    },
-    getParentContainer: function (nodeElement) { //a recursive method to find g.container of an element
-        if (nodeElement.classed("dmcontainer")) {
-            return nodeElement;
-        } else {
-            return this.getParentContainer(d3.select(nodeElement["_groups"][0][0].parentNode));
-        }
-    },
+
     detectDropNode: function (xx, yy, type, sourceContainer) { //detect if a drop is near opposite type of drag-head
         var flag = false, self = this;
         d3.select("#canvas").selectAll(".leaf-node").each(function () { //assuming every leaf node has an anchor
             if (!flag && d3.select(this).attr("type") === "output") {
-                var nodeElement = d3.select(this);
-                console.log(nodeElement);
+                var nodeElement = d3.select(this); 
                 if (nodeElement !== null) {
                     var x = Number(nodeElement.attr("x")) + self.getTranslateX(self.getParentContainer(nodeElement)) - self.getTranslateX(sourceContainer);
                     var y = Number(nodeElement.attr("y")) + self.getTranslateY(self.getParentContainer(nodeElement)) - self.getTranslateY(sourceContainer);
@@ -164,5 +133,32 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
             }
         }
         return false;
+    },
+    getTranslation: function (transform) {
+        // Create a dummy g for calculation purposes only. This will never
+        // be appended to the DOM and will be discarded once this function
+        // returns.
+        var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        // Set the transform attribute to the provided string value.
+        g.setAttributeNS(null, "transform", transform);
+        // consolidate the SVGTransformList containing all transformations
+        // to a single SVGTransform of type SVG_TRANSFORM_MATRIX and get
+        // its SVGMatrix.
+        var matrix = g.transform.baseVal.consolidate().matrix;
+        // As per definition values e and f are the ones for the translation.
+        return [matrix.e, matrix.f];
+    },
+    getTranslateX: function (sourceContainer) {
+        return Number(this.getTranslation(sourceContainer.attr("transform"))[0]);
+    },
+    getTranslateY: function (sourceContainer) {
+        return Number(this.getTranslation(sourceContainer.attr("transform"))[1]);
+    },
+    getParentContainer: function (nodeElement) { //a recursive method to find g.container of an element
+        if (nodeElement.classed("dmcontainer")) {
+            return nodeElement;
+        } else {
+            return this.getParentContainer(d3.select(nodeElement["_groups"][0][0].parentNode));
+        }
     }
 });

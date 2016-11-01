@@ -49,13 +49,13 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
             .attr("x", 0).attr("y", 0)
             .attr("height", 100)
             .attr("width", 100)
-            // .style("display","none");
+            .style("display", "none");
         var input = fo.append("xhtml:input")
             .attr("type", "file")
             .classed("schema-select", true)
             .attr("name", "input-select[]")
             .attr("id", this.id + "-schema-select")
-            .attr("accept", "application/json").style("display","none")
+            .attr("accept", "application/json").style("display", "none")
             .on("change", function () {
                 self.fileChange();
             });
@@ -79,8 +79,8 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
         this.model.get('parent').selectAll(".nested-group").remove();
         this.model.set('nodeCollection', new DataMapper.Collections.NodeList());
         this.model.set('elementCount', 0);
-        this.model.set('file',null);
-        this.model.set('data',null);
+        this.model.set('file', null);
+        this.model.set('data', null);
     }
 })
 ;
@@ -297,7 +297,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 //         dialogRef.close();
                 //     }
                 // }
-                ]
+            ]
         });
     },
     createSchema: function (title, type) {
@@ -305,7 +305,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         var newSchema = {
             "title": title,
             "type": type
-         };
+        };
         newSchema[helperObj] = {};
 
         this.set('file', null);
