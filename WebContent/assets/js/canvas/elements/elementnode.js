@@ -57,9 +57,10 @@ DataMapper.Views.NodeView = Backbone.View.extend({
                         self.addNode();
                         break;
                     case "edit-node":
-                        self.clearNode();
+                        self.editNode();
                         break;
                     case "clear-node":
+                        self.clearNode();
                         break;
                 }
             }
@@ -90,7 +91,7 @@ DataMapper.Views.NodeView = Backbone.View.extend({
 //        $select.append("<option>Option2222</option>");
         BootstrapDialog.show({
             title: "Add new node",
-            message: 'Title: <input id="title" type="text"><br>Type:<select id="type"><option value="object">Object</option><option value="array">Array</option><option value="string">String</option><option value="number">Number</option></select>',
+            message: 'Title: <input id="title" type="text"><br>Type:<select id="type">' + this.getTypeOptionList("Object") + '</select>',
             draggable: true,
             onhidde: function (dialogRef) {
                 var fruit = dialogRef.getModalBody().find('#title').val();
@@ -115,8 +116,45 @@ DataMapper.Views.NodeView = Backbone.View.extend({
             ]
         });
     },
+    editNode: function () {
+        BootstrapDialog.show({
+            title: "Edit node",
+            message: 'Title: <input id="title" type="text" value="' + this.model.get('text') + '"><br>Type:<select id="type">' + this.getTypeOptionList(this.model.get('textType')) + '</select>',
+            draggable: true,
+            onhidde: function (dialogRef) {
+                var fruit = dialogRef.getModalBody().find('#title').val();
+                if ($.trim(fruit.toLowerCase()) !== 'banana') {
+                    alert('Need banana!');
+                    return false;
+                }
+            },
+            buttons: [{
+                label: 'Edit',
+                cssClass: "btn-primary",
+                action: function (dialogRef) {
+                    dialogRef.close();
+                }
+            },
+                // {
+                //     label: 'Cancel',
+                //     action: function (dialogRef) {
+                //         dialogRef.close();
+                //     }
+                // }
+            ]
+        });
+    },
     clearNode: function () {
 
+    },
+    getTypeOptionList: function (selectedType) {
+        var list = "";
+        DataMapper.Types.map(function (type) {
+            var value = type.toLowerCase();
+            var isSelected = (selectedType.toLowerCase().split("[")[0]) === value ? "selected" : "";
+            list += '<option value="' + value + '" ' + isSelected + '>' + type + '</option>';
+        });
+        return list;
     }
 });
 

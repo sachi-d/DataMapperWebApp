@@ -41,7 +41,7 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
             .classed("dmcontainer-outline", true)
             .classed("dmcontainer-structure", true)
             .attr("x", 0).attr("y", 0)
-            .attr("height", height * 10)
+            .attr("height", height * 5)
             .attr("width", width)
             .attr("fill", "none")
             .attr("stroke", "#000");
@@ -132,6 +132,9 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         outline.attr("height", function () {
             var count = model.get('elementCount') || model.elementCount,
                 height = model.get('nodeHeight') || model.nodeHeight;
+            if (count < 5) {
+                count =5;
+            }
             return (count) * height;
         });
         //resize Canvas with the translate y value

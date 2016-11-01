@@ -128,7 +128,6 @@ DataMapper.Models.Connector = Backbone.Model.extend({
         this.setPoints();
     },
     setPoints: function () {
-        console.log("setPoints");
         var self = this;
         this.get('line').attr("points", function () {
             var p1 = self.get('x1') + "," + self.get('y1'),

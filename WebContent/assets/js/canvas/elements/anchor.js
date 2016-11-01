@@ -47,15 +47,19 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
                 var sourceNode = d3.select(d3.select(this)["_groups"][0][0].parentNode);
                 target = self.detectDropNode(xx, yy, sourceNode.attr("type"), sourceContainer);
                 if (target) {
+
                     //limit the connections to one - in output targets
                     if (target.attr("type") === "output") {
                         //loop through connectors to find targetNode=target and remove line
                         var duplicate = Diagram.Connectors.findFromTargetNode(target) || null;
                         if (duplicate !== null) {
+
                             duplicate.get('line').remove();
                             Diagram.Connectors.remove(duplicate);
                         }
-                    }
+                    } //TODO check if direct and remove operator
+
+
                     var oppositeContainer = self.getParentContainer(target);
                     var dotx = Number(target.select(".drag-head").attr("cx")) + self.getTranslateX(oppositeContainer) - self.getTranslateX(sourceContainer);
                     var doty = Number(target.select(".drag-head").attr("cy")) + self.getTranslateY(oppositeContainer) - self.getTranslateY(sourceContainer);
@@ -108,7 +112,7 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
         var flag = false, self = this;
         d3.select("#canvas").selectAll(".leaf-node").each(function () { //assuming every leaf node has an anchor
             if (!flag && d3.select(this).attr("type") === "output") {
-                var nodeElement = d3.select(this); 
+                var nodeElement = d3.select(this);
                 if (nodeElement !== null) {
                     var x = Number(nodeElement.attr("x")) + self.getTranslateX(self.getParentContainer(nodeElement)) - self.getTranslateX(sourceContainer);
                     var y = Number(nodeElement.attr("y")) + self.getTranslateY(self.getParentContainer(nodeElement)) - self.getTranslateY(sourceContainer);
