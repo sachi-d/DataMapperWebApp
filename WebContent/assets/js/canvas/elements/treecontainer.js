@@ -81,7 +81,30 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
         this.model.set('elementCount', 0);
         this.model.set('file', null);
         this.model.set('data', null);
-    }
+    },
+    addRootElement: function () {
+        var self = this;
+        BootstrapDialog.show({
+            title: "Add root element",
+            message: 'Title: <input id="title" type="text"><br>Type:<select id="type"><option value="object">Object</option><option value="array">Array</option></select>',
+            draggable: true,
+            buttons: [{
+                label: 'Add root Element',
+                cssClass: "btn-primary",
+                action: function (dialogRef) {
+                    self.model.createSchema(dialogRef.getModalBody().find('#title').val(), dialogRef.getModalBody().find('#type').val())
+                    dialogRef.close();
+                }
+            },
+                {
+                    label: 'Cancel',
+                    action: function (dialogRef) {
+                        dialogRef.close();
+                    }
+                }
+            ]
+        });
+    },
 })
 ;
 
@@ -121,7 +144,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
     parseSchema: function (data) {
         this.set('data', data);
         var title = data.title || "Root";
-        var count = this.traverseJSONSchema(data, title, 0, 0, this.get('parent'));
+        var count = this.traverseJSONSchema(data, title, 0, 0, this.get('parent'), null);
         this.set('elementCount', count);
         this.updateContainerHeight();
         this.updateContainerWidth();
@@ -133,7 +156,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             var count = model.get('elementCount') || model.elementCount,
                 height = model.get('nodeHeight') || model.nodeHeight;
             if (count < 5) {
-                count =5;
+                count = 5;
             }
             return (count) * height;
         });
@@ -163,19 +186,22 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             });
         }
     },
-    traverseJSONSchema: function (root, rootName, level, rank, resultPane) {
+    traverseJSONSchema: function (root, rootName, level, rank, resultPane, parentNode) {
         var height = this.nodeHeight,
             width = this.containerWidth,
             margin = width / 6,
             x = 0,
             overhead = rank * margin,
-            y = level * height;
+            y = level * height,
+            node = null;
         var tempParent = resultPane.append("g").attr("class", "nested-group");
         if (root.type === "object") {
             if (rootName !== "") {
                 var nodeText = rootName;
-                var node = new DataMapper.Models.Node({
+                node = new DataMapper.Models.Node({
                     parent: tempParent,
+                    parentNode: parentNode,
+                    parentContainer: this,
                     text: nodeText,
                     textType: root.type,
                     x: x,
@@ -192,21 +218,25 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 this.get('nodeCollection').add(node);
                 rank++;
                 level++;
+            } else {
+                node = parentNode;
             }
             var nestedParent = tempParent.append("g").attr("class", "nested-group");
             var keys = root.properties || {}; //select PROPERTIES
             for (var i = 0; i < Object.keys(keys).length; i++) {   //traverse through each PROPERTY of the object
                 var keyName = Object.keys(keys)[i];
                 var key = keys[keyName];
-                level = this.traverseJSONSchema(key, keyName, level, rank, nestedParent);
+                level = this.traverseJSONSchema(key, keyName, level, rank, nestedParent, node);
             }
 
         } else if (root.type === "array") {
             var keys = root.items || {}; //select ITEMS
             if (rootName !== "") {
                 var nodeText = rootName;
-                var node = new DataMapper.Models.Node({
+                node = new DataMapper.Models.Node({
                     parent: tempParent,
+                    parentNode: parentNode,
+                    parentContainer: this,
                     text: nodeText,
                     textType: root.type + "[" + keys.type + "]",
                     x: x,
@@ -226,7 +256,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 level++;
             }
             if (keys.hasOwnProperty("properties")) {
-                level = this.traverseJSONSchema(keys, "", level, rank, tempParent); //recurse through the items of array
+                level = this.traverseJSONSchema(keys, "", level, rank, tempParent, node); //recurse through the items of array
             }
         } else if (["string", "integer", "number", "boolean"].indexOf(root.type) > -1) {    //when the type is a primitive
             //                        resultPane.classed("nested-group", false);
@@ -235,6 +265,8 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 var nodeText = rootName;
                 var node = new DataMapper.Models.Node({
                     parent: resultPane,
+                    parentNode: parentNode,
+                    parentContainer: this,
                     text: nodeText,
                     textType: root.type,
                     x: x,
@@ -273,36 +305,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         iter(this.get('data'), []);
         return path;
     },
-    addRootElement: function () {
-        var self = this;
-        BootstrapDialog.show({
-            title: "Add root element",
-            message: 'Title: <input id="title" type="text"><br>Type:<select id="type"><option value="object">Object</option><option value="array">Array</option></select>',
-            draggable: true,
-            onhidde: function (dialogRef) {
-                var fruit = dialogRef.getModalBody().find('#title').val();
-                if ($.trim(fruit.toLowerCase()) !== 'banana') {
-                    alert('Need banana!');
-                    return false;
-                }
-            },
-            buttons: [{
-                label: 'Add root Element',
-                cssClass: "btn-primary",
-                action: function (dialogRef) {
-                    self.createSchema(dialogRef.getModalBody().find('#title').val(), dialogRef.getModalBody().find('#type').val())
-                    dialogRef.close();
-                }
-            },
-                // {
-                //     label: 'Cancel',
-                //     action: function (dialogRef) {
-                //         dialogRef.close();
-                //     }
-                // }
-            ]
-        });
-    },
+
     createSchema: function (title, type) {
         var helperObj = type.toLowerCase() === "array" ? "items" : "properties";
         var newSchema = {
@@ -314,6 +317,62 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         this.set('file', null);
         this.parseSchema(newSchema);
         console.log(newSchema);
+    },
+    addNode: function (trigNode, newTitle, newType, isChild) {
+
+
+        var parentKey = isChild ? trigNode.get('text') : trigNode.get('parentNode').get('text');
+        var trigKey = trigNode.get('text');
+
+        function addSibling(data,currentVal, newAt, newVal) {
+            var sch = data;
+
+            Object.keys(data).some(function (k) {
+                if (k==currentVal) {
+                    var cod = "\"" + k + "\":" + JSON.stringify(data[k]) + "";
+                    var str = JSON.stringify(data);
+                    str = str.replace(/("[^"]*")|\s/g, "$1");//remove whitespace
+                    var arr = str.split(cod);
+                    cod += ",\"" + newAt + "\":" + JSON.stringify(newVal);
+                    console.log(arr[0] + "---" + cod + "---" + arr[1]);
+                    sch = JSON.parse(arr[0] + cod + arr[1]);
+
+                    return true;
+                }
+
+            });
+            return sch;
+        }
+
+        var iterate = (function iter(o, p, search) {
+            return Object.keys(o).some(function (k) {
+                // console.log(o[k]);
+                if (k === search && o[k]) {
+                    console.log(o[k]);
+                    var tempData = o[k]["properties"] || o[k]["items"]["properties"];
+                    var newData = addSibling(tempData,trigKey, newTitle, {"type": newType});
+                    if (o[k]["properties"]) {
+                        o[k]["properties"] = newData;
+                    } else if (o[k]["items"]["properties"]) {
+                        o[k]["items"]["properties"] = newData;
+                    }
+                    // console.log(newData);
+                    return true;
+                }
+                if (o[k] !== null && typeof o[k] === 'object') {
+
+                    return iter(o[k],
+                        k === 'properties' && !o.title ? p : p.concat(k === 'properties' && o.title ? o.title : k), search);
+                }
+            });
+        })(this.get('data'), [], parentKey);
+
+
+        // iter(this.get('data'), []); //updates path
+        // console.log(this.get('data'));
+        this.get('parent').selectAll(".nested-group").remove();
+        this.parseSchema(this.get('data'));
+
     }
 });
 

@@ -82,7 +82,7 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
                         self.clearContainer();
                         break;
                     case "add-root":
-                        self.model.addRootElement();
+                        self.addRootElement();
                         break;
                 }
             }

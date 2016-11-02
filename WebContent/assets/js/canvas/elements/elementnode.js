@@ -89,9 +89,13 @@ DataMapper.Views.NodeView = Backbone.View.extend({
 //
 //        $select.append("<option>Optijn 1n</option>");
 //        $select.append("<option>Option2222</option>");
+
+        var self = this;
+
+        var isLeaf = this.model.get('isLeaf') ? ' style="display:none" ' : '';
         BootstrapDialog.show({
             title: "Add new node",
-            message: 'Title: <input id="title" type="text"><br>Type:<select id="type">' + this.getTypeOptionList("Object") + '</select>',
+            message: 'Title: <input id="title" type="text"><br>Type:<select id="type">' + this.getTypeOptionList("Object") + '</select><div ' + isLeaf + ' ><br>Add as child: <input type="checkbox" id="isChild"></div> ',
             draggable: true,
             onhidde: function (dialogRef) {
                 var fruit = dialogRef.getModalBody().find('#title').val();
@@ -104,22 +108,25 @@ DataMapper.Views.NodeView = Backbone.View.extend({
                 label: 'Add',
                 cssClass: "btn-primary",
                 action: function (dialogRef) {
+                    var modalBody=dialogRef.getModalBody();
+                    self.model.get('parentContainer').addNode(self.model, modalBody.find('#title').val(), modalBody.find('#type').val(),modalBody.find('#isChild').is(":checked"));
                     dialogRef.close();
                 }
             },
-                // {
-                //     label: 'Cancel',
-                //     action: function (dialogRef) {
-                //         dialogRef.close();
-                //     }
-                // }
+                {
+                    label: 'Cancel',
+                    action: function (dialogRef) {
+                        dialogRef.close();
+                    }
+                }
             ]
         });
     },
     editNode: function () {
+        var self = this;
         BootstrapDialog.show({
             title: "Edit node",
-            message: 'Title: <input id="title" type="text" value="' + this.model.get('text') + '"><br>Type:<select id="type">' + this.getTypeOptionList(this.model.get('textType')) + '</select>',
+            message: 'Title: <input id="title" type="text" value="' + self.model.get('text') + '"><br>Type:<select id="type">' + self.getTypeOptionList(this.model.get('textType')) + '</select>',
             draggable: true,
             onhidde: function (dialogRef) {
                 var fruit = dialogRef.getModalBody().find('#title').val();
@@ -132,15 +139,17 @@ DataMapper.Views.NodeView = Backbone.View.extend({
                 label: 'Edit',
                 cssClass: "btn-primary",
                 action: function (dialogRef) {
+                    console.log(self.model.get('text'));
+                    console.log(self.model.get('textType'));
                     dialogRef.close();
                 }
             },
-                // {
-                //     label: 'Cancel',
-                //     action: function (dialogRef) {
-                //         dialogRef.close();
-                //     }
-                // }
+                {
+                    label: 'Cancel',
+                    action: function (dialogRef) {
+                        dialogRef.close();
+                    }
+                }
             ]
         });
     },
