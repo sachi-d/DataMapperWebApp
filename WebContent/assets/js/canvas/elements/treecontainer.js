@@ -323,34 +323,51 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
 
         var parentKey = isChild ? trigNode.get('text') : trigNode.get('parentNode').get('text');
         var trigKey = trigNode.get('text');
+        var valueTemplate = (function getTemplate(type) {
+            var defaultVal = {"type": type};
+            switch (type.toLowerCase()) {
+                case "object":
+                    defaultVal["properties"] = {};
+                    break;
+                case "array":
+                    defaultVal["items"] = {"type": "object", "properties": {}};
+                    break;
+            }
+            return defaultVal;
+        })(newType);
 
-        function addSibling(data,currentVal, newAt, newVal) {
+
+        function addSibling(data, currentVal, newAt, newVal) {
             var sch = data;
 
-            Object.keys(data).some(function (k) {
-                if (k==currentVal) {
-                    var cod = "\"" + k + "\":" + JSON.stringify(data[k]) + "";
-                    var str = JSON.stringify(data);
-                    str = str.replace(/("[^"]*")|\s/g, "$1");//remove whitespace
-                    var arr = str.split(cod);
-                    cod += ",\"" + newAt + "\":" + JSON.stringify(newVal);
-                    console.log(arr[0] + "---" + cod + "---" + arr[1]);
-                    sch = JSON.parse(arr[0] + cod + arr[1]);
+            if (isChild) {
+                data[newAt] = newVal;
+            } else {
+                Object.keys(data).some(function (k) {
+                    if (k == currentVal) {
+                        var cod = "\"" + k + "\":" + JSON.stringify(data[k]) + "";
+                        var str = JSON.stringify(data);
+                        str = str.replace(/("[^"]*")|\s/g, "$1");//remove whitespace
+                        var arr = str.split(cod);
+                        cod += ",\"" + newAt + "\":" + JSON.stringify(newVal);
+                        console.log(arr[0] + "---" + cod + "---" + arr[1]);
+                        sch = JSON.parse(arr[0] + cod + arr[1]);
 
-                    return true;
-                }
+                        return true;
+                    }
 
-            });
+                });
+            }
             return sch;
         }
+
 
         var iterate = (function iter(o, p, search) {
             return Object.keys(o).some(function (k) {
                 // console.log(o[k]);
                 if (k === search && o[k]) {
-                    console.log(o[k]);
                     var tempData = o[k]["properties"] || o[k]["items"]["properties"];
-                    var newData = addSibling(tempData,trigKey, newTitle, {"type": newType});
+                    var newData = addSibling(tempData, trigKey, newTitle, valueTemplate);
                     if (o[k]["properties"]) {
                         o[k]["properties"] = newData;
                     } else if (o[k]["items"]["properties"]) {
