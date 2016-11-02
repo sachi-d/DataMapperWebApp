@@ -93,7 +93,7 @@ DataMapper.Views.NodeView = Backbone.View.extend({
         var self = this;
 
         var isLeaf = this.model.get('isLeaf') ? ' style="display:none" ' : '',
-        childOnly = this.model.get('parentNode') === null ? ' checked readonly ' : '';
+            childOnly = this.model.get('parentNode') === null ? ' checked readonly ' : '';
         BootstrapDialog.show({
             title: "Add new node",
             message: 'Title: <input id="title" type="text"><br>Type:<select id="type">' + this.getTypeOptionList("Object") + '</select><div ' + isLeaf + ' ><br>Add as child: <input type="checkbox" id="isChild" ' + childOnly + '></div> ',
@@ -124,10 +124,11 @@ DataMapper.Views.NodeView = Backbone.View.extend({
         });
     },
     editNode: function () {
-        var self = this;
+        var self = this,
+            disabled = this.model.get('parentNode') === null ? ' disabled ' : '';
         BootstrapDialog.show({
             title: "Edit node",
-            message: 'Title: <input id="title" type="text" value="' + self.model.get('text') + '"><br>Type:<select id="type">' + self.getTypeOptionList(this.model.get('textType')) + '</select>',
+            message: 'Title: <input id="title" type="text" value="' + self.model.get('text') + '"><br>Type:<select id="type" ' + disabled + '>' + self.getTypeOptionList(this.model.get('textType')) + '</select>',
             draggable: true,
             onhidde: function (dialogRef) {
                 var fruit = dialogRef.getModalBody().find('#title').val();
@@ -140,8 +141,8 @@ DataMapper.Views.NodeView = Backbone.View.extend({
                 label: 'Edit',
                 cssClass: "btn-primary",
                 action: function (dialogRef) {
-                    console.log(self.model.get('text'));
-                    console.log(self.model.get('textType'));
+                    var modalBody = dialogRef.getModalBody();
+                    self.model.get('parentContainer').editNode(self.model, modalBody.find('#title').val(), modalBody.find('#type').val());
                     dialogRef.close();
                 }
             },
@@ -196,7 +197,6 @@ DataMapper.Models.Node = Backbone.Model.extend({//set parent, text, x,y, type,ca
     },
     drawNode: function () {
         //  function drawNode(container, parent, text, x, y, dotPosition, type) {
-        var model = this;
         var height = this.get('height'),
             width = this.get('width');
         var parent1 = this.get('parent').append("g").attr("class", "node-element")
@@ -255,6 +255,11 @@ DataMapper.Models.Node = Backbone.Model.extend({//set parent, text, x,y, type,ca
             .attr("height", this.get('height'))
             .attr("stroke", "black")
             .attr("fill", "none");
+    },
+    update: function () {
+        //update text
+        // console.log(this.geT('node'));
+        this.get('node').select("text").text(this.get('text') + ":" + this.get('textType'));
     }
 });
 

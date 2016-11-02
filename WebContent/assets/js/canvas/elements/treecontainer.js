@@ -375,11 +375,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                         p = o[k];
                     }
                     var newData = addSibling(p["properties"], trigKey, newTitle, valueTemplate);
-                    // if (o[k]["properties"]) {
-                    //     o[k]["properties"] = newData;
-                    // } else if (o[k]["items"]["properties"]) {
-                    //     o[k]["items"]["properties"] = newData;
-                    // }
+
                     if (p.properties) {
                         p.properties = newData;
                     } else if (p.items.properties) {
@@ -395,11 +391,40 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         })(this.get('data'), parentKey);
 
 
-        // iter(this.get('data'), []); //updates path
-        // console.log(this.get('data'));
         this.get('parent').selectAll(".nested-group").remove();
         this.parseSchema(this.get('data'));
 
+    },
+    editNode: function (trigNode, newTitle, newType) {
+        var iterate = (function iter(o, search) {
+            return Object.keys(o).some(function (k) {
+
+                if (o[k]) {
+                    // console.log(k);
+                    if (k === search) {
+
+                        var temp = o[k];
+                        temp["type"] = newType;
+                        o[newTitle] = temp;
+                        delete o[k];
+                        return true;
+                    }
+                    if (o.title === search) {
+                        o.title = newTitle;
+                        o.type = newType;
+                        return true;
+                    }
+
+                }
+                if (o[k] !== null && typeof o[k] === 'object') {
+                    return iter(o[k], search);
+                }
+            });
+        })(this.get('data'), trigNode.get('text'));
+
+        trigNode.set('text', newTitle);
+        trigNode.set('textType', newType);
+        trigNode.update();
     }
 });
 
