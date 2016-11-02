@@ -92,10 +92,11 @@ DataMapper.Views.NodeView = Backbone.View.extend({
 
         var self = this;
 
-        var isLeaf = this.model.get('isLeaf') ? ' style="display:none" ' : '';
+        var isLeaf = this.model.get('isLeaf') ? ' style="display:none" ' : '',
+        childOnly = this.model.get('parentNode') === null ? ' checked readonly ' : '';
         BootstrapDialog.show({
             title: "Add new node",
-            message: 'Title: <input id="title" type="text"><br>Type:<select id="type">' + this.getTypeOptionList("Object") + '</select><div ' + isLeaf + ' ><br>Add as child: <input type="checkbox" id="isChild"></div> ',
+            message: 'Title: <input id="title" type="text"><br>Type:<select id="type">' + this.getTypeOptionList("Object") + '</select><div ' + isLeaf + ' ><br>Add as child: <input type="checkbox" id="isChild" ' + childOnly + '></div> ',
             draggable: true,
             onhidde: function (dialogRef) {
                 var fruit = dialogRef.getModalBody().find('#title').val();
@@ -108,8 +109,8 @@ DataMapper.Views.NodeView = Backbone.View.extend({
                 label: 'Add',
                 cssClass: "btn-primary",
                 action: function (dialogRef) {
-                    var modalBody=dialogRef.getModalBody();
-                    self.model.get('parentContainer').addNode(self.model, modalBody.find('#title').val(), modalBody.find('#type').val(),modalBody.find('#isChild').is(":checked"));
+                    var modalBody = dialogRef.getModalBody();
+                    self.model.get('parentContainer').addNode(self.model, modalBody.find('#title').val(), modalBody.find('#type').val(), modalBody.find('#isChild').is(":checked"));
                     dialogRef.close();
                 }
             },

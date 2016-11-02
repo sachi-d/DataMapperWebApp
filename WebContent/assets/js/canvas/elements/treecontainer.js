@@ -322,6 +322,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
 
 
         var parentKey = isChild ? trigNode.get('text') : trigNode.get('parentNode').get('text');
+        console.log(parentKey);
         var trigKey = trigNode.get('text');
         var valueTemplate = (function getTemplate(type) {
             var defaultVal = {"type": type};
@@ -341,6 +342,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             var sch = data;
 
             if (isChild) {
+                console.log("jjj");
                 data[newAt] = newVal;
             } else {
                 Object.keys(data).some(function (k) {
@@ -362,27 +364,35 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         }
 
 
-        var iterate = (function iter(o, p, search) {
+        var iterate = (function iter(o, search) {
             return Object.keys(o).some(function (k) {
-                // console.log(o[k]);
-                if (k === search && o[k]) {
-                    var tempData = o[k]["properties"] || o[k]["items"]["properties"];
-                    var newData = addSibling(tempData, trigKey, newTitle, valueTemplate);
-                    if (o[k]["properties"]) {
-                        o[k]["properties"] = newData;
-                    } else if (o[k]["items"]["properties"]) {
-                        o[k]["items"]["properties"] = newData;
+
+                if ((k === search || o.title === search ) && o[k]) {
+                    var p;
+                    if (o.title) {
+                        p = o;
+                    } else {
+                        p = o[k];
+                    }
+                    var newData = addSibling(p["properties"], trigKey, newTitle, valueTemplate);
+                    // if (o[k]["properties"]) {
+                    //     o[k]["properties"] = newData;
+                    // } else if (o[k]["items"]["properties"]) {
+                    //     o[k]["items"]["properties"] = newData;
+                    // }
+                    if (p.properties) {
+                        p.properties = newData;
+                    } else if (p.items.properties) {
+                        p.items.properties = newData;
                     }
                     // console.log(newData);
                     return true;
                 }
                 if (o[k] !== null && typeof o[k] === 'object') {
-
-                    return iter(o[k],
-                        k === 'properties' && !o.title ? p : p.concat(k === 'properties' && o.title ? o.title : k), search);
+                    return iter(o[k], search);
                 }
             });
-        })(this.get('data'), [], parentKey);
+        })(this.get('data'), parentKey);
 
 
         // iter(this.get('data'), []); //updates path
