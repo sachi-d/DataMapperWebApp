@@ -253,11 +253,11 @@ DataMapper.Models.Node = Backbone.Model.extend({//set parent, text, x,y, type,ca
 
     },
     updateIcon: function () {
-        var model = this;
+        var type = this.get('category').toLowerCase();
         this.get('node').select("image").attr("xlink:href", function () {
-            if (model.get('category') === "object") {
+            if (type === "object") {
                 return "assets/images/object-icon.png";
-            } else if (model.get('category') === "array") {
+            } else if (type === "array") {
                 return "assets/images/array-icon.png";
             }
             return "assets/images/leaf-icon.png";
@@ -290,11 +290,16 @@ DataMapper.Models.Node = Backbone.Model.extend({//set parent, text, x,y, type,ca
                         return Number(d3child.attr("y")) + diffY;
                     });
                 }
-                if (d3child.node().tagname === "polyline") {
-                    //update x1 and y1
-                }
-            });
 
+            });
+            Diagram.Connectors.findFromSourceContainer(this.get('parentContainer').get('parent')).map(function (connector) {
+                    if (connector.get('sourceNode').node().isSameNode(node.node())) {
+                        connector.set("x1", Number(connector.get("x1")) + Number(diffX));
+                        connector.set("y1", Number(connector.get("y1")) + Number(diffY));
+                        connector.setPoints(connector.get('x1'), connector.get('x2'), connector.get('y1'), connector.get('y2'));
+                    }
+                }
+            );
             Diagram.Connectors.findFromTargetContainer(this.get('parentContainer').get('parent')).map(function (connector) {
                     if (connector.get('targetNode').node().isSameNode(node.node())) {
                         connector.set("x2", Number(connector.get("x2")) + Number(diffX));

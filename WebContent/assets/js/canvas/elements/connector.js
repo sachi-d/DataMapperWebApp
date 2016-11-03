@@ -113,6 +113,21 @@ DataMapper.Models.Connector = Backbone.Model.extend({
     addPolyline: function () {
         var parent = this.get('sourceNode'),
             line = this.get('line');
+        var overlay=parent.append("polygon")
+            .style("fill", "yellow")
+            .attr("points", function() {
+                var s = 5,
+                    h = 20;
+                var p1 = [x1, y1 - s],
+                    p2 = [x1 + h + s, y1 - s],
+                    p3 = [x2 - h + s, y2 - s],
+                    p4 = [x2, y2 - s],
+                    p5 = [x2, y2 + s],
+                    p6 = [x2 - h - s, y2 + s],
+                    p7 = [x1 + h - s, y1 + s],
+                    p8 = [x1, y1 + s];
+                return p1 + " " + p2 + " " + p3 + " " + p4 + " " + p5 + " " + p6 + " " + p7 + " " + p8;
+            });
         var polyLine = parent.append("polyline").attr("class", "drag-line")
             .style("stroke", "black")
             .style("fill", "none")

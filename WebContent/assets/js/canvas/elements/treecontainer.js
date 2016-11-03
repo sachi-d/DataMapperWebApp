@@ -320,7 +320,8 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
     },
     addNode: function (trigNode, newTitle, newType, isChild) {
 
-
+        console.log(trigNode.get('parent'));
+        console.log(trigNode.get('parentNode'));
         var parentKey = isChild ? trigNode.get('text') : trigNode.get('parentNode').get('text');
         console.log(parentKey);
         var trigKey = trigNode.get('text');
@@ -340,7 +341,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
 
         function addSibling(data, currentVal, newAt, newVal) {
             var sch = data;
-
+            console.log(currentVal);
             if (isChild) {
                 console.log("jjj");
                 data[newAt] = newVal;
@@ -352,7 +353,6 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                         str = str.replace(/("[^"]*")|\s/g, "$1");//remove whitespace
                         var arr = str.split(cod);
                         cod += ",\"" + newAt + "\":" + JSON.stringify(newVal);
-                        console.log(arr[0] + "---" + cod + "---" + arr[1]);
                         sch = JSON.parse(arr[0] + cod + arr[1]);
 
                         return true;
@@ -421,7 +421,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         })(this.get('data'), trigNode.get('text'));
 
         trigNode.set('text', newTitle);
-        trigNode.set('category', newType);
+        trigNode.set('textType', newType);
         trigNode.updateText();
         trigNode.updateIcon();
     }
