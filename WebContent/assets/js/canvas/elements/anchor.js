@@ -83,6 +83,7 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
             });
     },
     drawArrow: function () {
+        var self = this;
         var newArrow = this.get('parent').append("polygon").attr("class", "drag-head");
         this.moveArrow(newArrow, this.get('cx'), this.get('cy'));
         if (this.get('type') === "input") {
@@ -91,6 +92,21 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
         } else {
             newArrow.attr("fill", "#7c7c7c");
         }
+        var observer = new MutationObserver(function (mutations) {
+            var newcx = mutations[0].target.getAttribute('cx');
+            var newcy = mutations[0].target.getAttribute('cy');
+            self.setPoints(newArrow, newcx, newcy);
+        });
+
+// Start observing the circle node and listen for changes to attributes cx and cy
+// while recording old values.
+        var config = {
+            attributes: true,
+            attributeOldValue: true,
+            attributeFilter: ["cx", "cy"]
+        };
+
+        observer.observe(newArrow.node(), config);
     },
     drawDragArrow: function (parent, cx, cy) {
         var newArrow = parent.append("polygon").attr("class", "drag-head-2");
@@ -98,14 +114,17 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
         return newArrow;
     },
     moveArrow: function (arrow, cx, cy) {
+        arrow.attr("cx", cx)
+            .attr("cy", cy);
+        this.setPoints(arrow, cx, cy);
+    },
+    setPoints: function (arrow, cx, cy) {
         arrow.attr("points", function () {
             var p0 = [Number(cx) - 5, Number(cy) - 5],
                 p1 = [Number(cx) + 5, Number(cy)],
                 p2 = [Number(cx) - 5, Number(cy) + 5];
             return p0[0] + "," + p0[1] + " " + p1[0] + "," + p1[1] + " " + p2[0] + "," + p2[1];
         })
-            .attr("cx", cx)
-            .attr("cy", cy);
     },
 
     detectDropNode: function (xx, yy, type, sourceContainer) { //detect if a drop is near opposite type of drag-head

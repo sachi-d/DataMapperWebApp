@@ -391,8 +391,6 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         })(this.get('data'), parentKey);
 
 
-        this.get('parent').selectAll(".nested-group").remove();
-        this.parseSchema(this.get('data'));
 
     },
     editNode: function (trigNode, newTitle, newType) {
@@ -423,8 +421,9 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         })(this.get('data'), trigNode.get('text'));
 
         trigNode.set('text', newTitle);
-        trigNode.set('textType', newType);
-        trigNode.update();
+        trigNode.set('category', newType);
+        trigNode.updateText();
+        trigNode.updateIcon();
     }
 });
 

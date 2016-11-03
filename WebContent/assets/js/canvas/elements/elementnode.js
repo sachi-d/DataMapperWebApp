@@ -233,16 +233,8 @@ DataMapper.Models.Node = Backbone.Model.extend({//set parent, text, x,y, type,ca
                 .attr("x", this.get('x') + this.get('overhead'))
                 .attr("y", this.get('y') + 4)
                 .attr("width", 11)
-                .attr("height", 11)
-                .attr("xlink:href", function () {
-                    if (model.get('category') === "object") {
-                        return "assets/images/object-icon.png";
-                    } else if (model.get('category') === "array") {
-                        return "assets/images/array-icon.png";
-                    }
-                    return "assets/images/leaf-icon.png";
-                });
-
+                .attr("height", 11);
+            model.updateIcon();
         }
 
         return parent1;
@@ -256,10 +248,50 @@ DataMapper.Models.Node = Backbone.Model.extend({//set parent, text, x,y, type,ca
             .attr("stroke", "black")
             .attr("fill", "none");
     },
-    update: function () {
-        //update text
-        // console.log(this.geT('node'));
+    updateText: function () {
         this.get('node').select("text").text(this.get('text') + ":" + this.get('textType'));
+
+    },
+    updateIcon: function () {
+        var model = this;
+        this.get('node').select("image").attr("xlink:href", function () {
+            if (model.get('category') === "object") {
+                return "assets/images/object-icon.png";
+            } else if (model.get('category') === "array") {
+                return "assets/images/array-icon.png";
+            }
+            return "assets/images/leaf-icon.png";
+        });
+    },
+    updatePosition: function (newX, newY) {
+        //update x and y
+        var node = this.get('node');
+        var diffX = newX - Number(node.attr("x"));
+        var diffY = newY - Number(node.attr("y"));
+        if (diffX || diffY) {
+            node.attr("x", newX).attr("y", newY);
+            var childList = node.node().children;
+
+            Array.from(childList).map(function (child) {
+                var d3child = d3.select(child);
+                if (d3child.attr("cx")) {
+                    d3child.attr("cx", function () {
+                        return Number(d3child.attr("cx")) + diffX;
+                    });
+                    d3child.attr("cy", function () {
+                        return Number(d3child.attr("cy")) + diffY;
+                    });
+                }
+                if (d3child.attr("x")) {
+                    d3child.attr("x", function () {
+                        return Number(d3child.attr("x")) + diffX;
+                    });
+                    d3child.attr("y", function () {
+                        return Number(d3child.attr("y")) + diffY;
+                    });
+                }
+            });
+        }
     }
 });
 
