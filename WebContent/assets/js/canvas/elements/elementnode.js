@@ -290,10 +290,23 @@ DataMapper.Models.Node = Backbone.Model.extend({//set parent, text, x,y, type,ca
                         return Number(d3child.attr("y")) + diffY;
                     });
                 }
+                if (d3child.node().tagname === "polyline") {
+                    //update x1 and y1
+                }
             });
+
+            Diagram.Connectors.findFromTargetContainer(this.get('parentContainer').get('parent')).map(function (connector) {
+                    if (connector.get('targetNode').node().isSameNode(node.node())) {
+                        connector.set("x2", Number(connector.get("x2")) + Number(diffX));
+                        connector.set("y2", Number(connector.get("y2")) + Number(diffY));
+                        connector.setPoints(connector.get('x1'), connector.get('x2'), connector.get('y1'), connector.get('y2'));
+                    }
+                }
+            );
         }
     }
-});
+})
+;
 
 
 DataMapper.Collections.NodeList = Backbone.Collection.extend({

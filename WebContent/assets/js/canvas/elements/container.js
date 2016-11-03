@@ -27,7 +27,7 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
                 this.y += d3.event.dy;
                 d3.select(this).attr("transform", "translate(" + this.x + "," + this.y + ")");
                 self.updateConnections(d3.event.dx, d3.event.dy);
-             //   self.resizeCanvas(this.x, this.y);
+                //   self.resizeCanvas(this.x, this.y);
             })
             .on("end", function () {
                 // resizeCanvas();
@@ -41,10 +41,10 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
             // console.log(menu);
             // Avoid the real one
             event.preventDefault();
-             if (self.model.get('elementCount') !==0) {
+            if (self.model.get('elementCount') !== 0) {
 
                 $('[data-action="add-root"]').hide();
-            }else{
+            } else {
                 $('[data-action="add-root"]').show();
             }
             // Show contextmenu
@@ -102,13 +102,13 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
         Diagram.Connectors.findFromSourceContainer(sourceContainer).map(function (connector) {
             connector.set("x2", connector.get("x2") - newX);
             connector.set("y2", connector.get("y2") - newY);
-            connector.setPoints();
+            connector.setPoints(connector.get('x1'), connector.get('x2'), connector.get('y1'), connector.get('y2'));
         });
 
         Diagram.Connectors.findFromTargetContainer(sourceContainer).map(function (connector) {
             connector.set("x2", Number(connector.get("x2")) + Number(newX));
             connector.set("y2", Number(connector.get("y2")) + Number(newY));
-            connector.setPoints();
+            connector.setPoints(connector.get('x1'), connector.get('x2'), connector.get('y1'), connector.get('y2'));
         });
     },
     resizeCanvas: function (x, y) {

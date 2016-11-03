@@ -125,16 +125,15 @@ DataMapper.Models.Connector = Backbone.Model.extend({
         this.set("y2", line.attr("y2"));
 
         line.remove();
-        this.setPoints();
+        this.setPoints(this.get('x1'), this.get('x2'), this.get('y1'), this.get('y2'));
     },
-    setPoints: function () {
-        var self = this;
+    setPoints: function (x1, x2, y1, y2) {
         var margin = 20;
         this.get('line').attr("points", function () {
-            var p1 = self.get('x1') + "," + self.get('y1'),
-                p2 = (Number(self.get('x1')) + margin) + "," + self.get('y1'),
-                p3 = (Number(self.get('x2')) - margin) + "," + self.get('y2'),
-                p4 = self.get('x2') + "," + self.get('y2');
+            var p1 = x1 + "," + y1,
+                p2 = (Number(x1) + margin) + "," + y1,
+                p3 = (Number(x2) - margin) + "," + y2,
+                p4 = x2 + "," + y2;
             return p1 + " " + p2 + " " + p3 + " " + p4;
         });
     }
