@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="24f06e61-b6af-412b-a694-8a0f481401ed" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebContent/assets/js/canvas/elements/anchor.js" afterPath="$PROJECT_DIR$/WebContent/assets/js/canvas/elements/anchor.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebContent/assets/js/canvas/elements/connector.js" afterPath="$PROJECT_DIR$/WebContent/assets/js/canvas/elements/connector.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebContent/assets/js/canvas/elements/container.js" afterPath="$PROJECT_DIR$/WebContent/assets/js/canvas/elements/container.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebContent/assets/js/canvas/elements/treecontainer.js" afterPath="$PROJECT_DIR$/WebContent/assets/js/canvas/elements/treecontainer.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebContent/assets/js/tool-palette/definitions/tools-init.js" afterPath="$PROJECT_DIR$/WebContent/assets/js/tool-palette/definitions/tools-init.js" />
     </list>
     <ignored path="DataMapper.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -62,6 +61,16 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="tools-init.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/WebContent/assets/js/tool-palette/definitions/tools-init.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="405">
+              <caret line="27" column="37" selection-start-line="27" selection-start-column="37" selection-end-line="27" selection-end-column="37" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="container.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/WebContent/assets/js/canvas/elements/container.js">
           <provider selected="true" editor-type-id="text-editor">
@@ -74,11 +83,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="connector.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="connector.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/WebContent/assets/js/canvas/elements/connector.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="435">
-              <caret line="139" column="35" selection-start-line="139" selection-start-column="35" selection-end-line="139" selection-end-column="35" />
+            <state relative-caret-position="1851">
+              <caret line="134" column="88" selection-start-line="134" selection-start-column="88" selection-end-line="134" selection-end-column="88" />
               <folding>
                 <element signature="e#0#44#0" expanded="false" />
               </folding>
@@ -89,8 +98,8 @@
       <file leaf-file-name="treecontainer.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/WebContent/assets/js/canvas/elements/treecontainer.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="291">
-              <caret line="393" column="43" selection-start-line="393" selection-start-column="43" selection-end-line="393" selection-end-column="43" />
+            <state relative-caret-position="321">
+              <caret line="318" column="1" selection-start-line="318" selection-start-column="1" selection-end-line="318" selection-end-column="1" />
               <folding>
                 <element signature="e#0#44#0" expanded="false" />
               </folding>
@@ -132,15 +141,15 @@
         <option value="$PROJECT_DIR$/WebContent/assets/js/canvas/elements/container-view.js" />
         <option value="$PROJECT_DIR$/WebContent/assets/js/canvas/canvas-view.js" />
         <option value="$PROJECT_DIR$/WebContent/assets/js/canvas/elements/operator.js" />
-        <option value="$PROJECT_DIR$/WebContent/assets/js/tool-palette/definitions/tools-init.js" />
         <option value="$PROJECT_DIR$/WebContent/assets/css/style.css" />
         <option value="$PROJECT_DIR$/WebContent/trials/backbonetrials/hello.html" />
         <option value="$PROJECT_DIR$/WebContent/assets/js/canvas/elements/elementnode.js" />
         <option value="$PROJECT_DIR$/WebContent/index.html" />
         <option value="$PROJECT_DIR$/WebContent/assets/js/canvas/elements/container.js" />
         <option value="$PROJECT_DIR$/WebContent/assets/js/canvas/elements/anchor.js" />
-        <option value="$PROJECT_DIR$/WebContent/assets/js/canvas/elements/treecontainer.js" />
         <option value="$PROJECT_DIR$/WebContent/assets/js/canvas/elements/connector.js" />
+        <option value="$PROJECT_DIR$/WebContent/assets/js/canvas/elements/treecontainer.js" />
+        <option value="$PROJECT_DIR$/WebContent/assets/js/tool-palette/definitions/tools-init.js" />
       </list>
     </option>
   </component>
@@ -151,10 +160,10 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="71" />
-    <option name="y" value="24" />
-    <option name="width" value="1849" />
-    <option name="height" value="1056" />
+    <option name="x" value="995" />
+    <option name="y" value="52" />
+    <option name="width" value="925" />
+    <option name="height" value="1028" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -505,18 +514,18 @@
       <workItem from="1477473579675" duration="10050000" />
       <workItem from="1477554825381" duration="20007000" />
       <workItem from="1477888590480" duration="29000" />
-      <workItem from="1477888689532" duration="80344000" />
+      <workItem from="1477888689532" duration="83915000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="228030000" />
+    <option name="totallyTimeSpent" value="231601000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="71" y="24" width="1849" height="1056" extended-state="6" />
+    <frame x="995" y="52" width="925" height="1028" extended-state="4" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.07679827" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15351352" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925585" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -823,14 +832,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/WebContent/assets/js/tool-palette/definitions/tools-init.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="773">
-          <caret line="237" column="2" selection-start-line="237" selection-start-column="2" selection-end-line="237" selection-end-column="2" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/WebContent/trials/backbonetrials/hello.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="372">
@@ -887,23 +888,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/WebContent/assets/js/canvas/elements/treecontainer.js">
+    <entry file="file://$PROJECT_DIR$/WebContent/assets/js/canvas/elements/connector.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="291">
-          <caret line="393" column="43" selection-start-line="393" selection-start-column="43" selection-end-line="393" selection-end-column="43" />
+        <state relative-caret-position="1851">
+          <caret line="134" column="88" selection-start-line="134" selection-start-column="88" selection-end-line="134" selection-end-column="88" />
           <folding>
             <element signature="e#0#44#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/WebContent/assets/js/canvas/elements/connector.js">
+    <entry file="file://$PROJECT_DIR$/WebContent/assets/js/canvas/elements/treecontainer.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="139" column="35" selection-start-line="139" selection-start-column="35" selection-end-line="139" selection-end-column="35" />
+        <state relative-caret-position="321">
+          <caret line="318" column="1" selection-start-line="318" selection-start-column="1" selection-end-line="318" selection-end-column="1" />
           <folding>
             <element signature="e#0#44#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/WebContent/assets/js/tool-palette/definitions/tools-init.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="27" column="37" selection-start-line="27" selection-start-column="37" selection-end-line="27" selection-end-column="37" />
+          <folding />
         </state>
       </provider>
     </entry>

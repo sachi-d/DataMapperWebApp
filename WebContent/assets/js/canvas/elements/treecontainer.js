@@ -316,14 +316,11 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
 
         this.set('file', null);
         this.parseSchema(newSchema);
-        console.log(newSchema);
     },
     addNode: function (trigNode, newTitle, newType, isChild) {
 
-        console.log(trigNode.get('parent'));
-        console.log(trigNode.get('parentNode'));
+
         var parentKey = isChild ? trigNode.get('text') : trigNode.get('parentNode').get('text');
-        console.log(parentKey);
         var trigKey = trigNode.get('text');
         var valueTemplate = (function getTemplate(type) {
             var defaultVal = {"type": type};
@@ -341,9 +338,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
 
         function addSibling(data, currentVal, newAt, newVal) {
             var sch = data;
-            console.log(currentVal);
             if (isChild) {
-                console.log("jjj");
                 data[newAt] = newVal;
             } else {
                 Object.keys(data).some(function (k) {
@@ -381,7 +376,6 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                     } else if (p.items.properties) {
                         p.items.properties = newData;
                     }
-                    // console.log(newData);
                     return true;
                 }
                 if (o[k] !== null && typeof o[k] === 'object') {
@@ -400,7 +394,6 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             return Object.keys(o).some(function (k) {
 
                 if (o[k]) {
-                    // console.log(k);
                     if (k === search) {
 
                         var temp = o[k];

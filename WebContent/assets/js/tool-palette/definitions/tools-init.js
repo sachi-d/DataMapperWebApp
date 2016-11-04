@@ -2,214 +2,327 @@
  * Created by sachithra on 10/21/16.
  */
     //Tools and tool groups definitions
-var toolGroupDefs = [
-        {
-            toolGroupName: "Common",
-            toolGroupID: "common-tool-group",
-            tools: [
-                {
-                    title: "Constant",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                },
-                {
-                    title: "CustomFunction",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                },
-                {
-                    title: "Properties",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                },
-                {
-                    title: "Compare",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                },
-                {
-                    title: "GlobalVariable",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                },
-            ]
-        },
-        {
-            toolGroupName: "Arithmetic",
-            toolGroupID: "arithmetic-tool-group",
-            tools: [
-                {
-                    title: "Add",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                },
-                {
-                    title: "Subtract",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                },
-                {
-                    title: "Multiply",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                },
-                {
-                    title: "Divide",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                },
-                {
-                    title: "Ceiling",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                },
-                {
-                    title: "Floor",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                },
-                {
-                    title: "Round",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                },
-                {
-                    title: "SetPrecision",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                },
-                {
-                    title: "AbsoluteValue",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                },
-                {
-                    title: "Min",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                },
-                {
-                    title: "Max",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                }
-            ]
-        },
-        {
-            toolGroupName: "Conditional",
-            toolGroupID: "conditional-tool-group",
-            tools: [
-                {
-                    title: "IfElse",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                }
-            ]
-        },
-        {
-            toolGroupName: "Boolean",
-            toolGroupID: "boolean-tool-group",
-            tools: [
-                {
-                    title: "AND",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String", "String"], outputTypes: ["String"]}
-                },
-                {
-                    title: "OR",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String", "String"], outputTypes: ["String"]}
-                },
-                {
-                    title: "NOT",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String"]}
-                }
-            ]
-        },
-        {
-            toolGroupName: "Type Conversion",
-            toolGroupID: "typeConversion-tool-group",
-            tools: [
-                {
-                    title: "StringToNumber",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                },
-                {
-                    title: "StringToBoolean",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                },
-                {
-                    title: "ToString",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                }
-            ]
-        },
-        {
-            toolGroupName: "String",
-            toolGroupID: "string-tool-group",
-            tools: [
-                {
-                    title: "Concat",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String", "String"], outputTypes: ["String"]}
-                },
-                {
-                    title: "Split",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                },
-                {
-                    title: "LowerCase",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String"]}
-                },
-                {
-                    title: "UpperCase",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String"]}
-                },
-                {
-                    title: "StringLength",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["Int"]}
-                },
-                {
-                    title: "StartsWith",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                },
-                {
-                    title: "EndsWith",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                },
-                {
-                    title: "Substring",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                },
-                {
-                    title: "Trim",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                },
-                {
-                    title: "Replace",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                },
-                {
-                    title: "Match",
-                    icon: "assets/images/tool-icons/sample-tool-icon.svg",
-                    defaults: {inputTypes: ["String"], outputTypes: ["String", "String"]}
-                }
-            ]
-        }
-    ];
+var toolGroupDefs = [{
+        toolGroupName: "Common",
+        toolGroupID: "common-tool-group",
+        tools: [{
+            title: "Constant",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {inputTypes: [], outputTypes: ["String"], inputLabels: [], outputLabels: ["Const"]}
+        }, {
+            title: "CustomFunction",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["String", "String"],
+                outputTypes: ["String"],
+                inputLabels: ["In", "In"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "Properties",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: [],
+                outputTypes: ["String"],
+                inputLabels: [],
+                outputLabels: ["Value"]
+            }
+        }, {
+            title: "Compare",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["String", "String"],
+                outputTypes: ["Boolean"],
+                inputLabels: ["In", "In"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "GlobalVariable",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {inputTypes: [], outputTypes: ["String"], inputLabels: [], outputLabels: ["Value"]}
+        }]
+    }, {
+        toolGroupName: "Arithmetic",
+        toolGroupID: "arithmetic-tool-group",
+        tools: [{
+            title: "Add",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["Number", "Number"],
+                outputTypes: ["Number"],
+                inputLabels: ["In", "In"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "Subtract",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["Number", "Number"],
+                outputTypes: ["Number"],
+                inputLabels: ["Number", "Subtrahend"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "Multiply",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["Number", "Number"],
+                outputTypes: ["Number"],
+                inputLabels: ["In", "In"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "Divide",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["Number", "Number"],
+                outputTypes: ["Number"],
+                inputLabels: ["Number", "Divisor"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "Ceiling",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["Number"],
+                outputTypes: ["Number"],
+                inputLabels: ["In"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "Floor",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["Number"],
+                outputTypes: ["Number"],
+                inputLabels: ["In"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "Round",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["Number"],
+                outputTypes: ["Number"],
+                inputLabels: ["In"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "SetPrecision",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["Number", "Number"],
+                outputTypes: ["Number"],
+                inputLabels: ["In", "DecimalCount"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "AbsoluteValue",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["Number"],
+                outputTypes: ["Number"],
+                inputLabels: ["In"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "Min",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["Number", "Number"],
+                outputTypes: ["Number"],
+                inputLabels: ["In", "In"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "Max",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["Number", "Number"],
+                outputTypes: ["Number"],
+                inputLabels: ["In", "In"],
+                outputLabels: ["Result"]
+            }
+        }]
+    }, {
+        toolGroupName: "Conditional",
+        toolGroupID: "conditional-tool-group",
+        tools: [{
+            title: "IfElse",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["Boolean", "String", "String"],
+                outputTypes: ["String"],
+                inputLabels: ["Condition", "Then", "Else"],
+                outputLabels: ["String"]
+            }
+        }]
+    }, {
+        toolGroupName: "Boolean",
+        toolGroupID: "boolean-tool-group",
+        tools: [{
+            title: "AND",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["Boolean", "Boolean"],
+                outputTypes: ["Boolean"],
+                inputLabels: ["In", "In"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "OR",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["Boolean", "Boolean"],
+                outputTypes: ["Boolean"],
+                inputLabels: ["In", "In"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "NOT",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["Boolean"],
+                outputTypes: ["Boolean"],
+                inputLabels: ["In"],
+                outputLabels: ["Result"]
+            }
+        }]
+    }, {
+        toolGroupName: "Type Conversion",
+        toolGroupID: "typeConversion-tool-group",
+        tools: [{
+            title: "StringToNumber",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["String"],
+                outputTypes: ["Number"],
+                inputLabels: ["In"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "StringToBoolean",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["String"],
+                outputTypes: ["Boolean"],
+                inputLabels: ["In"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "ToString",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["Number"],
+                outputTypes: ["String"],
+                inputLabels: ["In"],
+                outputLabels: ["Result"]
+            }
+        }]
+    }, {
+        toolGroupName: "String",
+        toolGroupID: "string-tool-group",
+        tools: [{
+            title: "Concat",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["String", "String"],
+                outputTypes: ["String"],
+                inputLabels: ["In", "In"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "Split",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["String"],
+                outputTypes: ["String", "String"],
+                inputLabels: ["In"],
+                outputLabels: ["Result", "Result"]
+            }
+        }, {
+            title: "LowerCase",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["String"],
+                outputTypes: ["String"],
+                inputLabels: ["In"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "UpperCase",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["String"],
+                outputTypes: ["String"],
+                inputLabels: ["In"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "StringLength",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["String"],
+                outputTypes: ["Number"],
+                inputLabels: ["In"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "StartsWith",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["String", "String"],
+                outputTypes: ["Boolean"],
+                inputLabels: ["Value", "Pattern"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "EndsWith",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["String", "String"],
+                outputTypes: ["Boolean"],
+                inputLabels: ["Value", "Pattern"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "Substring",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["String", "Number", "Number"],
+                outputTypes: ["String"],
+                inputLabels: ["Value", "StartIndex", "Length"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "Trim",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["String"],
+                outputTypes: ["String"],
+                inputLabels: ["In"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "Replace",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["String", "String", "String"],
+                outputTypes: ["String"],
+                inputLabels: ["In", "Target", "ReplaceWith"],
+                outputLabels: ["Result"]
+            }
+        }, {
+            title: "Match",
+            icon: "assets/images/tool-icons/sample-tool-icon.svg",
+            defaults: {
+                inputTypes: ["String", "String"],
+                outputTypes: ["Boolean"],
+                inputLabels: ["In", "Pattern"],
+                outputLabels: ["Result"]
+            }
+        }]
+    }];
 
 
 var toolPalette = (function renderToolPalette(toolPalette, definitions) {
@@ -240,3 +353,11 @@ var toolPalette = (function renderToolPalette(toolPalette, definitions) {
 
 var paletteView = new Tools.Views.ToolPalatteView({collection: toolPalette});
 paletteView.render();
+
+// toolGroupDefs.map(function (group) {
+//     group.tools.map(function (tool) {
+//         tool.defaults.inputLabels = tool.defaults.inputTypes;
+//         tool.defaults.outputLabels = tool.defaults.outputTypes;
+//     })
+// });
+// console.log(JSON.stringify(toolGroupDefs));
