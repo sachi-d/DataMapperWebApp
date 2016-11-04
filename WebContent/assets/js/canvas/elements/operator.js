@@ -77,62 +77,63 @@ DataMapper.Models.Operator = DataMapper.Models.Container.extend({
         var outputs = parent.append("g").attr("class", "op-outputs");
         var x = 0,
             y = Number(opTitleOutline.attr("height"));
-        if (inputCount !== 0) {
-            var tempHeight = this.get('height');
-            if (max !== inputCount) {
-                tempHeight = (max * this.get('height') / inputCount);
-            }
-            for (var i = 0; i < inputCount; i++) {
-                var tempY = y + i * tempHeight;
-                var node = new DataMapper.Models.Node({
-                    parent: inputs,
-                    text: "",
-                    textType: this.get('inputTypes')[i],
-                    x: x,
-                    y: tempY,
-                    type: "output",
-                    category: "operator",
-                    isLeaf: true,
-                    height: tempHeight,
-                    width: this.get('width'),
-                    isSchema: false,
-                    overhead: 0
-                });
-                var obj = new DataMapper.Views.NodeView({model: node}).render();
-                obj.attr("rank", i);
-                this.get('inputs').push(obj);
-                this.get('nodeCollection').add(node);
-            }
+        // if (inputCount !== 0) {
+        var tempHeight = this.get('height');
+        if (max !== inputCount) {
+            tempHeight = (max * this.get('height') / inputCount);
+        }
+        for (var i = 0; i < inputCount; i++) {
+            var tempY = y + i * tempHeight;
+            var node = new DataMapper.Models.Node({
+                parent: inputs,
+                text: this.get('inputLabels')[i],
+                textType: this.get('inputTypes')[i],
+                x: x,
+                y: tempY,
+                type: "output",
+                category: "operator",
+                isLeaf: true,
+                height: tempHeight,
+                width: this.get('width'),
+                isSchema: false,
+                overhead: 0
+            });
+            var obj = new DataMapper.Views.NodeView({model: node}).render();
+            obj.attr("rank", i);
+            this.get('inputs').push(obj);
+            this.get('nodeCollection').add(node);
+        }
 
-            x += this.get('width');
+        x += this.get('width');
+        // }
+        // if (outputCount !== 0) {
+        var tempHeight = this.get('height');
+        if (max !== outputCount) {
+            tempHeight = (max * this.get('height') / outputCount);
         }
-        if (outputCount !== 0) {
-            var tempHeight = this.get('height');
-            if (max !== outputCount) {
-                tempHeight = (max * this.get('height') / outputCount);
-            }
-            for (var i = 0; i < outputCount; i++) {
-                var tempY = y + i * tempHeight;
-                var node = new DataMapper.Models.Node({
-                    parent: outputs,
-                    text: "",
-                    textType: this.get('outputTypes')[i],
-                    x: x,
-                    y: tempY,
-                    type: "input",
-                    category: "operator",
-                    isLeaf: true,
-                    height: tempHeight,
-                    width: this.get('width'),
-                    isSchema: false,
-                    overhead: 0
-                });
-                var obj = new DataMapper.Views.NodeView({model: node}).render();
-                obj.attr("rank", i);
-                this.get('outputs').push(obj);
-                this.get('nodeCollection').add(node);
-            }
+        for (var i = 0; i < outputCount; i++) {
+            var tempY = y + i * tempHeight;
+            var node = new DataMapper.Models.Node({
+                parent: outputs,
+                text: this.get('outputLabels')[i],
+                text: this.get('outputLabels')[i],
+                textType: this.get('outputTypes')[i],
+                x: x,
+                y: tempY,
+                type: "input",
+                category: "operator",
+                isLeaf: true,
+                height: tempHeight,
+                width: this.get('width'),
+                isSchema: false,
+                overhead: 0
+            });
+            var obj = new DataMapper.Views.NodeView({model: node}).render();
+            obj.attr("rank", i);
+            this.get('outputs').push(obj);
+            this.get('nodeCollection').add(node);
         }
+        // }
         return parent;
     }
 });
