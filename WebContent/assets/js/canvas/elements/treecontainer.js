@@ -390,7 +390,9 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             });
         })(this.get('data'), parentKey);
 
-        trigNode.updatePosition(Number(trigNode.get('x')) + 5, Number(trigNode.get('y')) + 5);
+        this.get('parent').selectAll(".nested-group").remove();
+        this.parseSchema(this.get('data'));
+        // trigNode.updatePosition(Number(trigNode.get('x')) + 5, Number(trigNode.get('y')) + 5);
 
     },
     editNode: function (trigNode, newTitle, newType) {

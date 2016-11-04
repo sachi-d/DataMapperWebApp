@@ -54,10 +54,10 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
                         var duplicate = Diagram.Connectors.findFromTargetNode(target) || null;
                         if (duplicate !== null) {
 
-                            duplicate.get('line').remove();
+                            duplicate.removeConnector();
                             Diagram.Connectors.remove(duplicate);
                         }
-                    } //TODO check if direct and remove operator
+                    }
 
 
                     var oppositeContainer = self.getParentContainer(target);

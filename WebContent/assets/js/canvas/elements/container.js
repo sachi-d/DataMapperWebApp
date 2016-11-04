@@ -25,7 +25,7 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
                 this.y = this.y || selfModel.get('y');
                 this.x += d3.event.dx;
                 this.y += d3.event.dy;
-                d3.select(this).attr("transform", "translate(" + this.x + "," + this.y + ")");
+                d3.select(this).attr("transform", "translate(" + [this.x, this.y] + ")");
                 self.updateConnections(d3.event.dx, d3.event.dy);
                 //   self.resizeCanvas(this.x, this.y);
             })

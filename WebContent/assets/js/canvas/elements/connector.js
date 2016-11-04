@@ -18,7 +18,7 @@ DataMapper.Views.ConnectorView = Backbone.View.extend({
     },
     dropFunction: function () {
         Diagram.Connectors.add(this.model);
-        this.model.addPolyline();
+        var overlay = this.model.addPolyline();
         //if the line is direct
         if (this.model.isDirectConnector()) {
             this.model.addDirectOperator();
@@ -28,8 +28,7 @@ DataMapper.Views.ConnectorView = Backbone.View.extend({
     bindMenu: function (menu) {
         var self = this;
         var classClicked = self.el + "-clicked";
-        console.log(this.el);
-        $(this.el).on("contextmenu", function (event) {
+        $("#" + this.model.get('lineOverlay').attr("id")).on("contextmenu", function (event) {
             // Avoid the real one
             event.preventDefault();
 
@@ -40,6 +39,7 @@ DataMapper.Views.ConnectorView = Backbone.View.extend({
                     left: event.pageX + "px"
                 })
                 .addClass(classClicked);
+            // self.model.get('lineOverlay').node().dispatchEvent(new MouseEvent("mouseover"));
         });
         // If the document is clicked somewhere
         $(document).on("mousedown", function (e) {
@@ -50,6 +50,7 @@ DataMapper.Views.ConnectorView = Backbone.View.extend({
                 // Hide it
                 $(menu).removeClass(classClicked);
                 $(menu).hide(100);
+                // self.model.get('lineOverlay').node().dispatchEvent(new MouseEvent("mouseleave"));
             }
         });
 
@@ -105,6 +106,7 @@ DataMapper.Models.Connector = Backbone.Model.extend({
             Diagram.Operators.remove(this.operator);
         }
         this.get('line').remove();
+        this.get('lineOverlay').remove();
         Diagram.Connectors.remove(this);
     },
     isDirectConnector: function () {
@@ -113,26 +115,36 @@ DataMapper.Models.Connector = Backbone.Model.extend({
     addPolyline: function () {
         var parent = this.get('sourceNode'),
             line = this.get('line');
-        var overlay=parent.append("polygon")
-            .style("fill", "yellow")
-            .attr("points", function() {
-                var s = 5,
-                    h = 20;
-                var p1 = [x1, y1 - s],
-                    p2 = [x1 + h + s, y1 - s],
-                    p3 = [x2 - h + s, y2 - s],
-                    p4 = [x2, y2 - s],
-                    p5 = [x2, y2 + s],
-                    p6 = [x2 - h - s, y2 + s],
-                    p7 = [x1 + h - s, y1 + s],
-                    p8 = [x1, y1 + s];
-                return p1 + " " + p2 + " " + p3 + " " + p4 + " " + p5 + " " + p6 + " " + p7 + " " + p8;
-            });
+
         var polyLine = parent.append("polyline").attr("class", "drag-line")
             .style("stroke", "black")
             .style("fill", "none")
             .style("stroke-width", "2")
             .attr("id", line.attr("id"));
+        var overlay = parent.append("polyline").attr("class", "drag-line drag-line-overlay")
+            .style("stroke", "#3399ff")
+            .style("stroke-width", "15")
+            .style("fill", "none")
+            .style("opacity", "0")
+            .attr("id", line.attr("id") + "-overlay");
+
+        var mouseOver = function () {
+            return overlay.style("opacity", "0.2");
+        };
+        var mouseLeave = function () {
+            return overlay.style("opacity", "0");
+        };
+
+        overlay.on("mouseover", mouseOver)
+            .on("mouseleave", mouseLeave)
+            .on("click",mouseOver);
+
+        // var event = document.createEvent('Event');
+        // event.initEvent('mouseover', true, true);
+        // event.initEvent('mouseleave', true, true);
+        // overlay.node().dispatchEvent(event);
+
+        this.set("lineOverlay", overlay);
         this.set('line', polyLine);
         this.set("x1", line.attr("x1"));
         this.set("x2", line.attr("x2"));
@@ -141,16 +153,20 @@ DataMapper.Models.Connector = Backbone.Model.extend({
 
         line.remove();
         this.setPoints(this.get('x1'), this.get('x2'), this.get('y1'), this.get('y2'));
+        return overlay;
     },
     setPoints: function (x1, x2, y1, y2) {
         var margin = 20;
+        var points = "";
         this.get('line').attr("points", function () {
             var p1 = x1 + "," + y1,
                 p2 = (Number(x1) + margin) + "," + y1,
                 p3 = (Number(x2) - margin) + "," + y2,
                 p4 = x2 + "," + y2;
-            return p1 + " " + p2 + " " + p3 + " " + p4;
+            points = p1 + " " + p2 + " " + p3 + " " + p4;
+            return points;
         });
+        this.get('lineOverlay').attr("points", points);
     }
 });
 
