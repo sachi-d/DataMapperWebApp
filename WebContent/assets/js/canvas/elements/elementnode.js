@@ -98,13 +98,6 @@ DataMapper.Views.NodeView = Backbone.View.extend({
             title: "Add new node",
             message: 'Title: <input id="title" type="text"><br>Type:<select id="type">' + this.getTypeOptionList("Object") + '</select><div ' + isLeaf + ' ><br>Add as child: <input type="checkbox" id="isChild" ' + childOnly + '></div> ',
             draggable: true,
-            onhidde: function (dialogRef) {
-                var fruit = dialogRef.getModalBody().find('#title').val();
-                if ($.trim(fruit.toLowerCase()) !== 'banana') {
-                    alert('Need banana!');
-                    return false;
-                }
-            },
             buttons: [{
                 label: 'Add',
                 cssClass: "btn-primary",

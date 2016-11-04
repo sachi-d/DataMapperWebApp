@@ -258,7 +258,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             if (keys.hasOwnProperty("properties")) {
                 level = this.traverseJSONSchema(keys, "", level, rank, tempParent, node); //recurse through the items of array
             }
-        } else if (["string", "integer", "number", "boolean"].indexOf(root.type) > -1) {    //when the type is a primitive
+        } else {//if (DataMapper.Types.indexOf(root.type) > -1) {    //when the type is a primitive
             //                        resultPane.classed("nested-group", false);
             tempParent.remove();
             if (rootName !== "") {
@@ -369,7 +369,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                     } else {
                         p = o[k];
                     }
-                    var newData = addSibling(p["properties"], trigKey, newTitle, valueTemplate);
+                    var newData = addSibling(p["properties"] || p["items"]["properties"], trigKey, newTitle, valueTemplate);
 
                     if (p.properties) {
                         p.properties = newData;

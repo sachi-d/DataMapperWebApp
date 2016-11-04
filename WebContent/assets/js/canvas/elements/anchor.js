@@ -46,7 +46,11 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
                 var sourceContainer = self.getParentContainer(d3.select(this));
                 var sourceNode = d3.select(d3.select(this)["_groups"][0][0].parentNode);
                 target = self.detectDropNode(xx, yy, sourceNode.attr("type"), sourceContainer);
-                if (target) {
+                function decodeType(nodeObj) {
+                    return nodeObj.select("text").text().toLowerCase().split(":")[1];
+                }
+
+                if (target && decodeType(sourceNode) === decodeType(target)) {
 
                     //limit the connections to one - in output targets
                     if (target.attr("type") === "output") {
@@ -58,7 +62,6 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
                             Diagram.Connectors.remove(duplicate);
                         }
                     }
-
 
                     var oppositeContainer = self.getParentContainer(target);
                     var dotx = Number(target.select(".drag-head").attr("cx")) + self.getTranslateX(oppositeContainer) - self.getTranslateX(sourceContainer);
@@ -75,6 +78,7 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
                     if (oppositeContainer.classed("operator")) {
                         target.select("text").text(sourceNode.select("text").text().split(":")[0]).classed("op-node-text", true);
                     }
+
                 } else {
                     //d3.select("#inputnode").text("");
                     dragLine.remove();

@@ -50,7 +50,7 @@ DataMapper.Views.ConnectorView = Backbone.View.extend({
                 // Hide it
                 $(menu).removeClass(classClicked);
                 $(menu).hide(100);
-                self.model.get('lineOverlay').classed("clicked", false);
+                // self.model.get('lineOverlay').classed("clicked", false);
             }
         });
 
@@ -136,8 +136,8 @@ DataMapper.Models.Connector = Backbone.Model.extend({
         };
 
         overlay.on("mouseover", mouseOver)
-            .on("mouseleave", mouseLeave)
-            .on("contextmenu", overlay.classed("clicked", true));
+            .on("mouseleave", mouseLeave);
+        // .on("contextmenu", overlay.classed("clicked", true));
 
 
         // var event = document.createEvent('Event');
