@@ -317,8 +317,6 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         this.parseSchema(newSchema);
     },
     addNode: function (trigNode, newTitle, newType, isChild) {
-
-
         var parentKey = isChild ? trigNode.get('text') : trigNode.get('parentNode').get('text');
         var trigKey = trigNode.get('text');
         var valueTemplate = (function getTemplate(type) {
@@ -340,19 +338,14 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             if (isChild) {
                 data[newAt] = newVal;
             } else {
+                var newObj = {};
                 Object.keys(data).some(function (k) {
-                    if (k == currentVal) {
-                        var cod = "\"" + k + "\":" + JSON.stringify(data[k]) + "";
-                        var str = JSON.stringify(data);
-                        str = str.replace(/("[^"]*")|\s/g, "$1");//remove whitespace
-                        var arr = str.split(cod);
-                        cod += ",\"" + newAt + "\":" + JSON.stringify(newVal);
-                        sch = JSON.parse(arr[0] + cod + arr[1]);
-
-                        return true;
+                    newObj[k] = data[k];
+                    if (k === currentVal) {
+                        newObj[newAt] = newVal;
                     }
-
                 });
+                sch = newObj;
             }
             return sch;
         }
@@ -420,6 +413,9 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         trigNode.updateIcon();
     },
     deleteNode: function (trigNode) {
+        if (trigNode.get('text') === this.get('data').title) {
+            //clearcontainer
+        }
         var iterate = (function iter(o, search) {
             return Object.keys(o).some(function (k) {
 
@@ -428,13 +424,6 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                         delete o[k];
                         return true;
                     }
-                    if (o.title === search) {
-                        delete o.title;
-                        delete o.type;
-                        delete o.properties;
-                        return true;
-                    }
-
                 }
                 if (o[k] !== null && typeof o[k] === 'object') {
                     return iter(o[k], search);
