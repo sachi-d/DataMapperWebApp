@@ -28,6 +28,7 @@ DataMapper.Views.ConnectorView = Backbone.View.extend({
     bindMenu: function (menu) {
         var self = this;
         var classClicked = self.el + "-clicked";
+        console.log(classClicked);
         $("#" + this.model.get('lineOverlay').attr("id")).on("contextmenu", function (event) {
             // Avoid the real one
             event.preventDefault();
@@ -39,7 +40,8 @@ DataMapper.Views.ConnectorView = Backbone.View.extend({
                     left: event.pageX + "px"
                 })
                 .addClass(classClicked);
-            // self.model.get('lineOverlay').node().dispatchEvent(new MouseEvent("mouseover"));
+
+            self.model.get('lineOverlay').classed("clicked", true);
         });
         // If the document is clicked somewhere
         $(document).on("mousedown", function (e) {
@@ -50,19 +52,20 @@ DataMapper.Views.ConnectorView = Backbone.View.extend({
                 // Hide it
                 $(menu).removeClass(classClicked);
                 $(menu).hide(100);
-                // self.model.get('lineOverlay').classed("clicked", false);
+
+                self.model.get('lineOverlay').classed("clicked", false);
             }
         });
 
 
-// If the menu element is clicked
+        // If the menu element is clicked
         $(menu + " li").on("click", function () {
             // This is the triggered action name
             if ($(menu).hasClass(classClicked)) {
                 switch ($(this).attr("data-action")) {
-                    case "clear-connector":
-                        self.model.removeConnector();
-                        break;
+                case "clear-connector":
+                    self.model.removeConnector();
+                    break;
                 }
             }
 
@@ -89,7 +92,7 @@ DataMapper.Models.Connector = Backbone.Model.extend({
         // });
     },
     addDirectOperator: function () {
-//                    var self = this;
+        //                    var self = this;
         var operator = new DataMapper.Models.Operator({
             title: "directOperator",
             inputTypes: ["Direct"],
@@ -135,7 +138,7 @@ DataMapper.Models.Connector = Backbone.Model.extend({
             return overlay.classed("clicked") ? overlay.style("opacity", "0.2") : overlay.style("opacity", "0");
         };
 
-        overlay.on("mouseover", mouseOver)
+        overlay.on("mouseover ", mouseOver)
             .on("mouseleave", mouseLeave);
         // .on("contextmenu", overlay.classed("clicked", true));
 

@@ -27,7 +27,7 @@ DataMapper.Views.NodeView = Backbone.View.extend({
 
             // Show contextmenu
             $(menu).finish().toggle(100)
-                .css({// In the right position (the mouse)
+                .css({ // In the right position (the mouse)
                     top: event.pageY + "px",
                     left: event.pageX + "px"
                 })
@@ -46,22 +46,22 @@ DataMapper.Views.NodeView = Backbone.View.extend({
         });
 
 
-// If the menu element is clicked
+        // If the menu element is clicked
         $(menu + " li").on("click", function () {
             // This is the triggered action name
             if ($(menu).hasClass(classClicked)) {
                 switch ($(this).attr("data-action")) {
 
                     // A case for each action. Your actions here
-                    case "add-node":
-                        self.addNode();
-                        break;
-                    case "edit-node":
-                        self.editNode();
-                        break;
-                    case "clear-node":
-                        self.clearNode();
-                        break;
+                case "add-node":
+                    self.addNode();
+                    break;
+                case "edit-node":
+                    self.editNode();
+                    break;
+                case "clear-node":
+                    self.clearNode();
+                    break;
                 }
             }
 
@@ -71,24 +71,24 @@ DataMapper.Views.NodeView = Backbone.View.extend({
 
     },
     addNode: function () {
-//        $("#add-root-element-modal").show();
-//        BootstrapDialog.show({
-//            title: 'Draggable Dialog',
-//            message: 'Try to drag on dialog title to move your dialog.',
-//            draggable: true
-//        });
-//        var $msgBody = $('<form class="form-horizontal"></form>');
-//        var $titleBody = $('<div class="form-group"><label class="control-label col-sm-2" >Title:</label><div class="col-sm-10"><input type="text" class="form-control" id="title" ></div></div>');
-//        var $typeBody = $('<div class="form-group"></div>');
-//        $msgBody.append($titleBody).append($typeBody);
-//
-//        var $typeDiv = $('<div class="col-sm-10"></div>');
-//        var $select = $('<select id="type"   class="form-control" style="display:inline"></select>');
-//        $typeDiv.append($select);
-//        $typeBody.append($('<label class="control-label col-sm-2" >Type:</label>')).append($typeDiv);
-//
-//        $select.append("<option>Optijn 1n</option>");
-//        $select.append("<option>Option2222</option>");
+        //        $("#add-root-element-modal").show();
+        //        BootstrapDialog.show({
+        //            title: 'Draggable Dialog',
+        //            message: 'Try to drag on dialog title to move your dialog.',
+        //            draggable: true
+        //        });
+        //        var $msgBody = $('<form class="form-horizontal"></form>');
+        //        var $titleBody = $('<div class="form-group"><label class="control-label col-sm-2" >Title:</label><div class="col-sm-10"><input type="text" class="form-control" id="title" ></div></div>');
+        //        var $typeBody = $('<div class="form-group"></div>');
+        //        $msgBody.append($titleBody).append($typeBody);
+        //
+        //        var $typeDiv = $('<div class="col-sm-10"></div>');
+        //        var $select = $('<select id="type"   class="form-control" style="display:inline"></select>');
+        //        $typeDiv.append($select);
+        //        $typeBody.append($('<label class="control-label col-sm-2" >Type:</label>')).append($typeDiv);
+        //
+        //        $select.append("<option>Optijn 1n</option>");
+        //        $select.append("<option>Option2222</option>");
 
         var self = this;
 
@@ -99,13 +99,13 @@ DataMapper.Views.NodeView = Backbone.View.extend({
             message: 'Title: <input id="title" type="text"><br>Type:<select id="type">' + this.getTypeOptionList("Object") + '</select><div ' + isLeaf + ' ><br>Add as child: <input type="checkbox" id="isChild" ' + childOnly + '></div> ',
             draggable: true,
             buttons: [{
-                label: 'Add',
-                cssClass: "btn-primary",
-                action: function (dialogRef) {
-                    var modalBody = dialogRef.getModalBody();
-                    self.model.get('parentContainer').addNode(self.model, modalBody.find('#title').val(), modalBody.find('#type').val(), modalBody.find('#isChild').is(":checked"));
-                    dialogRef.close();
-                }
+                    label: 'Add',
+                    cssClass: "btn-primary",
+                    action: function (dialogRef) {
+                        var modalBody = dialogRef.getModalBody();
+                        self.model.get('parentContainer').addNode(self.model, modalBody.find('#title').val(), modalBody.find('#type').val(), modalBody.find('#isChild').is(":checked"));
+                        dialogRef.close();
+                    }
             },
                 {
                     label: 'Cancel',
@@ -131,13 +131,13 @@ DataMapper.Views.NodeView = Backbone.View.extend({
                 }
             },
             buttons: [{
-                label: 'Edit',
-                cssClass: "btn-primary",
-                action: function (dialogRef) {
-                    var modalBody = dialogRef.getModalBody();
-                    self.model.get('parentContainer').editNode(self.model, modalBody.find('#title').val(), modalBody.find('#type').val());
-                    dialogRef.close();
-                }
+                    label: 'Edit',
+                    cssClass: "btn-primary",
+                    action: function (dialogRef) {
+                        var modalBody = dialogRef.getModalBody();
+                        self.model.get('parentContainer').editNode(self.model, modalBody.find('#title').val(), modalBody.find('#type').val());
+                        dialogRef.close();
+                    }
             },
                 {
                     label: 'Cancel',
@@ -162,7 +162,7 @@ DataMapper.Views.NodeView = Backbone.View.extend({
     }
 });
 
-DataMapper.Models.Node = Backbone.Model.extend({//set parent, text, x,y, type,category
+DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,category
     defaults: {
         arrayId: 0,
         parent: d3.select("#canvas"),
@@ -181,12 +181,12 @@ DataMapper.Models.Node = Backbone.Model.extend({//set parent, text, x,y, type,ca
         this.set("id", "node-" + this.cid);
         if (this.get('isLeaf')) {
             if (this.get('type') === "input") {
-                this.set('dotPosition', [this.get('x') + this.get('width'), this.get('y') + this.get('height') / 2]);
+                this.set('dotPosition', [Number(this.get('x')) + Number(this.get('width')), Number(this.get('y')) + this.get('height') / 2]);
             } else if (this.get('type') === "output") {
-                this.set('dotPosition', [this.get('x'), this.get('y') + this.get('height') / 2]);
+                this.set('dotPosition', [Number(this.get('x')), Number(this.get('y')) + this.get('height') / 2]);
             }
         }
-//                    this.set('textType',this.get('text').split(":"));
+        //                    this.set('textType',this.get('text').split(":"));
     },
     drawNode: function () {
         //  function drawNode(container, parent, text, x, y, dotPosition, type) {
@@ -201,8 +201,8 @@ DataMapper.Models.Node = Backbone.Model.extend({//set parent, text, x,y, type,ca
         this.set('node', parent1);
 
         var text = parent1.append("text").attr("class", "node-element-text")
-            .attr("x", this.get('x') + 12)
-            .attr("y", this.get('y') + (3 * height / 4))
+            .attr("x", Number(this.get('x')) + 12)
+            .attr("y", Number(this.get('y')) + (3 * height / 4))
             .text(this.get('text') + ":" + this.get('textType'));
         if (this.get('category') === "operator") {
             this.drawOutline();
@@ -217,14 +217,16 @@ DataMapper.Models.Node = Backbone.Model.extend({//set parent, text, x,y, type,ca
                 cy: this.get('dotPosition')[1],
                 type: this.get('type')
             });
-            new DataMapper.Views.AnchorView({model: anchor});
+            new DataMapper.Views.AnchorView({
+                model: anchor
+            });
         }
         if (this.get('isSchema')) {
             parent1.select("text").attr("x", this.get("x") + 12 + this.get('overhead'));
             var model = this;
             parent1.append("svg:image")
-                .attr("x", this.get('x') + this.get('overhead'))
-                .attr("y", this.get('y') + 4)
+                .attr("x", Number(this.get('x')) + Number(this.get('overhead')))
+                .attr("y", Number(this.get('y')) + 4)
                 .attr("width", 11)
                 .attr("height", 11);
             model.updateIcon();
@@ -246,7 +248,7 @@ DataMapper.Models.Node = Backbone.Model.extend({//set parent, text, x,y, type,ca
 
     },
     updateIcon: function () {
-        var type = this.get('category').toLowerCase();
+        var type = this.get('textType').toLowerCase();
         this.get('node').select("image").attr("xlink:href", function () {
             if (type === "object") {
                 return "assets/images/object-icon.png";
@@ -258,6 +260,8 @@ DataMapper.Models.Node = Backbone.Model.extend({//set parent, text, x,y, type,ca
     },
     updatePosition: function (newX, newY) {
         //update x and y
+        this.set('x', newX);
+        this.set('y', newY);
         var node = this.get('node');
         var diffX = newX - Number(node.attr("x"));
         var diffY = newY - Number(node.attr("y"));
@@ -286,25 +290,22 @@ DataMapper.Models.Node = Backbone.Model.extend({//set parent, text, x,y, type,ca
 
             });
             Diagram.Connectors.findFromSourceContainer(this.get('parentContainer').get('parent')).map(function (connector) {
-                    if (connector.get('sourceNode').node().isSameNode(node.node())) {
-                        connector.set("x1", Number(connector.get("x1")) + Number(diffX));
-                        connector.set("y1", Number(connector.get("y1")) + Number(diffY));
-                        connector.setPoints(connector.get('x1'), connector.get('x2'), connector.get('y1'), connector.get('y2'));
-                    }
+                if (connector.get('sourceNode').node().isSameNode(node.node())) {
+                    connector.set("x1", Number(connector.get("x1")) + Number(diffX));
+                    connector.set("y1", Number(connector.get("y1")) + Number(diffY));
+                    connector.setPoints(connector.get('x1'), connector.get('x2'), connector.get('y1'), connector.get('y2'));
                 }
-            );
+            });
             Diagram.Connectors.findFromTargetContainer(this.get('parentContainer').get('parent')).map(function (connector) {
-                    if (connector.get('targetNode').node().isSameNode(node.node())) {
-                        connector.set("x2", Number(connector.get("x2")) + Number(diffX));
-                        connector.set("y2", Number(connector.get("y2")) + Number(diffY));
-                        connector.setPoints(connector.get('x1'), connector.get('x2'), connector.get('y1'), connector.get('y2'));
-                    }
+                if (connector.get('targetNode').node().isSameNode(node.node())) {
+                    connector.set("x2", Number(connector.get("x2")) + Number(diffX));
+                    connector.set("y2", Number(connector.get("y2")) + Number(diffY));
+                    connector.setPoints(connector.get('x1'), connector.get('x2'), connector.get('y1'), connector.get('y2'));
                 }
-            );
+            });
         }
     }
-})
-;
+});
 
 
 DataMapper.Collections.NodeList = Backbone.Collection.extend({
@@ -313,6 +314,15 @@ DataMapper.Collections.NodeList = Backbone.Collection.extend({
     getNodeFromDOMObject: function (object) {
         return this.find(function (node) {
             return node.get("node").node().isSameNode(object);
+        });
+    },
+    pushNodes: function (newY, depth) {
+        this.find(function (node) {
+            var currY = Number(node.get('y'));
+            if (currY >= newY) {
+                console.log(node.get('text'));
+                node.updatePosition(0, currY + Number(depth));
+            }
         });
     }
 });

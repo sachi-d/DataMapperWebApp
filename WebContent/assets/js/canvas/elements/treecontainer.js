@@ -11,58 +11,57 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
     drawInitContainer: function () {
         var self = this;
         var parent = d3.select("#canvas").append("g")
-                .attr("id", this.id)
-                .attr("class", "tree-dmcontainer dmcontainer dmcontainer-structure")
-                .attr("transform", "translate(" + this.model.get('x') + "," + this.model.get('y') + ")");
+            .attr("id", this.id)
+            .attr("class", "tree-dmcontainer dmcontainer dmcontainer-structure")
+            .attr("transform", "translate(" + this.model.get('x') + "," + this.model.get('y') + ")");
 
         var height = this.model.get("nodeHeight") || this.model.nodeHeight;
         var width = this.model.get("containerWidth") || this.model.containerWidth;
 
         var titleOutline = parent.append("rect")
-                .classed("dmcontainer-title-outline", true)
-                .classed("dmcontainer-structure", true)
-                .attr("x", 0).attr("y", -height)
-                .attr("height", height)
-                .attr("width", width)
-                .attr("fill", this.color)
-                .attr("stroke", "#000")
-                .attr("id", this.id + "-title-outline")
-                .attr("cursor", "move");
+            .classed("dmcontainer-title-outline", true)
+            .classed("dmcontainer-structure", true)
+            .attr("x", 0).attr("y", -height)
+            .attr("height", height)
+            .attr("width", width)
+            .attr("fill", this.color)
+            .attr("stroke", "#000")
+            .attr("id", this.id + "-title-outline")
+            .attr("cursor", "move");
 
         var title = parent.append("text")
-                .classed("dmcontainer-title", true)
-                .classed("dmcontainer-structure", true)
-                .attr("x", 0).attr("y", -5)
-                .attr("font-weight", "bold")
-                .text(this.model.get('title'))
-                .attr("cursor", "move");
+            .classed("dmcontainer-title", true)
+            .classed("dmcontainer-structure", true)
+            .attr("x", 0).attr("y", -5)
+            .attr("font-weight", "bold")
+            .text(this.model.get('title'))
+            .attr("cursor", "move");
 
         var containerOutline = parent.append("rect")
-                .classed("dmcontainer-outline", true)
-                .classed("dmcontainer-structure", true)
-                .attr("x", 0).attr("y", 0)
-                .attr("height", height * 5)
-                .attr("width", width)
-                .attr("fill", "none")
-                .attr("stroke", "#000");
+            .classed("dmcontainer-outline", true)
+            .classed("dmcontainer-structure", true)
+            .attr("x", 0).attr("y", 0)
+            .attr("height", height * 5)
+            .attr("width", width)
+            .attr("fill", "none")
+            .attr("stroke", "#000");
         var fo = parent.append("foreignObject")
-                .attr("x", 0).attr("y", 0)
-                .attr("height", 100)
-                .attr("width", 100)
-                .style("display", "none");
+            .attr("x", 0).attr("y", 0)
+            .attr("height", 100)
+            .attr("width", 100)
+            .style("display", "none");
         var input = fo.append("xhtml:input")
-                .attr("type", "file")
-                .classed("schema-select", true)
-                .attr("name", "input-select[]")
-                .attr("id", this.id + "-schema-select")
-                .attr("accept", "application/json").style("display", "none")
-                .on("change", function () {
-                    self.fileChange();
-                });
+            .attr("type", "file")
+            .classed("schema-select", true)
+            .attr("name", "input-select[]")
+            .attr("id", this.id + "-schema-select")
+            .attr("accept", "application/json").style("display", "none")
+            .on("change", function () {
+                self.fileChange();
+            });
         this.schemaSelect = input;
         return parent;
-    }
-    ,
+    },
     fileChange: function () {
         this.clearContainer();
         var e = d3.event;
@@ -72,8 +71,7 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
         var files = e.target.files || e.dataTransfer.files;
         this.model.set('file', files[0]);
         this.model.readFile();
-    }
-    ,
+    },
     clearContainer: function () {
         Diagram.Connectors.clearConnectionsFromContainer(this.model.get('parent'));
         this.model.get('parent').selectAll(".nested-group").remove();
@@ -105,8 +103,7 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
             ]
         });
     },
-})
-        ;
+});
 
 DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
     defaults: {
@@ -116,6 +113,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
     y: 40,
     containerWidth: 300,
     nodeHeight: 20,
+    rankMargin: 50,
     file: '',
     data: null,
     type: "input",
@@ -154,7 +152,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         var model = this;
         outline.attr("height", function () {
             var count = model.get('elementCount'),
-                    height = model.nodeHeight;
+                height = model.nodeHeight;
             if (count < 5) {
                 count = 5;
             }
@@ -174,26 +172,27 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         parent.select(".dmcontainer-title-outline").attr("width", maxLength);
         if (this.get('type') === "input") {
             parent.selectAll(".drag-head").each(function () {
-                var cx = maxLength, cy = d3.select(this).attr("cy");
+                var cx = maxLength,
+                    cy = d3.select(this).attr("cy");
                 d3.select(this).attr("points", function () {
-                    var p0 = [Number(cx) - 5, Number(cy) - 5],
+                        var p0 = [Number(cx) - 5, Number(cy) - 5],
                             p1 = [Number(cx) + 5, Number(cy)],
                             p2 = [Number(cx) - 5, Number(cy) + 5];
-                    return p0[0] + "," + p0[1] + " " + p1[0] + "," + p1[1] + " " + p2[0] + "," + p2[1];
-                })
-                        .attr("cx", cx)
-                        .attr("cy", cy);
+                        return p0[0] + "," + p0[1] + " " + p1[0] + "," + p1[1] + " " + p2[0] + "," + p2[1];
+                    })
+                    .attr("cx", cx)
+                    .attr("cy", cy);
             });
         }
     },
     traverseJSONSchema: function (root, rootName, level, rank, resultPane, parentNode) {
         var height = this.nodeHeight,
-                width = this.containerWidth,
-                margin = width / 6,
-                x = 0,
-                overhead = rank * margin,
-                y = level * height,
-                node = null;
+            width = this.containerWidth,
+            margin = this.rankMargin,
+            x = 0,
+            overhead = rank * margin,
+            y = level * height,
+            node = null;
         var tempParent = resultPane.append("g").attr("class", "nested-group");
         if (root.type === "object") {
             if (rootName !== "") {
@@ -214,7 +213,9 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                     isSchema: true,
                     overhead: overhead
                 });
-                new DataMapper.Views.NodeView({model: node}).render();
+                new DataMapper.Views.NodeView({
+                    model: node
+                }).render();
                 this.get('nodeCollection').add(node);
                 rank++;
                 level++;
@@ -223,7 +224,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             }
             var nestedParent = tempParent.append("g").attr("class", "nested-group");
             var keys = root.properties || {}; //select PROPERTIES
-            for (var i = 0; i < Object.keys(keys).length; i++) {   //traverse through each PROPERTY of the object
+            for (var i = 0; i < Object.keys(keys).length; i++) { //traverse through each PROPERTY of the object
                 var keyName = Object.keys(keys)[i];
                 var key = keys[keyName];
                 level = this.traverseJSONSchema(key, keyName, level, rank, nestedParent, node);
@@ -249,7 +250,9 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                     isSchema: true,
                     overhead: overhead
                 });
-                new DataMapper.Views.NodeView({model: node}).render();
+                new DataMapper.Views.NodeView({
+                    model: node
+                }).render();
 
                 this.get('nodeCollection').add(node);
                 rank++;
@@ -258,7 +261,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             if (keys.hasOwnProperty("properties")) {
                 level = this.traverseJSONSchema(keys, "", level, rank, tempParent, node); //recurse through the items of array
             }
-        } else {//if (DataMapper.Types.indexOf(root.type) > -1) {    //when the type is a primitive
+        } else { //if (DataMapper.Types.indexOf(root.type) > -1) {    //when the type is a primitive
             //                        resultPane.classed("nested-group", false);
             tempParent.remove();
             if (rootName !== "") {
@@ -279,7 +282,9 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                     isSchema: true,
                     overhead: overhead
                 });
-                new DataMapper.Views.NodeView({model: node}).render();
+                new DataMapper.Views.NodeView({
+                    model: node
+                }).render();
                 this.get('nodeCollection').add(node);
                 rank++;
                 level++;
@@ -296,7 +301,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 }
                 if (o[k] !== null && typeof o[k] === 'object') {
                     return iter(o[k],
-                            k === 'properties' && !o.title ? p : p.concat(k === 'properties' && o.title ? o.title : k));
+                        k === 'properties' && !o.title ? p : p.concat(k === 'properties' && o.title ? o.title : k));
                 }
             });
         }
@@ -317,17 +322,23 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         this.parseSchema(newSchema);
     },
     addNode: function (trigNode, newTitle, newType, isChild) {
+        var self = this;
         var parentKey = isChild ? trigNode.get('text') : trigNode.get('parentNode').get('text');
         var trigKey = trigNode.get('text');
         var valueTemplate = (function getTemplate(type) {
-            var defaultVal = {"type": type};
+            var defaultVal = {
+                "type": type
+            };
             switch (type.toLowerCase()) {
-                case "object":
-                    defaultVal["properties"] = {};
-                    break;
-                case "array":
-                    defaultVal["items"] = {"type": "object", "properties": {}};
-                    break;
+            case "object":
+                defaultVal["properties"] = {};
+                break;
+            case "array":
+                defaultVal["items"] = {
+                    "type": "object",
+                    "properties": {}
+                };
+                break;
             }
             return defaultVal;
         })(newType);
@@ -375,10 +386,43 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 }
             });
         })(this.get('data'), parentKey);
+        //        console.log(d3.select(trigNode.get('node').node().parentElement.nextSibling).attr("y"));
+        if (isChild) {
+            var nextSibling = d3.select(trigNode.get('node').node().nextSibling);
+            var y = Number(trigNode.get('y')) + Number(trigNode.get('height'));
+            //            console.log(nextSibling);
+            while (nextSibling.classed("nested-group")) {
+                //                console.log(nextSibling);
+                nextSibling = d3.select(nextSibling.node().lastChild);
+                y = Number(nextSibling.attr("y")) + Number(nextSibling.attr("height"));
+            }
+            self.get('nodeCollection').pushNodes(y, trigNode.get('height'));
+            var overhead = Number(trigNode.get('overhead')) + self.rankMargin;
+            var node = new DataMapper.Models.Node({
+                parent: d3.select(trigNode.get('node').node().nextSibling),
+                parentNode: trigNode,
+                parentContainer: self,
+                text: newTitle,
+                textType: newType,
+                x: trigNode.get('x'),
+                y: y,
+                type: trigNode.get('type'),
+                category: "leaf",
+                isLeaf: false,
+                height: trigNode.get('height'),
+                width: trigNode.get('width'),
+                isSchema: true,
+                overhead: overhead,
+            });
+            new DataMapper.Views.NodeView({
+                model: node
+            }).render();
+            self.get('nodeCollection').add(node);
+            self.set('elementCount', self.get('elementCount') + 1);
 
-        this.get('parent').selectAll(".nested-group").remove();
-        this.parseSchema(this.get('data'));
-        // trigNode.updatePosition(Number(trigNode.get('x')) + 5, Number(trigNode.get('y')) + 5);
+        }
+        this.updateContainerHeight();
+        this.updateContainerWidth();
 
     },
     editNode: function (trigNode, newTitle, newType) {

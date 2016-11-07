@@ -1,217 +1,226 @@
 <!DOCTYPE html>
 <html>
 
-    <head>
-        <meta charset="UTF-8">
-        <title>Data Mapper</title>
-        <link rel="stylesheet" href="assets/lib/bootstrap_v3.3.6/css/bootstrap.css">
-        <link rel="stylesheet" href="assets/css/style.css">
-        <link rel="stylesheet" href="assets/css/context-menu.css">
-        <link rel="stylesheet" href="assets/css/diagram-tool-bar.css">
+<head>
+    <meta charset="UTF-8">
+    <title>Data Mapper</title>
+    <link rel="stylesheet" href="assets/lib/bootstrap_v3.3.6/css/bootstrap.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/context-menu.css">
+    <link rel="stylesheet" href="assets/css/diagram-tool-bar.css">
 
 
-        <script src="assets/lib/d3_v4.2.2/d3.js"></script>
-        <script src="assets/lib/jQuery_v2.2.4/jquery.min.js"></script>
-        <script src="assets/lib/jquery-ui_v1.12.0/jquery-ui.js"></script>
-        <script src="assets/lib/underscore_v1.83/underscore_1.8.3.js" type="text/javascript"></script>
-        <script src="assets/lib/backbone_v1.3.3/backbone_1.3.3.js" type="text/javascript"></script>
-        <script src="assets/lib/bootstrap_v3.3.6/js/bootstrap.min.js"></script>
-        <script src="assets/lib/bootstrap_v3.3.6/js/bootstrap-dialog.min.js"></script>
-        <script src="assets/fileHandler.js"></script>
-        <style>
-            #page-content {
-                width: 100vw;
-            }
+    <script src="assets/lib/d3_v4.2.2/d3.js"></script>
+    <script src="assets/lib/jQuery_v2.2.4/jquery.min.js"></script>
+    <script src="assets/lib/jquery-ui_v1.12.0/jquery-ui.js"></script>
+    <script src="assets/lib/underscore_v1.83/underscore_1.8.3.js" type="text/javascript"></script>
+    <script src="assets/lib/backbone_v1.3.3/backbone_1.3.3.js" type="text/javascript"></script>
+    <script src="assets/lib/bootstrap_v3.3.6/js/bootstrap.min.js"></script>
+    <script src="assets/lib/bootstrap_v3.3.6/js/bootstrap-dialog.min.js"></script>
+    <script src="assets/fileHandler.js"></script>
+    <style>
+        /*
+        .drag-line-overlay:hover { opacity: 0.2; } .drag-line-overlay { opacity: 0; }
+*/
+        
+        #page-content {
+            width: 100vw;
+        }
+        
+        #tool-palette {
+            background: #232323;
+        }
+    </style>
+</head>
 
-            #tool-palette {
-                background: #232323;
-            }
-        </style>
-    </head>
-
-    <body>
+<body>
 
 
-        <div id="page-content" class="container">
-            <!--<div class="row">-->
-            <!--<div id="op-panel">-->
-            <!--<button id="concat-op-btn">Add concat operator <br> 2 to 1</button>-->
-            <!--<button id="split-op-btn">Add split operator <br> 1 to 3</button>-->
-            <!--</div>-->
-            <!--</div>-->
-            <div class="row">
-                <div id="tool-palette" class="col-md-2"></div>
-                <div id="canvas-container" class="col-md-10">
-                    <svg id="canvas" class="canvas" width="100%" height="100%" viewBox="0 0 1500 800">
+    <div id="page-content" class="container">
+        <!--<div class="row">-->
+        <!--<div id="op-panel">-->
+        <!--<button id="concat-op-btn">Add concat operator <br> 2 to 1</button>-->
+        <!--<button id="split-op-btn">Add split operator <br> 1 to 3</button>-->
+        <!--</div>-->
+        <!--</div>-->
+        <div class="row">
+            <div id="tool-palette" class="col-md-2"></div>
+            <div id="canvas-container" class="col-md-10">
+                <svg id="canvas" class="canvas" width="100%" height="100%" viewBox="0 0 1500 800">
 
-                    </svg>
+                </svg>
 
-                </div>
-            </div>
-
-            <div id="right-click-menu">
-
-                <ul class='custom-menu dropdown-menu' id="dmcontainer-menu">
-                    <li data-action="load-schema">Load Schema</li>
-                    <li data-action="clear-container">Clear container</li>
-                    <li data-action="add-root">Add new root element</li>
-                </ul>
-
-                <ul class='custom-menu dropdown-menu' id="operator-menu">
-                    <li data-action="clear-container">Delete operator</li>
-                </ul>
-
-                <ul class='custom-menu dropdown-menu' id="connector-menu">
-                    <li data-action="clear-connector">Delete</li>
-                </ul>
-                <ul class='custom-menu dropdown-menu' id="container-node-menu">
-                    <li data-action="add-node">Add node</li>
-                    <li data-action="edit-node">Edit node</li>
-                    <li data-action="clear-node">Delete node</li>
-                </ul>
             </div>
         </div>
 
+        <div id="right-click-menu">
 
-        <button class="pull-right" onclick="showMappings()">showMappings</button>
-        <script>
+            <ul class='custom-menu dropdown-menu' id="dmcontainer-menu">
+                <li data-action="load-schema">Load Schema</li>
+                <li data-action="clear-container">Clear container</li>
+                <li data-action="add-root">Add new root element</li>
+            </ul>
 
-            var DataMapper = {
-                //Definitions
-                Models: {},
-                Collections: {},
-                Views: {},
-                Types: ["Object", "Array", "String", "Number", "Boolean", "Bytes", "Double", "Enum", "Fixed", "Float", "Long"]
-            };
-            var Diagram = {
-                //the editor = svg
-                Canvas: {},
-                // Backbone view corresponding to Input/Output container
-                // the model contains the loaded schema as a JSON object and a collection of nodes
-                InputViews: [],
-                OutputViews: [],
-                //all the 'lines' drawn in the application
-                //each connector contains information on sourceNode, targetNode, sourceContainer, targetContainer and the d3 line object
-                Connectors: {},
-                //The collection of tools
-                ToolList: {},
-                PalleteView: {},
-                //a Backbone collection of all the operators in the app - when a tool is dragged and dropped an operator is created and drawn
-                Operators: {}
-            };
-        </script>
+            <ul class='custom-menu dropdown-menu' id="operator-menu">
+                <li data-action="clear-container">Delete operator</li>
+            </ul>
 
-        <script src="https://cdn.jsdelivr.net/lodash/4.16.6/lodash.min.js"></script>
-        <script src="assets/js/canvas/elements/connector.js"></script>
-        <script src="assets/js/canvas/elements/anchor.js"></script>
-        <script src="assets/js/canvas/elements/elementnode.js"></script>
-        <script src="assets/js/canvas/elements/container.js"></script>
-        <script src="assets/js/canvas/elements/treecontainer.js"></script>
-        <script src="assets/js/canvas/elements/operator.js"></script>
+            <ul class='custom-menu dropdown-menu' id="connector-menu">
+                <li data-action="clear-connector">Delete</li>
+            </ul>
+            <ul class='custom-menu dropdown-menu' id="container-node-menu">
+                <li data-action="add-node">Add node</li>
+                <li data-action="edit-node">Edit node</li>
+                <li data-action="clear-node">Delete node</li>
+            </ul>
+        </div>
+    </div>
 
-        <script src="assets/js/canvas/canvas-view.js"></script>
-        <script src="assets/js/canvas/elements/treestructure.js"></script>
 
-        <script src="assets/js/tool-palette/tool-view.js"></script>
-        <script src="assets/js/tool-palette/tool.js"></script>
-        <script src="assets/js/tool-palette/toolgroup-view.js"></script>
-        <script src="assets/js/tool-palette/toolgroup.js"></script>
-        <script src="assets/js/tool-palette/toolpalette-view.js"></script>
-        <script src="assets/js/tool-palette/toolpalette.js"></script>
-        <script src="assets/js/tool-palette/definitions/tools-init.js"></script>
-        <script>
-            function showMappings() {
-                var variableList = [], count = 0,
-                        inputAdjList = [],
-                        outputAdjList = [];
+    <button class="pull-right" onclick="showMappings()">showMappings</button>
+    <script>
+        var DataMapper = {
+            //Definitions
+            Models: {},
+            Collections: {},
+            Views: {},
+            Types: ["Object", "Array", "String", "Number", "Boolean", "Bytes", "Double", "Enum", "Fixed", "Float", "Long"]
+        };
+        var Diagram = {
+            //the editor = svg
+            Canvas: {},
+            // Backbone view corresponding to Input/Output container
+            // the model contains the loaded schema as a JSON object and a collection of nodes
+            InputViews: [],
+            OutputViews: [],
+            //all the 'lines' drawn in the application
+            //each connector contains information on sourceNode, targetNode, sourceContainer, targetContainer and the d3 line object
+            Connectors: {},
+            //The collection of tools
+            ToolList: {},
+            PalleteView: {},
+            //a Backbone collection of all the operators in the app - when a tool is dragged and dropped an operator is created and drawn
+            Operators: {}
+        };
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/lodash/4.16.6/lodash.min.js"></script>
+    <script src="assets/js/canvas/elements/connector.js"></script>
+    <script src="assets/js/canvas/elements/anchor.js"></script>
+    <script src="assets/js/canvas/elements/elementnode.js"></script>
+    <script src="assets/js/canvas/elements/container.js"></script>
+    <script src="assets/js/canvas/elements/treecontainer.js"></script>
+    <script src="assets/js/canvas/elements/operator.js"></script>
+
+    <script src="assets/js/canvas/canvas-view.js"></script>
+    <script src="assets/js/canvas/elements/treestructure.js"></script>
+
+    <script src="assets/js/tool-palette/tool-view.js"></script>
+    <script src="assets/js/tool-palette/tool.js"></script>
+    <script src="assets/js/tool-palette/toolgroup-view.js"></script>
+    <script src="assets/js/tool-palette/toolgroup.js"></script>
+    <script src="assets/js/tool-palette/toolpalette-view.js"></script>
+    <script src="assets/js/tool-palette/toolpalette.js"></script>
+    <script src="assets/js/tool-palette/definitions/tools-init.js"></script>
+    <script>
+        function showMappings() {
+            var variableList = [],
+                count = 0,
+                inputAdjList = [],
+                outputAdjList = [];
                 [Diagram.InputViews[0].model, Diagram.OutputViews[0].model].map(function (model) { //add all input and output nodes
-                    model.get('nodeCollection').models.map(function (node) {
-                        variableList.push({
-                            id: count,
-                            text: model.getPath(node.get('text')),
-                            type: node.get('textType'),
-                            refID: node.get('id')
-                        });
-                        count++;
+                model.get('nodeCollection').models.map(function (node) {
+                    variableList.push({
+                        id: count,
+                        text: model.getPath(node.get('text')),
+                        type: node.get('textType'),
+                        refID: node.get('id')
                     });
+                    count++;
                 });
-                Diagram.Operators.models.map(function (model) {
-                    model.get('nodeCollection').models.map(function (node) {
-                        var type = node.get('type');
-                        if (type === "input") {
-                            var connectors = Diagram.Connectors.findFromSourceNode(node.get('node'));
-                            if (connectors.length > 0) {
-                                for (var i = 0; i < connectors.length; i++) {
-                                    var connector = connectors[i];
-                                    var opposite = connector.get('targetContainer'); //container
-                                    if (opposite.classed("operator")) {
-                                        variableList.push({
-                                            id: count,
-                                            text: node.get('text'),
-                                            type: node.get('textType'),
-                                            refID: node.get('id')
-                                        });
-                                        count++;
-                                        break;
-                                    }
+            });
+            Diagram.Operators.models.map(function (model) {
+                model.get('nodeCollection').models.map(function (node) {
+                    var type = node.get('type');
+                    if (type === "input") {
+                        var connectors = Diagram.Connectors.findFromSourceNode(node.get('node'));
+                        if (connectors.length > 0) {
+                            for (var i = 0; i < connectors.length; i++) {
+                                var connector = connectors[i];
+                                var opposite = connector.get('targetContainer'); //container
+                                if (opposite.classed("operator")) {
+                                    variableList.push({
+                                        id: count,
+                                        text: node.get('text'),
+                                        type: node.get('textType'),
+                                        refID: node.get('id')
+                                    });
+                                    count++;
+                                    break;
                                 }
                             }
                         }
-                    });
+                    }
                 });
-                console.log(variableList);
-                Diagram.Operators.models.map(function (model) {
-                    var inputs = [], outputs = [];
-                    model.get('nodeCollection').models.map(function (node) {
-                        var type = node.get('type');
-                        if (type === "output") {
-                            var connector = Diagram.Connectors.findFromTargetNode(node.get('node')) || null;
-                            if (connector !== null) {
-                                var opposite = connector.get('sourceNode'); //d3 node object
-                                var oppositeNode = variableList.find(function (variable) {
-                                    return variable.refID == opposite.attr("id");
-                                });
-                                inputs.push([oppositeNode.id]);
-                            } else {
-                                inputs.push([]);
-                            }
-                        } else if (type === "input") {
-                            var connectors = Diagram.Connectors.findFromSourceNode(node.get('node'));
-                            var targets = [];
-                            if (connectors.length > 0) {
-                                connectors.map(function (connector) {
-                                    var intermediateNode = connector.get('targetContainer').classed("operator") ? connector.get('sourceNode') : connector.get('targetNode'); //intermediate nodes
-                                    var oppositeNode = variableList.find(function (variable) {
-                                        return variable.refID == intermediateNode.attr("id");
-                                    });
-        //                            var oppositeNode = nodeList.getNodeFromDOMObject(intermediateNode.node());
-                                    targets.push(oppositeNode.id);
-                                });
-                            }
-                            outputs.push(targets);
+            });
+            console.log(variableList);
+            Diagram.Operators.models.map(function (model) {
+                var inputs = [],
+                    outputs = [];
+                model.get('nodeCollection').models.map(function (node) {
+                    var type = node.get('type');
+                    if (type === "output") {
+                        var connector = Diagram.Connectors.findFromTargetNode(node.get('node')) || null;
+                        if (connector !== null) {
+                            var opposite = connector.get('sourceNode'); //d3 node object
+                            var oppositeNode = variableList.find(function (variable) {
+                                return variable.refID == opposite.attr("id");
+                            });
+                            inputs.push([oppositeNode.id]);
+                        } else {
+                            inputs.push([]);
                         }
-                    });
-                    inputAdjList.push({operator: model, inputs: inputs});
-                    outputAdjList.push({operator: model, outputs: outputs});
+                    } else if (type === "input") {
+                        var connectors = Diagram.Connectors.findFromSourceNode(node.get('node'));
+                        var targets = [];
+                        if (connectors.length > 0) {
+                            connectors.map(function (connector) {
+                                var intermediateNode = connector.get('targetContainer').classed("operator") ? connector.get('sourceNode') : connector.get('targetNode'); //intermediate nodes
+                                var oppositeNode = variableList.find(function (variable) {
+                                    return variable.refID == intermediateNode.attr("id");
+                                });
+                                //                            var oppositeNode = nodeList.getNodeFromDOMObject(intermediateNode.node());
+                                targets.push(oppositeNode.id);
+                            });
+                        }
+                        outputs.push(targets);
+                    }
                 });
-                console.log("variable list:");
-                console.log(variableList);
-                console.log("operators:");
-                console.log(Diagram.Operators.models);
-                console.log("input adjacency list:");
-                console.log(inputAdjList);
-                console.log("output adjacency list:");
-                console.log(outputAdjList);
-        //                console.log(DataMapper.Connectors.getMappings());
-            }
+                inputAdjList.push({
+                    operator: model,
+                    inputs: inputs
+                });
+                outputAdjList.push({
+                    operator: model,
+                    outputs: outputs
+                });
+            });
+            console.log("variable list:");
+            console.log(variableList);
+            console.log("operators:");
+            console.log(Diagram.Operators.models);
+            console.log("input adjacency list:");
+            console.log(inputAdjList);
+            console.log("output adjacency list:");
+            console.log(outputAdjList);
+            //                console.log(DataMapper.Connectors.getMappings());
+        }
 
-            Diagram.Canvas = new DataMapper.Views.CanvasView();
-            Diagram.Canvas.render();
+        Diagram.Canvas = new DataMapper.Views.CanvasView();
+        Diagram.Canvas.render();
+    </script>
 
 
-        </script>
-
-
-    </body>
+</body>
 
 </html>
