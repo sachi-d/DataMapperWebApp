@@ -149,7 +149,7 @@ DataMapper.Views.NodeView = Backbone.View.extend({
         });
     },
     clearNode: function () {
-
+        this.model.get('parentContainer').deleteNode(this.model);
     },
     getTypeOptionList: function (selectedType) {
         var list = "";

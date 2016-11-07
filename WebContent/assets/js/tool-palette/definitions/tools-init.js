@@ -43,7 +43,7 @@ var toolGroupDefs = [{
         }]
     }, {
         toolGroupName: "Arithmetic",
-        toolGroupID: "arithmetic-tool-group",
+        toolGroupID: "arithmetic-tool-group", 
         tools: [{
             title: "Add",
             icon: "assets/images/tool-icons/sample-tool-icon.svg",
