@@ -249,7 +249,7 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
 
     },
     updateIcon: function () {
-        var type = this.get('textType').toLowerCase();
+        var type = this.get('category').toLowerCase();
         this.get('node').select("image").attr("xlink:href", function () {
             if (type === "object") {
                 return "assets/images/object-icon.png";

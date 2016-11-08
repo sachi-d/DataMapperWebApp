@@ -123,7 +123,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
     },
     readFile: function () {
         var model = this;
-        // display text
+
         if (this.get('file').name.endsWith(".json") || this.get('file').type === "application/json") {
 
             var reader = new FileReader();
@@ -194,7 +194,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             overhead = rank * margin,
             y = level * height,
             node = null;
-        var tempParent = resultPane; //.append("g").attr("class", "nested-group");
+        var tempParent = resultPane;
         if (root.type === "object") {
             if (rootName !== "") {
                 var nodeText = rootName;
@@ -263,8 +263,6 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 level = this.traverseJSONSchema(keys, "", level, rank, tempParent, node); //recurse through the items of array
             }
         } else { //if (DataMapper.Types.indexOf(root.type) > -1) {    //when the type is a primitive
-            //                        resultPane.classed("nested-group", false);
-            //            tempParent.remove();
             if (rootName !== "") {
                 var nodeText = rootName;
                 var node = new DataMapper.Models.Node({
@@ -324,6 +322,16 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
     },
     addNode: function (trigNode, newTitle, newType, isChild) {
         newType = newType.toLowerCase();
+        var category = "leaf",
+            isLeaf = true,
+            textType = newType;
+        if (newType === "object" || newType === "array") {
+            category = newType;
+            isLeaf = false;
+            if (newType === "array") {
+                textType = "array[object]";
+            }
+        }
         var self = this;
         var parentKey = isChild ? trigNode.get('text') : trigNode.get('parentNode').get('text');
         var trigKey = trigNode.get('text');
@@ -391,11 +399,12 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         nextSibling = d3.select(trigNode.get('node').node().nextSibling);
         y = Number(trigNode.get('y')) + Number(trigNode.get('height'));
         while (nextSibling.classed("nested-group")) {
-            //                console.log(nextSibling);
-            nextSibling = d3.select(nextSibling.node().lastChild);
-            if (nextSibling) {
+
+            if (nextSibling.node().lastChild) {
+                nextSibling = d3.select(nextSibling.node().lastChild);
                 y = Number(nextSibling.attr("y")) + Number(nextSibling.attr("height"));
             } else {
+                //                console.log()
                 break;
             }
         }
@@ -415,12 +424,12 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             parentNode: parentNode,
             parentContainer: self,
             text: newTitle,
-            textType: newType,
+            textType: textType,
             x: trigNode.get('x'),
             y: y,
             type: trigNode.get('type'),
-            category: "leaf",
-            isLeaf: false,
+            category: category,
+            isLeaf: isLeaf,
             height: trigNode.get('height'),
             width: trigNode.get('width'),
             isSchema: true,
