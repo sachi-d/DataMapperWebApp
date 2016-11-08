@@ -386,41 +386,57 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 }
             });
         })(this.get('data'), parentKey);
-        //        console.log(d3.select(trigNode.get('node').node().parentElement.nextSibling).attr("y"));
+        var nextSibling, y, parent, parentNode, overhead;
         if (isChild) {
-            var nextSibling = d3.select(trigNode.get('node').node().nextSibling);
-            var y = Number(trigNode.get('y')) + Number(trigNode.get('height'));
+            nextSibling = d3.select(trigNode.get('node').node().nextSibling);
+            y = Number(trigNode.get('y')) + Number(trigNode.get('height'));
             //            console.log(nextSibling);
             while (nextSibling.classed("nested-group")) {
                 //                console.log(nextSibling);
                 nextSibling = d3.select(nextSibling.node().lastChild);
                 y = Number(nextSibling.attr("y")) + Number(nextSibling.attr("height"));
             }
-            self.get('nodeCollection').pushNodes(y, trigNode.get('height'));
-            var overhead = Number(trigNode.get('overhead')) + self.rankMargin;
-            var node = new DataMapper.Models.Node({
-                parent: d3.select(trigNode.get('node').node().nextSibling),
-                parentNode: trigNode,
-                parentContainer: self,
-                text: newTitle,
-                textType: newType,
-                x: trigNode.get('x'),
-                y: y,
-                type: trigNode.get('type'),
-                category: "leaf",
-                isLeaf: false,
-                height: trigNode.get('height'),
-                width: trigNode.get('width'),
-                isSchema: true,
-                overhead: overhead,
-            });
-            new DataMapper.Views.NodeView({
-                model: node
-            }).render();
-            self.get('nodeCollection').add(node);
-            self.set('elementCount', self.get('elementCount') + 1);
+            parent = d3.select(trigNode.get('node').node().nextSibling);
+            parentNode = trigNode;
+            overhead = Number(trigNode.get('overhead')) + self.rankMargin;
+
+
+        } else {
+            nextSibling = d3.select(trigNode.get('node').node().nextSibling);
+            y = Number(trigNode.get('y')) + Number(trigNode.get('height'));
+
+            while (nextSibling.classed("nested-group")) {
+                //                console.log(nextSibling);
+                nextSibling = d3.select(nextSibling.node().lastChild);
+                y = Number(nextSibling.attr("y")) + Number(nextSibling.attr("height"));
+            }
+            parent = d3.select(trigNode.get('node').node().parentElement);
+            parentNode = trigNode.get('parentNode');
+            overhead = trigNode.get('overhead');
 
         }
+        self.get('nodeCollection').pushNodes(y, trigNode.get('height'));
+        var node = new DataMapper.Models.Node({
+            parent: parent,
+            parentNode: parentNode,
+            parentContainer: self,
+            text: newTitle,
+            textType: newType,
+            x: trigNode.get('x'),
+            y: y,
+            type: trigNode.get('type'),
+            category: "leaf",
+            isLeaf: false,
+            height: trigNode.get('height'),
+            width: trigNode.get('width'),
+            isSchema: true,
+            overhead: overhead,
+        });
+        new DataMapper.Views.NodeView({
+            model: node
+        }).render();
+        self.get('nodeCollection').add(node);
+        self.set('elementCount', self.get('elementCount') + 1);
         this.updateContainerHeight();
         this.updateContainerWidth();
 
