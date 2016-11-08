@@ -204,6 +204,7 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
             .attr("x", Number(this.get('x')) + 12)
             .attr("y", Number(this.get('y')) + (3 * height / 4))
             .text(this.get('text') + ":" + this.get('textType'));
+
         if (this.get('category') === "operator") {
             this.drawOutline();
             text.attr("fill", "#989898");
@@ -320,7 +321,6 @@ DataMapper.Collections.NodeList = Backbone.Collection.extend({
         this.find(function (node) {
             var currY = Number(node.get('y'));
             if (currY >= newY) {
-                console.log(node.get('text'));
                 node.updatePosition(0, currY + Number(depth));
             }
         });

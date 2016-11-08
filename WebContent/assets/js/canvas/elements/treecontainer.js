@@ -142,7 +142,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         this.set('data', data);
 
         var title = (data.properties || data.items) ? data.title || "Root" : null;
-        var count = (title === null) ? 0 : this.traverseJSONSchema(data, title, 0, 0, this.get('parent'), null);
+        var count = (title === null) ? 0 : this.traverseJSONSchema(data, title, 0, 0, this.get('parent').append("g").attr("class", "nested-group"), null);
         this.set('elementCount', count);
         this.updateContainerHeight();
         this.updateContainerWidth();
@@ -186,6 +186,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         }
     },
     traverseJSONSchema: function (root, rootName, level, rank, resultPane, parentNode) {
+
         var height = this.nodeHeight,
             width = this.containerWidth,
             margin = this.rankMargin,
@@ -193,12 +194,12 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             overhead = rank * margin,
             y = level * height,
             node = null;
-        var tempParent = resultPane.append("g").attr("class", "nested-group");
+        var tempParent = resultPane; //.append("g").attr("class", "nested-group");
         if (root.type === "object") {
             if (rootName !== "") {
                 var nodeText = rootName;
                 node = new DataMapper.Models.Node({
-                    parent: tempParent,
+                    parent: resultPane,
                     parentNode: parentNode,
                     parentContainer: this,
                     text: nodeText,
@@ -222,7 +223,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             } else {
                 node = parentNode;
             }
-            var nestedParent = tempParent.append("g").attr("class", "nested-group");
+            var nestedParent = resultPane.append("g").attr("class", "nested-group");
             var keys = root.properties || {}; //select PROPERTIES
             for (var i = 0; i < Object.keys(keys).length; i++) { //traverse through each PROPERTY of the object
                 var keyName = Object.keys(keys)[i];
@@ -263,7 +264,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             }
         } else { //if (DataMapper.Types.indexOf(root.type) > -1) {    //when the type is a primitive
             //                        resultPane.classed("nested-group", false);
-            tempParent.remove();
+            //            tempParent.remove();
             if (rootName !== "") {
                 var nodeText = rootName;
                 var node = new DataMapper.Models.Node({
@@ -322,6 +323,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         this.parseSchema(newSchema);
     },
     addNode: function (trigNode, newTitle, newType, isChild) {
+        newType = newType.toLowerCase();
         var self = this;
         var parentKey = isChild ? trigNode.get('text') : trigNode.get('parentNode').get('text');
         var trigKey = trigNode.get('text');
@@ -329,7 +331,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             var defaultVal = {
                 "type": type
             };
-            switch (type.toLowerCase()) {
+            switch (type) {
             case "object":
                 defaultVal["properties"] = {};
                 break;
@@ -361,7 +363,6 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             return sch;
         }
 
-
         var iterate = (function iter(o, search) {
             return Object.keys(o).some(function (k) {
 
@@ -387,29 +388,22 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             });
         })(this.get('data'), parentKey);
         var nextSibling, y, parent, parentNode, overhead;
-        if (isChild) {
-            nextSibling = d3.select(trigNode.get('node').node().nextSibling);
-            y = Number(trigNode.get('y')) + Number(trigNode.get('height'));
-            //            console.log(nextSibling);
-            while (nextSibling.classed("nested-group")) {
-                //                console.log(nextSibling);
-                nextSibling = d3.select(nextSibling.node().lastChild);
+        nextSibling = d3.select(trigNode.get('node').node().nextSibling);
+        y = Number(trigNode.get('y')) + Number(trigNode.get('height'));
+        while (nextSibling.classed("nested-group")) {
+            //                console.log(nextSibling);
+            nextSibling = d3.select(nextSibling.node().lastChild);
+            if (nextSibling) {
                 y = Number(nextSibling.attr("y")) + Number(nextSibling.attr("height"));
+            } else {
+                break;
             }
+        }
+        if (isChild) {
             parent = d3.select(trigNode.get('node').node().nextSibling);
             parentNode = trigNode;
             overhead = Number(trigNode.get('overhead')) + self.rankMargin;
-
-
         } else {
-            nextSibling = d3.select(trigNode.get('node').node().nextSibling);
-            y = Number(trigNode.get('y')) + Number(trigNode.get('height'));
-
-            while (nextSibling.classed("nested-group")) {
-                //                console.log(nextSibling);
-                nextSibling = d3.select(nextSibling.node().lastChild);
-                y = Number(nextSibling.attr("y")) + Number(nextSibling.attr("height"));
-            }
             parent = d3.select(trigNode.get('node').node().parentElement);
             parentNode = trigNode.get('parentNode');
             overhead = trigNode.get('overhead');
@@ -435,6 +429,9 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         new DataMapper.Views.NodeView({
             model: node
         }).render();
+        if (newType === "object" || newType === "array") {
+            parent.append("g").attr("class", "nested-group");
+        }
         self.get('nodeCollection').add(node);
         self.set('elementCount', self.get('elementCount') + 1);
         this.updateContainerHeight();
