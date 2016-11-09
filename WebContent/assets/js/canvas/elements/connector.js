@@ -17,18 +17,23 @@ DataMapper.Views.ConnectorView = Backbone.View.extend({
         return line;
     },
     dropFunction: function () {
-        Diagram.Connectors.add(this.model);
-        var overlay = this.model.addPolyline();
+        var model = this.model;
+        Diagram.Connectors.add(model);
+        var overlay = model.addPolyline();
         //if the line is direct
-        if (this.model.isDirectConnector()) {
-            this.model.addDirectOperator();
+        if (model.isDirectConnector()) {
+            model.addDirectOperator();
+        } else {
+            //            console.log(model.get('targetNode').get('isSchema'));
+            if (!model.get('targetNode').get('isSchema')) {
+                model.get('targetNode').get('node').select('text').text(model.get('sourceNode').get('text'));
+            }
         }
         this.bindMenu("#connector-menu");
     },
     bindMenu: function (menu) {
         var self = this;
         var classClicked = self.el + "-clicked";
-        console.log(classClicked);
         $("#" + this.model.get('lineOverlay').attr("id")).on("contextmenu", function (event) {
             // Avoid the real one
             event.preventDefault();
@@ -48,12 +53,11 @@ DataMapper.Views.ConnectorView = Backbone.View.extend({
 
             // If the clicked element is not the menu
             if (!$(e.target).parents(menu).length > 0) {
-
+                //                console.log("rem");
+                self.model.get('lineOverlay').classed("clicked", false).style("opacity", "0");
                 // Hide it
                 $(menu).removeClass(classClicked);
                 $(menu).hide(100);
-
-                self.model.get('lineOverlay').classed("clicked", false);
             }
         });
 
@@ -98,8 +102,8 @@ DataMapper.Models.Connector = Backbone.Model.extend({
             inputTypes: ["Direct"],
             outputTypes: ["Direct"]
         });
-        var head = Diagram.InputViews[0].model.get('nodeCollection').getNodeFromDOMObject(this.get('sourceNode').node()).clone();
-        var tail = Diagram.OutputViews[0].model.get('nodeCollection').getNodeFromDOMObject(this.get('targetNode').node()).clone();
+        var head = Diagram.InputViews[0].model.get('nodeCollection').getNodeFromDOMObject(this.get('sourceNode').get('node').node()).clone();
+        var tail = Diagram.OutputViews[0].model.get('nodeCollection').getNodeFromDOMObject(this.get('targetNode').get('node').node()).clone();
         operator.get('nodeCollection').add([head, tail]);
         this.operator = operator;
         Diagram.Operators.add(operator);
@@ -107,16 +111,21 @@ DataMapper.Models.Connector = Backbone.Model.extend({
     removeConnector: function () {
         if (this.isDirectConnector()) {
             Diagram.Operators.remove(this.operator);
+        } else {
+            var tnode = this.get('targetNode');
+            if (!tnode.get('isSchema')) {
+                tnode.updateText();
+            }
         }
         this.get('line').remove();
         this.get('lineOverlay').remove();
         Diagram.Connectors.remove(this);
     },
     isDirectConnector: function () {
-        return this.get('sourceContainer').classed("tree-dmcontainer") && this.get('targetContainer').classed("tree-dmcontainer");
+        return this.get('sourceContainer').get('parent').classed("tree-dmcontainer") && this.get('targetContainer').get('parent').classed("tree-dmcontainer");
     },
     addPolyline: function () {
-        var parent = this.get('sourceNode'),
+        var parent = this.get('sourceNode').get('node'),
             line = this.get('line');
 
         var polyLine = parent.append("polyline").attr("class", "drag-line")
@@ -179,13 +188,13 @@ DataMapper.Collections.Connectors = Backbone.Collection.extend({
     url: "/connectors",
     findFromTargetNode: function (targetNode) { //know the target
         return this.find(function (item) { //assuming target can have only one source
-            if (item.get("targetNode").node().isSameNode(targetNode.node()))
+            if (item.get("targetNode").get('node').node().isSameNode(targetNode.node()))
                 return item;
         });
     },
     findFromSourceNode: function (sourceNode) { //know the source
         var array = this.filter(function (d) { //assuming a source can have multiple targets
-            if (d.get('sourceNode').node().isSameNode(sourceNode.node())) {
+            if (d.get('sourceNode').get('node').node().isSameNode(sourceNode.node())) {
                 return d;
             }
         });
@@ -193,7 +202,7 @@ DataMapper.Collections.Connectors = Backbone.Collection.extend({
     },
     findFromTargetContainer: function (targetContainer) {
         var array = this.filter(function (d) {
-            if (d.get('targetContainer').node().isSameNode(targetContainer.node())) {
+            if (d.get('targetContainer').get('parent').node().isSameNode(targetContainer.node())) {
                 return d;
             }
         });
@@ -201,7 +210,7 @@ DataMapper.Collections.Connectors = Backbone.Collection.extend({
     },
     findFromSourceContainer: function (sourceContainer) {
         var array = this.filter(function (d) {
-            if (d.get('sourceContainer').node().isSameNode(sourceContainer.node())) {
+            if (d.get('sourceContainer').get('parent').node().isSameNode(sourceContainer.node())) {
                 return d;
             }
         });

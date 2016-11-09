@@ -37,12 +37,6 @@
 
 
     <div id="page-content" class="container">
-        <!--<div class="row">-->
-        <!--<div id="op-panel">-->
-        <!--<button id="concat-op-btn">Add concat operator <br> 2 to 1</button>-->
-        <!--<button id="split-op-btn">Add split operator <br> 1 to 3</button>-->
-        <!--</div>-->
-        <!--</div>-->
         <div class="row">
             <div id="tool-palette" class="col-md-2"></div>
             <div id="canvas-container" class="col-md-10">
@@ -123,6 +117,15 @@
     <script src="assets/js/tool-palette/toolpalette.js"></script>
     <script src="assets/js/tool-palette/definitions/tools-init.js"></script>
     <script>
+        function getAllContainers() {
+            var conts = [];
+            Diagram.InputViews.concat(Diagram.OutputViews).map(function (view) {
+                conts.push(view.model);
+            });
+            conts = conts.concat(Diagram.Operators.models);
+            return conts;
+        }
+
         function showMappings() {
             var variableList = [],
                 count = 0,

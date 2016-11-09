@@ -240,7 +240,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                     parentNode: parentNode,
                     parentContainer: this,
                     text: nodeText,
-                    textType: root.type + "[" + keys.type + "]",
+                    textType: keys.type,
                     x: x,
                     y: y,
                     type: this.get('type'),
@@ -329,7 +329,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             category = newType;
             isLeaf = false;
             if (newType === "array") {
-                textType = "array[object]";
+                textType = "object";
             }
         }
         var self = this;
@@ -395,24 +395,54 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 }
             });
         })(this.get('data'), parentKey);
-        var nextSibling, y, parent, parentNode, overhead;
-        nextSibling = d3.select(trigNode.get('node').node().nextSibling);
-        y = Number(trigNode.get('y')) + Number(trigNode.get('height'));
-        while (nextSibling.classed("nested-group")) {
 
-            if (nextSibling.node().lastChild) {
-                nextSibling = d3.select(nextSibling.node().lastChild);
-                y = Number(nextSibling.attr("y")) + Number(nextSibling.attr("height"));
+
+        function findLastNodeSib(node) {
+            var last = node.nextSibling;
+            if (last) {
+                if (d3.select(last).classed("nested-group")) {
+                    last = last.lastChild;
+                    if (last) {
+                        return findLastNodeSib(last);
+                    } else {
+                        return last.previousSibling;
+                    }
+                } else {
+                    return node;
+                }
             } else {
-                //                console.log()
-                break;
+                return node;
+            }
+
+        }
+
+        function findLastNodeChild(node) {
+            var last = node.lastChild;
+            if (last) {
+                if (d3.select(last).classed("nested-group")) {
+                    return findLastNodeChild(last);
+                } else {
+                    return last;
+                }
+            } else {
+                if (d3.select(node).classed("nested-group")) {
+                    return node.previousSibling;
+                }
+                return node;
             }
         }
+        var nextSibling, y, parent, parentNode, overhead;
+        var rep = isChild ? findLastNodeChild(trigNode.get('node').node().nextSibling) : findLastNodeSib(trigNode.get('node').node());
+        var repd = d3.select(rep);
+        y = Number(repd.attr('y')) + Number(repd.attr('height'));
+
         if (isChild) {
+
             parent = d3.select(trigNode.get('node').node().nextSibling);
             parentNode = trigNode;
             overhead = Number(trigNode.get('overhead')) + self.rankMargin;
         } else {
+
             parent = d3.select(trigNode.get('node').node().parentElement);
             parentNode = trigNode.get('parentNode');
             overhead = trigNode.get('overhead');
@@ -435,7 +465,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             isSchema: true,
             overhead: overhead,
         });
-        new DataMapper.Views.NodeView({
+        var newNode = new DataMapper.Views.NodeView({
             model: node
         }).render();
         if (newType === "object" || newType === "array") {
@@ -477,6 +507,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         trigNode.set('textType', newType);
         trigNode.updateText();
         trigNode.updateIcon();
+        trigNode.updateLeaf();
     },
     deleteNode: function (trigNode) {
         if (trigNode.get('text') === this.get('data').title) {

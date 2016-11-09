@@ -68,7 +68,10 @@ DataMapper.Views.CanvasView = Backbone.View.extend({
             inputLabels: tool.get('defaults').inputLabels,
             outputLabels: tool.get('defaults').outputLabels
         });
-        var operatorView = new DataMapper.Views.OperatorView({id: operator.id, model: operator});
+        var operatorView = new DataMapper.Views.OperatorView({
+            id: operator.id,
+            model: operator
+        });
 
         operatorView.render();
         Diagram.Operators.add(operator);

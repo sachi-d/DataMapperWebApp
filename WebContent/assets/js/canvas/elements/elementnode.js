@@ -179,17 +179,12 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
     },
     initialize: function () {
         this.set("id", "node-" + this.cid);
-        if (this.get('isLeaf')) {
-            if (this.get('type') === "input") {
-                this.set('dotPosition', [Number(this.get('x')) + Number(this.get('width')), Number(this.get('y')) + this.get('height') / 2]);
-            } else if (this.get('type') === "output") {
-                this.set('dotPosition', [Number(this.get('x')), Number(this.get('y')) + this.get('height') / 2]);
-            }
-        }
+        this.calculateDotPosition();
         //                    this.set('textType',this.get('text').split(":"));
     },
     drawNode: function () {
         //  function drawNode(container, parent, text, x, y, dotPosition, type) {
+        var model = this;
         var height = this.get('height'),
             width = this.get('width');
         var parent1 = this.get('parent').append("g").attr("class", "node-element")
@@ -203,28 +198,21 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
         var text = parent1.append("text").attr("class", "node-element-text")
             .attr("x", Number(this.get('x')) + 12)
             .attr("y", Number(this.get('y')) + (3 * height / 4))
-            .text(this.get('text') + ":" + this.get('textType'));
+            .text(function () {
+                var subType = model.get('category') === "array" ? "array[" + model.get('textType') + "]" : model.get('textType');
+                return model.get('text') + ":" + subType;
+            });
 
         if (this.get('category') === "operator") {
             this.drawOutline();
             text.attr("fill", "#989898");
         }
-        if (this.get('dotPosition').length === 2) {
-            parent1.classed("leaf-node", true);
-            parent1.attr("type", this.get('type'));
-            var anchor = new DataMapper.Models.Anchor({
-                parent: parent1,
-                cx: this.get('dotPosition')[0],
-                cy: this.get('dotPosition')[1],
-                type: this.get('type')
-            });
-            new DataMapper.Views.AnchorView({
-                model: anchor
-            });
-        }
+        parent1.attr("type", this.get('type'));
+
+
         if (this.get('isSchema')) {
             parent1.select("text").attr("x", this.get("x") + 12 + this.get('overhead'));
-            var model = this;
+
             parent1.append("svg:image")
                 .attr("x", Number(this.get('x')) + Number(this.get('overhead')))
                 .attr("y", Number(this.get('y')) + 4)
@@ -232,7 +220,7 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
                 .attr("height", 11);
             model.updateIcon();
         }
-
+        model.updateLeaf();
         return parent1;
     },
     drawOutline: function () {
@@ -244,9 +232,36 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
             .attr("stroke", "black")
             .attr("fill", "none");
     },
+    calculateDotPosition: function () {
+        if (this.get('isLeaf')) {
+            if (this.get('type') === "input") {
+                this.set('dotPosition', [Number(this.get('x')) + Number(this.get('width')), Number(this.get('y')) + this.get('height') / 2]);
+            } else if (this.get('type') === "output") {
+                this.set('dotPosition', [Number(this.get('x')), Number(this.get('y')) + this.get('height') / 2]);
+            }
+        }
+    },
+    updateLeaf: function () {
+        if (this.get('textType') !== "object" && this.get('textType') !== "array") {
+            this.set('isLeaf', true);
+            this.get('node').classed("leaf-node", true);
+            if (this.get('dotPosition').length !== 2) {
+                this.calculateDotPosition();
+            }
+
+            var anchor = new DataMapper.Models.Anchor({
+                parent: this.get('node'),
+                cx: this.get('dotPosition')[0],
+                cy: this.get('dotPosition')[1],
+                type: this.get('type')
+            });
+            new DataMapper.Views.AnchorView({
+                model: anchor
+            });
+        }
+    },
     updateText: function () {
         this.get('node').select("text").text(this.get('text') + ":" + this.get('textType'));
-
     },
     updateIcon: function () {
         var type = this.get('category').toLowerCase();
@@ -291,14 +306,14 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
 
             });
             Diagram.Connectors.findFromSourceContainer(this.get('parentContainer').get('parent')).map(function (connector) {
-                if (connector.get('sourceNode').node().isSameNode(node.node())) {
+                if (connector.get('sourceNode').get('node').node().isSameNode(node.node())) {
                     connector.set("x1", Number(connector.get("x1")) + Number(diffX));
                     connector.set("y1", Number(connector.get("y1")) + Number(diffY));
                     connector.setPoints(connector.get('x1'), connector.get('x2'), connector.get('y1'), connector.get('y2'));
                 }
             });
             Diagram.Connectors.findFromTargetContainer(this.get('parentContainer').get('parent')).map(function (connector) {
-                if (connector.get('targetNode').node().isSameNode(node.node())) {
+                if (connector.get('targetNode').get('node').node().isSameNode(node.node())) {
                     connector.set("x2", Number(connector.get("x2")) + Number(diffX));
                     connector.set("y2", Number(connector.get("y2")) + Number(diffY));
                     connector.setPoints(connector.get('x1'), connector.get('x2'), connector.get('y1'), connector.get('y2'));

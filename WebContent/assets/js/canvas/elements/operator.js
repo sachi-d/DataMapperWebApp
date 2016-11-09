@@ -37,8 +37,8 @@ DataMapper.Models.Operator = DataMapper.Models.Container.extend({
     initialize: function () {
         this.set('id', this.get('title') + "-" + Diagram.Operators.length);
         this.set('nodeCollection', new DataMapper.Collections.NodeList());
-        this.set('inputCount', this.get('inputTypes').length);
-        this.set('outputCount', this.get('outputTypes').length);
+        this.set('inputCount', this.get('inputLabels').length);
+        this.set('outputCount', this.get('outputLabels').length);
     },
 
     drawContainer: function () {
@@ -86,6 +86,7 @@ DataMapper.Models.Operator = DataMapper.Models.Container.extend({
             var tempY = y + i * tempHeight;
             var node = new DataMapper.Models.Node({
                 parent: inputs,
+                parentContainer: this,
                 text: this.get('inputLabels')[i],
                 textType: this.get('inputTypes')[i],
                 x: x,
@@ -98,7 +99,9 @@ DataMapper.Models.Operator = DataMapper.Models.Container.extend({
                 isSchema: false,
                 overhead: 0
             });
-            var obj = new DataMapper.Views.NodeView({model: node}).render();
+            var obj = new DataMapper.Views.NodeView({
+                model: node
+            }).render();
             obj.attr("rank", i);
             this.get('inputs').push(obj);
             this.get('nodeCollection').add(node);
@@ -115,6 +118,7 @@ DataMapper.Models.Operator = DataMapper.Models.Container.extend({
             var tempY = y + i * tempHeight;
             var node = new DataMapper.Models.Node({
                 parent: outputs,
+                parentContainer: this,
                 text: this.get('outputLabels')[i],
                 text: this.get('outputLabels')[i],
                 textType: this.get('outputTypes')[i],
@@ -128,11 +132,14 @@ DataMapper.Models.Operator = DataMapper.Models.Container.extend({
                 isSchema: false,
                 overhead: 0
             });
-            var obj = new DataMapper.Views.NodeView({model: node}).render();
+            var obj = new DataMapper.Views.NodeView({
+                model: node
+            }).render();
             obj.attr("rank", i);
             this.get('outputs').push(obj);
             this.get('nodeCollection').add(node);
         }
+
         // }
         return parent;
     }

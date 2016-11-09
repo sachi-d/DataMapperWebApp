@@ -26,7 +26,10 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
                 var tempParent = d3.select(d3.select(this)["_groups"][0][0].parentNode);
                 dragHead2 = self.drawDragArrow(tempParent, thisDragX, thisDragY);
                 connector = new DataMapper.Models.Connector();
-                connectorView = new DataMapper.Views.ConnectorView({parent: tempParent, model: connector});
+                connectorView = new DataMapper.Views.ConnectorView({
+                    parent: tempParent,
+                    model: connector
+                });
                 dragLine = connectorView.render();
                 // connector.setPoints(thisDragX,thisDragY,thisDragX,thisDragY);
                 dragLine.attr("x1", thisDragX)
@@ -46,12 +49,26 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
                 var sourceContainer = self.getParentContainer(d3.select(this));
                 var sourceNode = d3.select(d3.select(this)["_groups"][0][0].parentNode);
                 target = self.detectDropNode(xx, yy, sourceNode.attr("type"), sourceContainer);
-                function decodeType(nodeObj) {
-                    return nodeObj.select("text").text().toLowerCase().split(":")[1];
+                //find backend nodes
+                var backendSourceNode, backendTargetNode;
+                if (target) {
+                    var findNodes = (function (sNode, tNode) {
+                        console.log("fdfd");
+                        getAllContainers().map(function (model) {
+                            if (!backendSourceNode) {
+                                backendSourceNode = model.get('nodeCollection').getNodeFromDOMObject(sNode.node());
+                            }
+                            if (!backendTargetNode) {
+                                backendTargetNode = model.get('nodeCollection').getNodeFromDOMObject(tNode.node());
+                            }
+                            if (backendSourceNode && backendTargetNode) {
+                                return [backendSourceNode, backendTargetNode];
+                            }
+                        });
+                    })(sourceNode, target);
                 }
 
-                if (target && decodeType(sourceNode) === decodeType(target)) {
-
+                if (target && backendSourceNode.get('textType').toLowerCase() === backendTargetNode.get('textType').toLowerCase()) {
                     //limit the connections to one - in output targets
                     if (target.attr("type") === "output") {
                         //loop through connectors to find targetNode=target and remove line
@@ -59,28 +76,23 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
                         if (duplicate !== null) {
 
                             duplicate.removeConnector();
-                            Diagram.Connectors.remove(duplicate);
                         }
                     }
 
-                    var oppositeContainer = self.getParentContainer(target);
-                    var dotx = Number(target.select(".drag-head").attr("cx")) + self.getTranslateX(oppositeContainer) - self.getTranslateX(sourceContainer);
-                    var doty = Number(target.select(".drag-head").attr("cy")) + self.getTranslateY(oppositeContainer) - self.getTranslateY(sourceContainer);
+                    var oppositeContainer = backendTargetNode.get('parentContainer');
+                    sourceContainer = backendSourceNode.get('parentContainer');
+                    var dotx = Number(target.select(".drag-head").attr("cx")) + self.getTranslateX(oppositeContainer.get('parent')) - self.getTranslateX(sourceContainer.get('parent'));
+                    var doty = Number(target.select(".drag-head").attr("cy")) + self.getTranslateY(oppositeContainer.get('parent')) - self.getTranslateY(sourceContainer.get('parent'));
                     dragLine.attr("x2", dotx)
                         .attr("y2", doty);
                     // .attr("target-dmcontainer", oppositeContainer.attr("id"));
                     dragHead2.remove();
                     connector.set("targetContainer", oppositeContainer);
-                    connector.set("targetNode", target);
+                    connector.set("targetNode", backendTargetNode);
                     connector.set("sourceContainer", sourceContainer);
-                    connector.set("sourceNode", sourceNode);
+                    connector.set("sourceNode", backendSourceNode);
                     connectorView.dropFunction();
-                    if (oppositeContainer.classed("operator")) {
-                        target.select("text").text(sourceNode.select("text").text().split(":")[0]).classed("op-node-text", true);
-                    }
-
                 } else {
-                    //d3.select("#inputnode").text("");
                     dragLine.remove();
                     dragHead2.remove();
                 }
@@ -102,8 +114,8 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
             self.setPoints(newArrow, newcx, newcy);
         });
 
-// Start observing the circle node and listen for changes to attributes cx and cy
-// while recording old values.
+        // Start observing the circle node and listen for changes to attributes cx and cy
+        // while recording old values.
         var config = {
             attributes: true,
             attributeOldValue: true,
@@ -132,7 +144,8 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
     },
 
     detectDropNode: function (xx, yy, type, sourceContainer) { //detect if a drop is near opposite type of drag-head
-        var flag = false, self = this;
+        var flag = false,
+            self = this;
         d3.select("#canvas").selectAll(".leaf-node").each(function () { //assuming every leaf node has an anchor
             if (!flag && d3.select(this).attr("type") === "output") {
                 var nodeElement = d3.select(this);
