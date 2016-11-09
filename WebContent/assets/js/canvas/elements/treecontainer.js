@@ -104,6 +104,12 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
         });
     },
     addExtraSchema: function () {
+        var arr;
+        if (this.model.get('type') === "input") {
+            arr = Diagram.InputViews;
+        } else {
+            arr = Diagram.OutputViews;
+        }
         var model = new DataMapper.Models.TreeContainer({
             type: this.model.get('type'),
             title: this.model.get('title'),
@@ -111,16 +117,12 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
             y: 200 //this.model.updateContainerHeight()
         });
         var view = new DataMapper.Views.TreeContainerView({
-            id: "output-dmcontainer" + Diagram.OutputViews.length,
+            id: this.model.get('parent').attr("id") + arr.length,
             model: model
         });
         view.render();
-
-        if (this.model.get('type') === "input") {
-            Diagram.InputViews.push(view);
-        } else {
-            Diagram.OutputViews.push(view);
-        }
+        console.log(arr.length);
+        arr.push(view);
     }
 });
 
@@ -375,14 +377,14 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             return defaultVal;
         })(newType);
 
-
+        //add the new node to the parent in schema
         function addSibling(data, currentVal, newAt, newVal) {
             var sch = data;
             if (isChild) {
                 data[newAt] = newVal;
             } else {
                 var newObj = {};
-                Object.keys(data).some(function (k) {
+                Object.keys(data).some(function (k) { //to maintain the order of the child nodes
                     newObj[k] = data[k];
                     if (k === currentVal) {
                         newObj[newAt] = newVal;
@@ -393,7 +395,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             return sch;
         }
 
-        var iterate = (function iter(o, search) {
+        var iterate = (function iter(o, search) { //iterate the data to find the parent node
             return Object.keys(o).some(function (k) {
 
                 if ((k === search || o.title === search) && o[k]) {
@@ -418,7 +420,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             });
         })(this.get('data'), parentKey);
 
-
+        //find the last node when a sibling is added
         function findLastNodeSib(node) {
             var last = node.nextSibling;
             if (last) {
@@ -440,7 +442,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             }
 
         }
-
+        //find the last node when a child is added
         function findLastNodeChild(node) {
             var last = node.lastChild;
             if (last) {
@@ -473,7 +475,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             parentNode = trigNode.get('parentNode');
             overhead = trigNode.get('overhead');
         }
-        self.get('nodeCollection').pushNodes(y, trigNode.get('height'));
+        self.get('nodeCollection').pushNodes(y, Number(trigNode.get('height')));
         var node = new DataMapper.Models.Node({
             parent: parent,
             parentNode: parentNode,
@@ -567,6 +569,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         if (trigNode.get('text') === this.get('data').title) {
             //clearcontainer
         }
+        //delete from the schema
         var iterate = (function iter(o, search) {
             return Object.keys(o).some(function (k) {
 
@@ -581,8 +584,11 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 }
             });
         })(this.get('data'), trigNode.get('text'));
-        this.get('parent').selectAll(".nested-group").remove();
-        this.parseSchema(this.get('data'));
+
+        //delete from UI
+        this.get('nodeCollection').remove(trigNode);
+        this.get('nodeCollection').pushNodes(trigNode.get('y'), -Number(trigNode.get('height')));
+        trigNode.deleteNode();
     }
 });
 

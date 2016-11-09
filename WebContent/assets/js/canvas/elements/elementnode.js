@@ -320,6 +320,23 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
                 }
             });
         }
+    },
+    deleteNode: function () {
+        var trigNode = this;
+        Diagram.Connectors.findFromSourceNode(trigNode.get('node')).map(function (connector) {
+            connector.removeConnector();
+        });
+        var temp = Diagram.Connectors.findFromTargetNode(trigNode.get('node'));
+        if (temp) {
+            temp.removeConnector();
+        }
+        if (trigNode.get('node').node().nextSibling) {
+            var coParent = d3.select(trigNode.get('node').node().nextSibling);
+            if (coParent.classed("nested-group")) {
+                coParent.remove();
+            }
+        }
+        trigNode.get('node').remove();
     }
 });
 
@@ -336,7 +353,7 @@ DataMapper.Collections.NodeList = Backbone.Collection.extend({
         this.find(function (node) {
             var currY = Number(node.get('y'));
             if (currY >= newY) {
-                node.updatePosition(0, currY + Number(depth));
+                node.updatePosition(0, currY + depth);
             }
         });
     }
