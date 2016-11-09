@@ -411,6 +411,9 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                     return node;
                 }
             } else {
+                if (d3.select(node).classed("nested-group")) {
+                    return node.previousSibling;
+                }
                 return node;
             }
 
@@ -433,6 +436,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         }
         var nextSibling, y, parent, parentNode, overhead;
         var rep = isChild ? findLastNodeChild(trigNode.get('node').node().nextSibling) : findLastNodeSib(trigNode.get('node').node());
+
         var repd = d3.select(rep);
         y = Number(repd.attr('y')) + Number(repd.attr('height'));
 
@@ -446,7 +450,6 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             parent = d3.select(trigNode.get('node').node().parentElement);
             parentNode = trigNode.get('parentNode');
             overhead = trigNode.get('overhead');
-
         }
         self.get('nodeCollection').pushNodes(y, trigNode.get('height'));
         var node = new DataMapper.Models.Node({
@@ -468,9 +471,38 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         var newNode = new DataMapper.Views.NodeView({
             model: node
         }).render();
+        var newNestNode;
         if (newType === "object" || newType === "array") {
-            parent.append("g").attr("class", "nested-group");
+            newNestNode = parent.append("g").attr("class", "nested-group");
         }
+
+        //reorder the DOM elements
+        if (!isChild) {
+            var t1 = $(newNode.node()).detach(),
+                t2;
+            if (newNestNode) {
+                t2 = $(newNestNode.node()).detach();
+            }
+            var flag = false;
+            var counterNode = trigNode.get('node').node();
+            if (d3.select(counterNode.nextSibling).classed("nested-group")) {
+                counterNode = counterNode.nextSibling;
+            }
+            Array.from(parent.node().children).map(function (tchild) {
+                if (flag) {
+                    var t3 = $(tchild).detach();
+                    t3.appendTo($(parent.node()));
+                }
+                if (tchild.isSameNode(counterNode)) {
+                    t1.appendTo($(parent.node()));
+                    if (t2) {
+                        t2.appendTo($(parent.node()));
+                    }
+                    flag = true;
+                }
+            });
+        }
+
         self.get('nodeCollection').add(node);
         self.set('elementCount', self.get('elementCount') + 1);
         this.updateContainerHeight();
