@@ -21,7 +21,7 @@ DataMapper.Views.CanvasView = Backbone.View.extend({
             y: this.inputStartY
         });
         var inputView1 = new DataMapper.Views.TreeContainerView({
-            id: "input-dmcontainer",
+            id: "input-dmcontainer0",
             model: inputModel
         });
         inputView1.render();
@@ -32,7 +32,7 @@ DataMapper.Views.CanvasView = Backbone.View.extend({
             y: this.outputStartY
         });
         var outputView1 = new DataMapper.Views.TreeContainerView({
-            id: "output-dmcontainer",
+            id: "output-dmcontainer0",
             model: outputModel
         });
         outputView1.render();

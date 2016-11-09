@@ -18,8 +18,7 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
         var self = this;
         var selfModel = this.model;
         return d3.drag()
-            .on("start", function () {
-            })
+            .on("start", function () {})
             .on("drag", function (d, i) {
                 this.x = this.x || selfModel.get('x');
                 this.y = this.y || selfModel.get('y');
@@ -49,7 +48,7 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
             }
             // Show contextmenu
             $(menu).finish().toggle(100)
-                .css({// In the right position (the mouse)
+                .css({ // In the right position (the mouse)
                     top: event.pageY + "px",
                     left: event.pageX + "px"
                 })
@@ -68,22 +67,25 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
         });
 
 
-// If the menu element is clicked
+        // If the menu element is clicked
         $(menu + " li").on("click", function () {
             // This is the triggered action name
             if ($(menu).hasClass(classClicked)) {
                 switch ($(this).attr("data-action")) {
 
                     // A case for each action. Your actions here
-                    case "load-schema":
-                        $("#" + self.schemaSelect.attr("id")).trigger("click");
-                        break;
-                    case "clear-container":
-                        self.clearContainer();
-                        break;
-                    case "add-root":
-                        self.addRootElement();
-                        break;
+                case "load-schema":
+                    $("#" + self.schemaSelect.attr("id")).trigger("click");
+                    break;
+                case "clear-container":
+                    self.clearContainer();
+                    break;
+                case "add-root":
+                    self.addRootElement();
+                    break;
+                case "extra-schema":
+                    self.addExtraSchema();
+                    break;
                 }
             }
 
@@ -95,8 +97,7 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
     clearContainer: function () {
         //to be overridden by inherited views
     },
-    drawInitContainer: function () {
-    },
+    drawInitContainer: function () {},
     updateConnections: function (newX, newY) {
         var sourceContainer = d3.select(this.el);
         Diagram.Connectors.findFromSourceContainer(sourceContainer).map(function (connector) {

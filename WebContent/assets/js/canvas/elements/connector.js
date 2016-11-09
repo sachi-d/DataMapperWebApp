@@ -99,11 +99,11 @@ DataMapper.Models.Connector = Backbone.Model.extend({
         //                    var self = this;
         var operator = new DataMapper.Models.Operator({
             title: "directOperator",
-            inputTypes: ["Direct"],
-            outputTypes: ["Direct"]
+            inputLabels: ["Direct"],
+            outputLabels: ["Direct"]
         });
-        var head = Diagram.InputViews[0].model.get('nodeCollection').getNodeFromDOMObject(this.get('sourceNode').get('node').node()).clone();
-        var tail = Diagram.OutputViews[0].model.get('nodeCollection').getNodeFromDOMObject(this.get('targetNode').get('node').node()).clone();
+        var head = this.get('sourceNode').clone();
+        var tail = this.get('targetNode').clone();
         operator.get('nodeCollection').add([head, tail]);
         this.operator = operator;
         Diagram.Operators.add(operator);

@@ -103,6 +103,25 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
             ]
         });
     },
+    addExtraSchema: function () {
+        var model = new DataMapper.Models.TreeContainer({
+            type: this.model.get('type'),
+            title: this.model.get('title'),
+            x: 200, //this.model.get('x'),
+            y: 200 //this.model.updateContainerHeight()
+        });
+        var view = new DataMapper.Views.TreeContainerView({
+            id: "output-dmcontainer" + Diagram.OutputViews.length,
+            model: model
+        });
+        view.render();
+
+        if (this.model.get('type') === "input") {
+            Diagram.InputViews.push(view);
+        } else {
+            Diagram.OutputViews.push(view);
+        }
+    }
 });
 
 DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
@@ -150,14 +169,17 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
     updateContainerHeight: function () {
         var outline = this.get('parent').select(".dmcontainer-outline");
         var model = this;
+        var h = 0;
         outline.attr("height", function () {
             var count = model.get('elementCount'),
                 height = model.nodeHeight;
             if (count < 5) {
                 count = 5;
             }
-            return (count) * height;
+            h = (count) * height;
+            return h;
         });
+        return h;
         //resize Canvas with the translate y value
     },
     updateContainerWidth: function (t) {

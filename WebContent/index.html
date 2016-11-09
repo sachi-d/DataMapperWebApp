@@ -34,7 +34,7 @@
 </head>
 
 <body>
-
+    <button onclick="showMappings()">showMappings</button>
 
     <div id="page-content" class="container">
         <div class="row">
@@ -51,6 +51,7 @@
 
             <ul class='custom-menu dropdown-menu' id="dmcontainer-menu">
                 <li data-action="load-schema">Load Schema</li>
+                <li data-action="extra-schema">Add another schema</li>
                 <li data-action="clear-container">Clear container</li>
                 <li data-action="add-root">Add new root element</li>
             </ul>
@@ -71,7 +72,7 @@
     </div>
 
 
-    <button class="pull-right" onclick="showMappings()">showMappings</button>
+
     <script>
         var DataMapper = {
             //Definitions
@@ -98,7 +99,7 @@
         };
     </script>
 
-    <script src="https://cdn.jsdelivr.net/lodash/4.16.6/lodash.min.js"></script>
+    <!--    <script src="https://cdn.jsdelivr.net/lodash/4.16.6/lodash.min.js"></script>-->
     <script src="assets/js/canvas/elements/connector.js"></script>
     <script src="assets/js/canvas/elements/anchor.js"></script>
     <script src="assets/js/canvas/elements/elementnode.js"></script>
@@ -126,12 +127,15 @@
             return conts;
         }
 
+
         function showMappings() {
+
             var variableList = [],
                 count = 0,
                 inputAdjList = [],
                 outputAdjList = [];
-                [Diagram.InputViews[0].model, Diagram.OutputViews[0].model].map(function (model) { //add all input and output nodes
+            Diagram.InputViews.concat(Diagram.OutputViews).map(function (view) { //add all input and output nodes
+                var model = view.model;
                 model.get('nodeCollection').models.map(function (node) {
                     variableList.push({
                         id: count,
@@ -150,7 +154,7 @@
                         if (connectors.length > 0) {
                             for (var i = 0; i < connectors.length; i++) {
                                 var connector = connectors[i];
-                                var opposite = connector.get('targetContainer'); //container
+                                var opposite = connector.get('targetContainer').get('parent'); //container
                                 if (opposite.classed("operator")) {
                                     variableList.push({
                                         id: count,
@@ -177,7 +181,7 @@
                         if (connector !== null) {
                             var opposite = connector.get('sourceNode'); //d3 node object
                             var oppositeNode = variableList.find(function (variable) {
-                                return variable.refID == opposite.attr("id");
+                                return variable.refID == opposite.get('node').attr("id");
                             });
                             inputs.push([oppositeNode.id]);
                         } else {
@@ -188,7 +192,7 @@
                         var targets = [];
                         if (connectors.length > 0) {
                             connectors.map(function (connector) {
-                                var intermediateNode = connector.get('targetContainer').classed("operator") ? connector.get('sourceNode') : connector.get('targetNode'); //intermediate nodes
+                                var intermediateNode = connector.get('targetContainer').get('parent').classed("operator") ? connector.get('sourceNode').get('node') : connector.get('targetNode').get('node'); //intermediate nodes
                                 var oppositeNode = variableList.find(function (variable) {
                                     return variable.refID == intermediateNode.attr("id");
                                 });
