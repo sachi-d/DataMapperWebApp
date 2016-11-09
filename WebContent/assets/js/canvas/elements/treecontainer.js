@@ -140,7 +140,6 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
     type: "input",
     initialize: function () {
         this.set('nodeCollection', new DataMapper.Collections.NodeList());
-
     },
     readFile: function () {
         var model = this;
@@ -328,7 +327,6 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 }
             });
         }
-
         var path;
         iter(this.get('data'), []);
         return path;
