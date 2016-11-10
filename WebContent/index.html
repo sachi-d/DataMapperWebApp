@@ -50,24 +50,24 @@
         <div id="right-click-menu">
 
             <ul class='custom-menu dropdown-menu' id="dmcontainer-menu">
-                <li data-action="load-schema">Load Schema</li>
-                <li data-action="add-root">Add new root element</li>
-                <li data-action="extra-schema">Add another schema</li>
-                <li data-action="clear-container">Clear container</li>
-                <li data-action="delete-container">Delete container</li>
+                <li data-action="load-schema"><span class="glyphicon glyphicon-list-alt"></span> Load Schema</li>
+                <li data-action="add-root"><span class="glyphicon glyphicon-plus"></span> Add new root element</li>
+                <li data-action="clear-container"><span class="glyphicon glyphicon-remove-circle"></span> Clear container</li>
+                <li data-action="extra-schema"><span class="glyphicon glyphicon-paste"></span> Add another schema</li>
+                <li data-action="delete-container"><span class="glyphicon glyphicon-trash"></span> Delete container</li>
             </ul>
 
             <ul class='custom-menu dropdown-menu' id="operator-menu">
-                <li data-action="delete-container">Delete operator</li>
+                <li data-action="delete-container"><span class="glyphicon glyphicon-trash"></span> Delete operator</li>
             </ul>
 
             <ul class='custom-menu dropdown-menu' id="connector-menu">
-                <li data-action="clear-connector">Delete</li>
+                <li data-action="clear-connector"><span class="glyphicon glyphicon-trash"></span> Delete</li>
             </ul>
             <ul class='custom-menu dropdown-menu' id="container-node-menu">
-                <li data-action="add-node">Add node</li>
-                <li data-action="edit-node">Edit node</li>
-                <li data-action="clear-node">Delete node</li>
+                <li data-action="add-node"><span class="glyphicon glyphicon-plus"></span> Add node</li>
+                <li data-action="edit-node"><span class="glyphicon glyphicon-pencil"></span> Edit node</li>
+                <li data-action="clear-node"><span class="glyphicon glyphicon-trash"></span> Delete node</li>
             </ul>
         </div>
     </div>
@@ -160,7 +160,7 @@
                     }
                 });
             });
-            console.log(variableList);
+
             Diagram.Operators.models.map(function (model) {
                 var inputs = [],
                     outputs = [];

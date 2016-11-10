@@ -44,8 +44,10 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
             //restrict adding root element to non-empty containers
             if (self.model.get('elementCount') !== 0) {
                 $('[data-action="add-root"]').hide();
+                $('[data-action="clear-container"]').show();
             } else {
                 $('[data-action="add-root"]').show();
+                $('[data-action="clear-container"]').hide();
             }
 
             //restrict the deletion of the main tree containers

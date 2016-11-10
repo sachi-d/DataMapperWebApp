@@ -79,6 +79,8 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
         this.model.set('elementCount', 0);
         this.model.set('file', null);
         this.model.set('data', null);
+        this.model.updateContainerHeight();
+        this.model.updateContainerWidth();
     },
     addRootElement: function () {
         var self = this;
