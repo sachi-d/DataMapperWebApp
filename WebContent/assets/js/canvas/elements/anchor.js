@@ -53,7 +53,7 @@ DataMapper.Models.Anchor = Backbone.Model.extend({
                 var backendSourceNode, backendTargetNode;
                 if (target) {
                     var findNodes = (function (sNode, tNode) {
-                        getAllContainers().map(function (model) {
+                        Diagram.Operators.models.concat(Diagram.TreeContainers.models).map(function (model) {
                             if (!backendSourceNode) {
                                 backendSourceNode = model.get('nodeCollection').getNodeFromDOMObject(sNode.node());
                             }

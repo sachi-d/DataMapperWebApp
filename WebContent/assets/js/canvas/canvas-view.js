@@ -14,6 +14,7 @@ DataMapper.Views.CanvasView = Backbone.View.extend({
         Diagram.Connectors = new DataMapper.Collections.Connectors();
         Diagram.VariableList = new DataMapper.Collections.NodeList();
         Diagram.Operators = new DataMapper.Collections.Operators();
+        Diagram.TreeContainers = new DataMapper.Collections.TreeContainers();
         var inputModel = new DataMapper.Models.TreeContainer({
             type: "input",
             title: "Input",
@@ -36,10 +37,8 @@ DataMapper.Views.CanvasView = Backbone.View.extend({
             model: outputModel
         });
         outputView1.render();
+        Diagram.TreeContainers.add([inputModel, outputModel]);
 
-        Diagram.InputViews.push(inputView1);
-        Diagram.OutputViews.push(outputView1);
-        //                    this.render();
     },
     render: function () {
         this.initElements();

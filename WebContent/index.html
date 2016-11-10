@@ -51,13 +51,14 @@
 
             <ul class='custom-menu dropdown-menu' id="dmcontainer-menu">
                 <li data-action="load-schema">Load Schema</li>
+                <li data-action="add-root">Add new root element</li>
                 <li data-action="extra-schema">Add another schema</li>
                 <li data-action="clear-container">Clear container</li>
-                <li data-action="add-root">Add new root element</li>
+                <li data-action="delete-container">Delete container</li>
             </ul>
 
             <ul class='custom-menu dropdown-menu' id="operator-menu">
-                <li data-action="clear-container">Delete operator</li>
+                <li data-action="delete-container">Delete operator</li>
             </ul>
 
             <ul class='custom-menu dropdown-menu' id="connector-menu">
@@ -84,10 +85,9 @@
         var Diagram = {
             //the editor = svg
             Canvas: {},
-            // Backbone view corresponding to Input/Output container
+            // Backbone collection corresponding to Input/Output container
             // the model contains the loaded schema as a JSON object and a collection of nodes
-            InputViews: [],
-            OutputViews: [],
+            TreeContainers: {},
             //all the 'lines' drawn in the application
             //each connector contains information on sourceNode, targetNode, sourceContainer, targetContainer and the d3 line object
             Connectors: {},
@@ -118,24 +118,14 @@
     <script src="assets/js/tool-palette/toolpalette.js"></script>
     <script src="assets/js/tool-palette/definitions/tools-init.js"></script>
     <script>
-        function getAllContainers() {
-            var conts = [];
-            Diagram.InputViews.concat(Diagram.OutputViews).map(function (view) {
-                conts.push(view.model);
-            });
-            conts = conts.concat(Diagram.Operators.models);
-            return conts;
-        }
-
-
         function showMappings() {
 
             var variableList = [],
                 count = 0,
                 inputAdjList = [],
                 outputAdjList = [];
-            Diagram.InputViews.concat(Diagram.OutputViews).map(function (view) { //add all input and output nodes
-                var model = view.model;
+            Diagram.TreeContainers.models.map(function (model) { //add all input and output nodes
+
                 model.get('nodeCollection').models.map(function (node) {
                     variableList.push({
                         id: count,

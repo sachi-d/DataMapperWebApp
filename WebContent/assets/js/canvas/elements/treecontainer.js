@@ -104,12 +104,7 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
         });
     },
     addExtraSchema: function () {
-        var arr;
-        if (this.model.get('type') === "input") {
-            arr = Diagram.InputViews;
-        } else {
-            arr = Diagram.OutputViews;
-        }
+
         var model = new DataMapper.Models.TreeContainer({
             type: this.model.get('type'),
             title: this.model.get('title'),
@@ -121,8 +116,7 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
             model: model
         });
         view.render();
-        console.log(arr.length);
-        arr.push(view);
+        Diagram.TreeContainers.add(model);
     }
 });
 
@@ -342,6 +336,12 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         this.set('file', null);
         this.parseSchema(newSchema);
     },
+
+
+
+
+
+
     addNode: function (trigNode, newTitle, newType, isChild) {
         newType = newType.toLowerCase();
         var category = "leaf",
@@ -589,5 +589,19 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         trigNode.deleteNode();
     }
 });
+DataMapper.Collections.TreeContainers = Backbone.Collection.extend({
+    model: DataMapper.Models.TreeContainer,
+    url: "/treecontainers",
+    getContainerByID: function (id) {
+        return this.find(function (item) {
+            return item.get('parent').attr("id") === id;
+        });
+    },
+    getOutContainers: function () {
 
+    },
+    getInContainers: function () {
+
+    }
+});
 //BUG = LOADfILE ONCE, AGAIN LOAD FILE AGAIN AND CANCEL - TYPERROR - CAUSE "Onchange" listener

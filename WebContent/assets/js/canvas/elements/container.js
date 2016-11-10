@@ -86,6 +86,9 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
                 case "extra-schema":
                     self.addExtraSchema();
                     break;
+                case "delete-container":
+                    self.deleteContainer();
+                    break;
                 }
             }
 
@@ -94,8 +97,19 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
         });
 
     },
-    clearContainer: function () {
-        //to be overridden by inherited views
+    deleteContainer: function () {
+        Diagram.Connectors.findFromTargetContainer(this.model.get('parent')).map(function (connector) {
+            connector.removeConnector();
+        });
+        Diagram.Connectors.findFromSourceContainer(this.model.get('parent')).map(function (connector) {
+            connector.removeConnector();
+        });
+        if (this.model.get('parent').classed("operator")) {
+            Diagram.Operators.remove(this.model);
+        } else {
+            Diagram.TreeContainers.remove(this.model);
+        }
+        this.model.get('parent').remove();
     },
     drawInitContainer: function () {},
     updateConnections: function (newX, newY) {

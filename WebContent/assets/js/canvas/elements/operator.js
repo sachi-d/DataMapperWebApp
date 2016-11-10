@@ -4,14 +4,7 @@
 DataMapper.Views.OperatorView = DataMapper.Views.ContainerView.extend({
     el: "#canvas",
     menu: "#operator-menu",
-    clearContainer: function () {
-        Diagram.Connectors.findFromTargetContainer(this.model.get('parent')).map(function (connector) {
-            connector.removeConnector();
-        });
 
-        this.model.get('parent').remove();
-        Diagram.Operators.remove(this.model);
-    },
     drawInitContainer: function () {
         return this.model.drawContainer();
     }
