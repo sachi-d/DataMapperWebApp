@@ -38,7 +38,8 @@ DataMapper.Views.CanvasView = Backbone.View.extend({
         });
         outputView1.render();
         Diagram.TreeContainers.add([inputModel, outputModel]);
-
+        inputModel.get('parent').classed("prime-container", true);
+        outputModel.get('parent').classed("prime-container", true);
     },
     render: function () {
         this.initElements();
@@ -65,7 +66,8 @@ DataMapper.Views.CanvasView = Backbone.View.extend({
             inputTypes: tool.get('defaults').inputTypes,
             outputTypes: tool.get('defaults').outputTypes,
             inputLabels: tool.get('defaults').inputLabels,
-            outputLabels: tool.get('defaults').outputLabels
+            outputLabels: tool.get('defaults').outputLabels,
+            arguments: tool.get('defaults').arguments
         });
         var operatorView = new DataMapper.Views.OperatorView({
             id: operator.id,

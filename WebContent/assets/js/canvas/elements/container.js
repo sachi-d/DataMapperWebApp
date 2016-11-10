@@ -40,11 +40,19 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
             // console.log(menu);
             // Avoid the real one
             event.preventDefault();
-            if (self.model.get('elementCount') !== 0) {
 
+            //restrict adding root element to non-empty containers
+            if (self.model.get('elementCount') !== 0) {
                 $('[data-action="add-root"]').hide();
             } else {
                 $('[data-action="add-root"]').show();
+            }
+
+            //restrict the deletion of the main tree containers
+            if (self.model.get('parent').classed("prime-container")) {
+                $('[data-action="delete-container"]').hide();
+            } else {
+                $('[data-action="delete-container"]').show();
             }
             // Show contextmenu
             $(menu).finish().toggle(100)

@@ -112,7 +112,7 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
             y: 200 //this.model.updateContainerHeight()
         });
         var view = new DataMapper.Views.TreeContainerView({
-            id: this.model.get('parent').attr("id") + arr.length,
+            id: this.model.get('parent').attr("id") + Diagram.TreeContainers.length,
             model: model
         });
         view.render();
