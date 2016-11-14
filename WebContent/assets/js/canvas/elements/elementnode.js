@@ -71,24 +71,6 @@ DataMapper.Views.NodeView = Backbone.View.extend({
 
     },
     addNode: function () {
-        //        $("#add-root-element-modal").show();
-        //        BootstrapDialog.show({
-        //            title: 'Draggable Dialog',
-        //            message: 'Try to drag on dialog title to move your dialog.',
-        //            draggable: true
-        //        });
-        //        var $msgBody = $('<form class="form-horizontal"></form>');
-        //        var $titleBody = $('<div class="form-group"><label class="control-label col-sm-2" >Title:</label><div class="col-sm-10"><input type="text" class="form-control" id="title" ></div></div>');
-        //        var $typeBody = $('<div class="form-group"></div>');
-        //        $msgBody.append($titleBody).append($typeBody);
-        //
-        //        var $typeDiv = $('<div class="col-sm-10"></div>');
-        //        var $select = $('<select id="type"   class="form-control" style="display:inline"></select>');
-        //        $typeDiv.append($select);
-        //        $typeBody.append($('<label class="control-label col-sm-2" >Type:</label>')).append($typeDiv);
-        //
-        //        $select.append("<option>Optijn 1n</option>");
-        //        $select.append("<option>Option2222</option>");
 
         var self = this;
 

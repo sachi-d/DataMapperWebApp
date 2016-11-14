@@ -85,7 +85,7 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
 
                     // A case for each action. Your actions here
                 case "load-schema":
-                    $("#" + self.schemaSelect.attr("id")).trigger("click");
+                    self.loadFile();
                     break;
                 case "clear-container":
                     self.clearContainer();

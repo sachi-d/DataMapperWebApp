@@ -45,21 +45,22 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
             .attr("width", width)
             .attr("fill", "none")
             .attr("stroke", "#000");
-        var fo = parent.append("foreignObject")
-            .attr("x", 0).attr("y", 0)
-            .attr("height", 100)
-            .attr("width", 100)
-            .style("display", "none");
-        var input = fo.append("xhtml:input")
-            .attr("type", "file")
-            .classed("schema-select", true)
-            .attr("name", "input-select[]")
-            .attr("id", this.id + "-schema-select")
-            .attr("accept", "application/json").style("display", "none")
-            .on("change", function () {
-                self.fileChange();
-            });
-        this.schemaSelect = input;
+        //        var fo = parent.append("foreignObject")
+        //            .attr("x", 0).attr("y", 0)
+        //            .attr("height", 100)
+        //            .attr("width", 100)
+        //            .style("display", "none");
+        //        
+        //        var input = fo.append("xhtml:input")
+        //            .attr("type", "file")
+        //            .classed("schema-select", true)
+        //            .attr("name", "input-select[]")
+        //            .attr("id", this.id + "-schema-select")
+        //            .attr("accept", "application/json").style("display", "none")
+        //            .on("change", function () {
+        //                self.fileChange();
+        //            });
+        //        this.schemaSelect = input;
         return parent;
     },
     fileChange: function () {
@@ -92,7 +93,7 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
                     label: 'Add root Element',
                     cssClass: "btn-primary",
                     action: function (dialogRef) {
-                        self.model.createSchema(dialogRef.getModalBody().find('#title').val(), dialogRef.getModalBody().find('#type').val())
+                        self.model.createSchema(dialogRef.getModalBody().find('#title').val(), dialogRef.getModalBody().find('#type').val());
                         dialogRef.close();
                     }
                 },
@@ -119,6 +120,37 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
         });
         view.render();
         Diagram.TreeContainers.add(model);
+    },
+    loadFile: function () {
+        var self = this;
+        var typeOptions = (function (arr) {
+            var str = "";
+            arr.map(function (type) {
+                var op = "<option value=" + type + " >" + type + "</option>";
+                str += op;
+            });
+            return str;
+        })(["XML", "JSON", "CSV", "XSD", "JSON schema", "Connector"]);
+        BootstrapDialog.show({
+            title: "Load file",
+            message: ' Type: <select id="type">' + typeOptions + ' </select><br><br>  File: <input type="file" style="display:inline">',
+            draggable: true,
+            buttons: [{
+                    label: 'Load',
+                    cssClass: "btn-primary",
+                    action: function (dialogRef) {
+                        self.fileChange();
+                        dialogRef.close();
+                    }
+                },
+                {
+                    label: 'Cancel',
+                    action: function (dialogRef) {
+                        dialogRef.close();
+                    }
+                }
+            ]
+        });
     }
 });
 
