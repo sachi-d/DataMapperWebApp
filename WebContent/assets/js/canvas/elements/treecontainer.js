@@ -45,33 +45,13 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
             .attr("width", width)
             .attr("fill", "none")
             .attr("stroke", "#000");
-        //        var fo = parent.append("foreignObject")
-        //            .attr("x", 0).attr("y", 0)
-        //            .attr("height", 100)
-        //            .attr("width", 100)
-        //            .style("display", "none");
-        //        
-        //        var input = fo.append("xhtml:input")
-        //            .attr("type", "file")
-        //            .classed("schema-select", true)
-        //            .attr("name", "input-select[]")
-        //            .attr("id", this.id + "-schema-select")
-        //            .attr("accept", "application/json").style("display", "none")
-        //            .on("change", function () {
-        //                self.fileChange();
-        //            });
-        //        this.schemaSelect = input;
+
         return parent;
     },
-    fileChange: function (loadFile) {
-        console.log(loadFile);
+    fileChange: function (type, loadFile) {
         this.clearContainer();
-        //        var e = d3.e vent;
-        //        e.stopPropagation();
-        //        e.preventDefault();
-        //        // e.dataTransfer = e.originalTarget.dataTransfer;
-        //        var files = e.target.files || e.dataTransfer.files;
         this.model.set('file', loadFile);
+        this.model.set('fileType', type);
         this.model.readFile();
     },
     clearContainer: function () {
@@ -127,11 +107,11 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
         var typeOptions = (function (arr) {
             var str = "";
             arr.map(function (type) {
-                var op = "<option value=" + type + " >" + type + "</option>";
+                var op = "<option value=" + type.toLowerCase() + " >" + type + "</option>";
                 str += op;
             });
             return str;
-        })(["XML", "JSON", "CSV", "XSD", "JSON schema", "Connector"]);
+        })(["XML", "JSON", "CSV", "XSD", "JSON-schema", "Connector"]);
         BootstrapDialog.show({
             title: "Load file",
             message: ' Type: <select id="type">' + typeOptions + ' </select><br><br>  File: <input id="load-file" type="file" style="display:inline">',
@@ -140,7 +120,7 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
                     label: 'Load',
                     cssClass: "btn-primary",
                     action: function (dialogRef) {
-                        self.fileChange(dialogRef.getModalBody().find('#load-file')[0].files[0]);
+                        self.fileChange(dialogRef.getModalBody().find('#type').val(), dialogRef.getModalBody().find('#load-file')[0].files[0]);
                         dialogRef.close();
                     }
                                 },
@@ -165,10 +145,30 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
     nodeHeight: 20,
     rankMargin: 50,
     file: '',
+    fileType: 'schema',
     data: null,
     type: "input",
     initialize: function () {
         this.set('nodeCollection', new DataMapper.Collections.NodeList());
+    },
+    getJSONschema: function (fileText) {
+        var type = this.get('fileType');
+        console.log(type);
+        switch (type) {
+        case "json-schema":
+            return JSON.parse(fileText);
+        case "json":
+            return Schemify.JSONtoSchema(JSON.parse(fileText));
+        case "csv":
+            var m = CSVParser.parse(fileText, true, ",", false, false, ".");
+            var newJSON = {};
+            m.headerNames.map(function (header, index) {
+                newJSON[header] = m.dataGrid[0][index];
+            })
+            console.log(m.dataGrid);
+            return Schemify.JSONtoSchema(newJSON);
+        }
+
     },
     readFile: function () {
         var model = this;
@@ -179,9 +179,8 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         reader.onload = function (e) {
             //parseJSON
             var text = e.target.result;
-            data = JSON.parse(text);
-            var data1 = JSONtoSchema(data);
-            model.parseSchema(data1);
+            data = model.getJSONschema(text);
+            model.parseSchema(data);
         };
         reader.readAsText(this.get('file'));
         //        }
