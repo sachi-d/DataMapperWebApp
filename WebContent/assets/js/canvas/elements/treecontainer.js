@@ -63,14 +63,15 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
         //        this.schemaSelect = input;
         return parent;
     },
-    fileChange: function () {
+    fileChange: function (loadFile) {
+        console.log(loadFile);
         this.clearContainer();
-        var e = d3.event;
-        e.stopPropagation();
-        e.preventDefault();
-        // e.dataTransfer = e.originalTarget.dataTransfer;
-        var files = e.target.files || e.dataTransfer.files;
-        this.model.set('file', files[0]);
+        //        var e = d3.e vent;
+        //        e.stopPropagation();
+        //        e.preventDefault();
+        //        // e.dataTransfer = e.originalTarget.dataTransfer;
+        //        var files = e.target.files || e.dataTransfer.files;
+        this.model.set('file', loadFile);
         this.model.readFile();
     },
     clearContainer: function () {
@@ -133,23 +134,23 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
         })(["XML", "JSON", "CSV", "XSD", "JSON schema", "Connector"]);
         BootstrapDialog.show({
             title: "Load file",
-            message: ' Type: <select id="type">' + typeOptions + ' </select><br><br>  File: <input type="file" style="display:inline">',
+            message: ' Type: <select id="type">' + typeOptions + ' </select><br><br>  File: <input id="load-file" type="file" style="display:inline">',
             draggable: true,
             buttons: [{
                     label: 'Load',
                     cssClass: "btn-primary",
                     action: function (dialogRef) {
-                        self.fileChange();
+                        self.fileChange(dialogRef.getModalBody().find('#load-file')[0].files[0]);
                         dialogRef.close();
                     }
-                },
+                                },
                 {
                     label: 'Cancel',
                     action: function (dialogRef) {
                         dialogRef.close();
                     }
-                }
-            ]
+                                }
+                                ]
         });
     }
 });
@@ -171,20 +172,19 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
     },
     readFile: function () {
         var model = this;
+        //        if (this.get('file').name.endsWith(".json") || this.get('file').type === "application/json") {
 
-        if (this.get('file').name.endsWith(".json") || this.get('file').type === "application/json") {
-
-            var reader = new FileReader();
-            var data;
-            reader.onload = function (e) {
-                //parseJSON
-                var text = e.target.result;
-                data = JSON.parse(text);
-
-                model.parseSchema(data);
-            };
-            reader.readAsText(this.get('file'));
-        }
+        var reader = new FileReader();
+        var data;
+        reader.onload = function (e) {
+            //parseJSON
+            var text = e.target.result;
+            data = JSON.parse(text);
+            var data1 = JSONtoSchema(data);
+            model.parseSchema(data1);
+        };
+        reader.readAsText(this.get('file'));
+        //        }
     },
     parseSchema: function (data) {
         this.set('data', data);
