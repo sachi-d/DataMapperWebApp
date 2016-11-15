@@ -104,14 +104,37 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
     },
     loadFile: function () {
         var self = this;
+        var optionList = [
+            {
+                name: "XML",
+                id: "xml"
+            },
+            {
+                name: "JSON",
+                id: "json"
+            },
+            {
+                name: "CSV",
+                id: "csv"
+            }, {
+                name: "XSD",
+                id: "xsd"
+            }, {
+                name: "JSON Schema",
+                id: "jsonschema"
+            }, {
+                name: "Connector",
+                id: "connector"
+            }
+        ];
         var typeOptions = (function (arr) {
             var str = "";
             arr.map(function (type) {
-                var op = "<option value=" + type.toLowerCase() + " >" + type + "</option>";
+                var op = "<option value=" + type.id + " >" + type.name + "</option>";
                 str += op;
             });
             return str;
-        })(["XML", "JSON", "CSV", "XSD", "JSON-schema", "Connector"]);
+        })(optionList);
         BootstrapDialog.show({
             title: "Load file",
             message: ' Type: <select id="type">' + typeOptions + ' </select><br><br>  File: <input id="load-file" type="file" style="display:inline">',
@@ -153,21 +176,31 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
     },
     getJSONschema: function (fileText) {
         var type = this.get('fileType');
-        console.log(type);
-        switch (type) {
-        case "json-schema":
-            return JSON.parse(fileText);
-        case "json":
-            return Schemify.JSONtoSchema(JSON.parse(fileText));
-        case "csv":
-            var m = CSVParser.parse(fileText, true, ",", false, false, ".");
-            var newJSON = {};
-            m.headerNames.map(function (header, index) {
-                newJSON[header] = m.dataGrid[0][index];
-            })
-            console.log(m.dataGrid);
-            return Schemify.JSONtoSchema(newJSON);
-        }
+        var schemaOutput = {
+            jsonschema: function () {
+                return JSON.parse(fileText);
+            },
+            json: function () {
+                return Schemify.JSONtoSchema(JSON.parse(fileText));
+            },
+            csv: function () {
+                var m = CSVParser.parse(fileText, true, ",", false, false, ".");
+                var newSchema = {
+                    "title": "csv root",
+                    "type": "object",
+                    "properties": {}
+                };
+                m.headerNames.map(function (header, index) {
+                    newSchema.properties[header] = {
+                        "type": m.headerTypes[index]
+                    };
+                })
+                console.log(newSchema);
+                return newSchema;
+            }
+        };
+        return schemaOutput[type]();
+
 
     },
     readFile: function () {

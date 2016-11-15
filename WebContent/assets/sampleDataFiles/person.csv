@@ -1,3 +1,4 @@
-name,age,birthday
-aaa,23,1993-09-30
-bbbb,23,232
+name,age,birthday,isMe
+aaa,23,1993-09-30,true
+bbbb,23,232,false
+cccc,43,434343,true
