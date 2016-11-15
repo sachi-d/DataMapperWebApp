@@ -181,7 +181,9 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 return JSON.parse(fileText);
             },
             json: function () {
-                return Schemify.JSONtoSchema(JSON.parse(fileText));
+                var m = Schemify.JSONtoSchema(JSON.parse(fileText));
+                console.log(m);
+                return m;
             },
             csv: function () {
                 var m = CSVParser.parse(fileText, true, ",", false, false, ".");
@@ -197,6 +199,11 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 })
                 console.log(newSchema);
                 return newSchema;
+            },
+            xml: function () {
+                var x2js = new X2JS();
+                var jsonObj = x2js.xml_str2json(fileText);
+                return Schemify.JSONtoSchema(jsonObj);
             }
         };
         return schemaOutput[type]();
@@ -269,7 +276,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         }
     },
     traverseJSONSchema: function (root, rootName, level, rank, resultPane, parentNode) {
-
+        console.log("dfd");
         var height = this.nodeHeight,
             width = this.containerWidth,
             margin = this.rankMargin,

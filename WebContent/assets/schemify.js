@@ -1,11 +1,18 @@
 var Schemify = {
     JSONtoSchema: function (obj) {
-        var objType = typeof obj;
         var schema = {
             "$schema": "http://json-schema.org/draft-04/schema#",
-            "type": objType
         };
+        if (Object.keys(obj).length === 1) {
+            var title = Object.keys(obj)[0];
+            schema["title"] = title;
+            obj = obj[title];
+        }
+
+        var objType = typeof obj;
+        schema["type"] = objType;
         if (objType !== "object") {
+            schema["properties"] = {};
             return schema;
 
         }
