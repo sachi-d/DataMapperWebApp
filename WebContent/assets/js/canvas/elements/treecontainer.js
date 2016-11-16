@@ -201,8 +201,8 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 return newSchema;
             },
             xml: function () {
-                var x2js = new X2JS();
-                var jsonObj = x2js.xml_str2json(fileText);
+
+                var jsonObj = xml2json(fileText);
                 return Schemify.JSONtoSchema(jsonObj);
             }
         };
