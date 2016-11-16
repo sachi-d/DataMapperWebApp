@@ -276,7 +276,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         }
     },
     traverseJSONSchema: function (root, rootName, level, rank, resultPane, parentNode) {
-        console.log("dfd");
+
         var height = this.nodeHeight,
             width = this.containerWidth,
             margin = this.rankMargin,
