@@ -53,7 +53,6 @@
                 <li data-action="load-schema"><span class="glyphicon glyphicon-list-alt"></span> Load Schema</li>
                 <li data-action="add-root"><span class="glyphicon glyphicon-plus"></span> Add new root element</li>
                 <li data-action="clear-container"><span class="glyphicon glyphicon-remove-circle"></span> Clear container</li>
-                <li data-action="extra-schema"><span class="glyphicon glyphicon-paste"></span> Add another schema</li>
                 <li data-action="delete-container"><span class="glyphicon glyphicon-trash"></span> Delete container</li>
             </ul>
 
@@ -83,19 +82,14 @@
             Types: ["Object", "Array", "String", "Number", "Boolean", "Bytes", "Double", "Enum", "Fixed", "Float", "Long"]
         };
         var Diagram = {
-            //the editor = svg
-            Canvas: {},
-            // Backbone collection corresponding to Input/Output container
-            // the model contains the loaded schema as a JSON object and a collection of nodes
+            Canvas: {}, //the editor = svg
             TreeContainers: {},
-            //all the 'lines' drawn in the application
-            //each connector contains information on sourceNode, targetNode, sourceContainer, targetContainer and the d3 line object
-            Connectors: {},
-            //The collection of tools
-            ToolList: {},
+            /* Backbone collection corresponding to Input/Output container
+                                            the model contains the loaded schema as a JSON object and a collection of nodes */
+            Connectors: {}, //all the 'lines' drawn in the application
+            ToolList: {}, //The collection of tools
             PalleteView: {},
-            //a Backbone collection of all the operators in the app - when a tool is dragged and dropped an operator is created and drawn
-            Operators: {}
+            Operators: {} //a Backbone collection of all the operators in the app - when a tool is dragged and dropped an operator is created and drawn
         };
     </script>
 

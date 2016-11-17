@@ -3,6 +3,16 @@
  */
 //Tools and tool groups definitions
 var toolGroupDefs = [{
+    toolGroupName: "Tree containers",
+    toolGroupID: "tree-containers",
+    tools: [{
+        title: "Input",
+        icon: "assets/images/tool-icons/sample-tool-icon.svg",
+        defaults: {
+            isContainer: true
+        }
+        }]
+    }, {
     toolGroupName: "Common",
     toolGroupID: "common-tool-group",
     tools: [{
@@ -181,7 +191,7 @@ var toolGroupDefs = [{
             inputTypes: ["Boolean", "String", "String"],
             outputTypes: ["String"],
             inputLabels: ["Condition", "Then", "Else"],
-            outputLabels: ["String"]
+            outputLabels: ["Result"]
         }
         }]
     }, {

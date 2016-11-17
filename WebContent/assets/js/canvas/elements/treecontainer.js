@@ -87,21 +87,7 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
             ]
         });
     },
-    addExtraSchema: function () {
 
-        var model = new DataMapper.Models.TreeContainer({
-            type: this.model.get('type'),
-            title: this.model.get('title'),
-            x: 200, //this.model.get('x'),
-            y: 200 //this.model.updateContainerHeight()
-        });
-        var view = new DataMapper.Views.TreeContainerView({
-            id: this.model.get('parent').attr("id") + Diagram.TreeContainers.length,
-            model: model
-        });
-        view.render();
-        Diagram.TreeContainers.add(model);
-    },
     loadFile: function () {
         var self = this;
         var optionList = [
@@ -138,7 +124,7 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
         })(optionList);
         BootstrapDialog.show({
             title: "Load file",
-            message: ' Type: <select id="type">' + typeOptions + ' </select><br><br>  File: <input id="load-file" type="file" style="display:inline">',
+            message: ' Type: <select id="type">' + typeOptions + ' </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  File: <input id="load-file" type="file" style="display:inline">',
             draggable: true,
             buttons: [{
                     label: 'Load',

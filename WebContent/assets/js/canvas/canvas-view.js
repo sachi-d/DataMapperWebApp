@@ -50,15 +50,37 @@ DataMapper.Views.CanvasView = Backbone.View.extend({
                 var newPosY = ui.offset.top - $(this).offset().top;
                 var id = ui.draggable[0].lastChild.id || null;
                 if (id !== null) {
-                    self.addOperator(id, newPosX, newPosY);
+                    var tool = Diagram.ToolList.getToolByID(id);
+
+                    if (tool.get('defaults').isContainer) {
+                        self.addExtraSchema(tool, newPosX, newPosY);
+                    } else {
+                        self.addOperator(tool, newPosX, newPosY);
+                    }
                 }
             }
         });
 
 
     },
-    addOperator: function (toolID, x, y) {
-        var tool = Diagram.ToolList.getToolByID(toolID);
+    addExtraSchema: function (tool, xx, yy) {
+        var type = tool.get('defaults').type;
+
+        var model = new DataMapper.Models.TreeContainer({
+            type: type,
+            title: tool.get('title'),
+            x: xx, //this.model.get('x'),
+            y: yy //this.model.updateContainerHeight()
+        });
+        var view = new DataMapper.Views.TreeContainerView({
+            id: "container-" + Diagram.TreeContainers.length,
+            model: model
+        });
+        view.render();
+        Diagram.TreeContainers.add(model);
+    },
+    addOperator: function (tool, x, y) {
+
         var operator = new DataMapper.Models.Operator({
             title: tool.get('title'),
             x: x,
