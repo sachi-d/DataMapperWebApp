@@ -122,7 +122,8 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
             }, {
                 name: "JSON Schema",
                 id: "jsonschema"
-            }, {
+            },
+            {
                 name: "Connector",
                 id: "connector"
             }
@@ -176,12 +177,14 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
     },
     getJSONschema: function (fileText) {
         var type = this.get('fileType');
+        var filename = this.get('file').name;
+        console.log(filename);
         var schemaOutput = {
             jsonschema: function () {
                 return JSON.parse(fileText);
             },
             json: function () {
-                var m = Schemify.JSONtoSchema(JSON.parse(fileText));
+                var m = Schemify.JSONtoJSONSchema(JSON.parse(fileText));
                 console.log(m);
                 return m;
             },
@@ -201,9 +204,16 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 return newSchema;
             },
             xml: function () {
-
                 var jsonObj = xml2json(fileText);
-                return Schemify.JSONtoSchema(jsonObj);
+                console.log(JSON.stringify(jsonObj, null, 4));
+                return Schemify.JSONtoJSONSchema(jsonObj);
+            },
+            xsd: function () {
+                // use as function
+                var filename =
+                    xsd2json(filename, function (err, schemaObject) {
+                        console.log(JSON.stringify(schemaObject, null, 2));
+                    });
             }
         };
         return schemaOutput[type]();
@@ -493,25 +503,20 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
 
         //find the last node when a sibling is added
         function findLastNodeSib(node) {
-            var last = node.nextSibling;
-            if (last) {
-                if (d3.select(last).classed("nested-group")) {
-                    last = last.lastChild;
-                    if (last) {
-                        return findLastNodeSib(last);
-                    } else {
-                        return last.previousSibling;
+            if (node.nextSibling && d3.select(node.nextSibling).classed("nested-group")) {
+                var last = node.nextSibling.lastChild;
+                if (last) {
+                    if (d3.select(last).classed("nested-group")) { // last is a parent
+                        return findLastNodeSib(last.previousSibling);
+                    } else { //last is leaf node
+                        return last;
                     }
-                } else {
+                } else { //empty
                     return node;
                 }
             } else {
-                if (d3.select(node).classed("nested-group")) {
-                    return node.previousSibling;
-                }
                 return node;
             }
-
         }
         //find the last node when a child is added
         function findLastNodeChild(node) {
@@ -531,7 +536,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         }
         var nextSibling, y, parent, parentNode, overhead;
         var rep = isChild ? findLastNodeChild(trigNode.get('node').node().nextSibling) : findLastNodeSib(trigNode.get('node').node());
-
+        console.log(rep);
         var repd = d3.select(rep);
         y = Number(repd.attr('y')) + Number(repd.attr('height'));
 

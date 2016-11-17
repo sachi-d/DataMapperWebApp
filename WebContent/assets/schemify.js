@@ -1,5 +1,5 @@
 var Schemify = {
-    JSONtoSchema: function (obj) {
+    JSONtoJSONSchema: function (obj) {
         var schema = {
             "$schema": "http://json-schema.org/draft-04/schema#",
         };
@@ -61,5 +61,8 @@ var Schemify = {
             });
         })(obj, schema[str]);
         return schema;
+    },
+    XSDtoJSONSchema: function (xsdText) {
+
     }
 }
