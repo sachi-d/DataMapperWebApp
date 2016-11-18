@@ -1,8 +1,13 @@
 var Schemify = {
-    JSONtoJSONSchema: function (obj) {
+
+    initSchema: function () {
         var schema = {
             "$schema": "http://json-schema.org/draft-04/schema#",
         };
+        return schema;
+    },
+    JSONtoJSONSchema: function (obj) {
+        var schema = this.initSchema();
         if (Object.keys(obj).length === 1) {
             var title = Object.keys(obj)[0];
             schema["title"] = title;
@@ -62,7 +67,88 @@ var Schemify = {
         })(obj, schema[str]);
         return schema;
     },
-    XSDtoJSONSchema: function (xsdText) {
 
+    XMLtoJSONSchema: function (xmlText) {
+        var schema = this.initSchema();
+        var self = this;
+
+        function traverseXMLTree(rootNode, parent) {
+            console.log(rootNode);
+            var children = rootNode.children;
+            var attributes = rootNode.attributes;
+            var title = rootNode.tagName;
+            if (parent[title]) { //if already defined
+                var temp = parent[title]["properties"];
+                parent[title] = {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": temp
+                    }
+                };
+                return;
+            } else {
+                parent[title] = {
+                    "type": self.getType(rootNode.textContent)
+                };
+            }
+            if (children.length === 0 && attributes.length === 0) {
+                return;
+            } else {
+                if (children.length !== 0) {
+                    parent[title] = {
+                        "type": "object",
+                        "properties": {}
+                    };
+                    var nestParent = parent[title]["properties"];
+                    //    $("#" + resultBox).append(nodeName);
+                    for (var i = 0; i < children.length; i++) {
+                        var child = children[i];
+                        traverseXMLTree(child, nestParent);
+                    }
+                }
+                if (attributes.length !== 0) {
+                    var obj = {};
+                    for (var j = 0; j < attributes.length; j++) {
+                        var attr = attributes[j];
+                        obj[attr.name] = {
+                            "type": self.getType(attr.textContent)
+                        }
+                    }
+                    parent[title]["attributes"] = obj;
+                }
+            }
+        }
+
+        //parse XML tree
+        function parseXMLTree(inputText, result) {
+            parser = new DOMParser();
+            var xmlDoc = parser.parseFromString(inputText, "text/xml");
+            // documentElement always represents the root node
+            var root = xmlDoc.documentElement;
+            result["title"] = root.tagName;
+            result["type"] = "object";
+            result["properties"] = {};
+            for (var i = 0; i < root.children.length; i++) {
+                traverseXMLTree(root.children[i], result["properties"]);
+            }
+
+            return result;
+        }
+        parseXMLTree(xmlText, schema);
+        console.log(schema);
+        return schema;
+    },
+
+
+
+    getType: function (text) {
+        if (text === "true" || text === "false") {
+            return "boolean";
+        }
+        if (!isNaN(Number(text))) {
+            return "number";
+        }
+        return "string";
     }
 }
