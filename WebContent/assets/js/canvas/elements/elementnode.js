@@ -252,6 +252,8 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
                 return "assets/images/object-icon.png";
             } else if (type === "array") {
                 return "assets/images/array-icon.png";
+            } else if (type === "attribute") {
+                return "assets/images/attribute-icon.png";
             }
             return "assets/images/leaf-icon.png";
         });

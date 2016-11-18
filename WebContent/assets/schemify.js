@@ -78,13 +78,11 @@ var Schemify = {
             var attributes = rootNode.attributes;
             var title = rootNode.tagName;
             if (parent[title]) { //if already defined
-                var temp = parent[title]["properties"];
+                var temp = parent[title];
+                console.log(temp);
                 parent[title] = {
                     "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": temp
-                    }
+                    "items": temp
                 };
                 return;
             } else {
@@ -108,6 +106,7 @@ var Schemify = {
                     }
                 }
                 if (attributes.length !== 0) {
+                    console.log(attributes);
                     var obj = {};
                     for (var j = 0; j < attributes.length; j++) {
                         var attr = attributes[j];

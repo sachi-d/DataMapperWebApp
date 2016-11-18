@@ -308,12 +308,12 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             } else {
                 node = parentNode;
             }
-            var nestedParent = resultPane.append("g").attr("class", "nested-group");
+            tempParent = resultPane.append("g").attr("class", "nested-group");
             var keys = root.properties || {}; //select PROPERTIES
             for (var i = 0; i < Object.keys(keys).length; i++) { //traverse through each PROPERTY of the object
                 var keyName = Object.keys(keys)[i];
                 var key = keys[keyName];
-                level = this.traverseJSONSchema(key, keyName, level, rank, nestedParent, node);
+                level = this.traverseJSONSchema(key, keyName, level, rank, tempParent, node);
             }
 
         } else if (root.type === "array") {
@@ -374,13 +374,38 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 level++;
             }
         }
-        if (rootName !== "" && root.attributes) {
-            var tempParent = resultPane.append("g").attr("class", "nested-group");
+        if (root.attributes) {
+            if (node.get('isLeaf')) {
+                tempParent = tempParent.append("g").attr("class", "nested-group");
+            }
             var keys = root.attributes;
             for (var i = 0; i < Object.keys(keys).length; i++) { //traverse through each PROPERTY of the object
                 var keyName = Object.keys(keys)[i];
                 var key = keys[keyName];
-                level = this.traverseJSONSchema(key, keyName, level, rank, tempParent, node);
+                y = level * height;
+                overhead = rank * margin;
+                node = new DataMapper.Models.Node({
+                    parent: tempParent,
+                    parentNode: node,
+                    parentContainer: this,
+                    text: keyName,
+                    textType: key.type,
+                    x: x,
+                    y: y,
+                    type: this.get('type'),
+                    category: "attribute",
+                    isLeaf: true,
+                    height: height,
+                    width: width,
+                    isSchema: true,
+                    overhead: overhead
+                });
+                new DataMapper.Views.NodeView({
+                    model: node
+                }).render();
+                this.get('nodeCollection').add(node);
+
+                level++;
             }
         }
         return level;
