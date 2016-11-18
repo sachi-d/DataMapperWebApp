@@ -351,7 +351,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         } else { //if (DataMapper.Types.indexOf(root.type) > -1) {    //when the type is a primitive
             if (rootName !== "") {
                 var nodeText = rootName;
-                var node = new DataMapper.Models.Node({
+                node = new DataMapper.Models.Node({
                     parent: resultPane,
                     parentNode: parentNode,
                     parentContainer: this,
@@ -373,6 +373,15 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 this.get('nodeCollection').add(node);
                 rank++;
                 level++;
+            }
+        }
+        if (rootName !== "" && root.attributes) {
+            var tempParent = resultPane.append("g").attr("class", "nested-group");
+            var keys = root.attributes;
+            for (var i = 0; i < Object.keys(keys).length; i++) { //traverse through each PROPERTY of the object
+                var keyName = Object.keys(keys)[i];
+                var key = keys[keyName];
+                level = this.traverseJSONSchema(key, keyName, level, rank, tempParent, node);
             }
         }
         return level;

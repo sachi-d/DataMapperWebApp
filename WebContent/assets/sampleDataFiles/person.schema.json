@@ -1,50 +1,76 @@
 {
-  "title": "person",
-  "type": "object",
-  "properties": {
-    "first name": { "type": "string" },
-    "last name": { "type": "string" },
-    "age":{ "type":"number"},
-    "birthday": { "type": "string", "format": "date-time" },
-    "address": {
-      "type": "object",
-      "properties": {
-        "street address": {
-      "type": "object",
-      "properties": {
-        "house number": { "type": "number" },
-        "lane": { "type": "string" }
-      }    
-    },
-        "city": { "type": "string" },
-        "state": { "type": "string" },
-        "country": { "type" : "string" }
-      }    
-    },
-    "phone number": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "location": {
-            "type": "string"
-          },
-          "code": {
-            "type": "number"
-          }
+    "title": "person",
+    "type": "object",
+    "properties": {
+        "first name": {
+            "type": "string",
+            "attributes": {
+                "nameID": {
+                    "type": "string"
+                }
+            }
         },
-        "required": [
+        "last name": {
+            "type": "string"
+        },
+        "age": {
+            "type": "number"
+        },
+        "birthday": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "address": {
+            "type": "object",
+            "properties": {
+                "street address": {
+                    "type": "object",
+                    "properties": {
+                        "house number": {
+                            "type": "number"
+                        },
+                        "lane": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "city": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                }
+            }
+        },
+        "phone number": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "location": {
+                        "type": "string"
+                    },
+                    "code": {
+                        "type": "number"
+                    }
+                },
+                "required": [
           "location",
           "code"
         ]
-      }
-    },
-    "children": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-	"nickname":{"type":"string"}
-  }
+            }
+        },
+        "children": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "nickname": {
+            "type": "string"
+        }
+    }
 }
