@@ -36,11 +36,11 @@ var Tools = (function (tools) {
                 self.$el.addClass('non-user-selectable');
             });
 
-            $("#tool-palette").accordion({ //to get accordion collapsibility
-                header: ".tool-group-header",
-                collapsible: true,
-                heightStyle: "content"
-            });
+//            $("#tool - palette ").accordion({ //to get accordion collapsibility
+    //                header: ".tool-group-header",
+    //                collapsible: true,
+    //                heightStyle: "content"
+    //            });
 
             return this;
         }

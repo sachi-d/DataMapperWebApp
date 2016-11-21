@@ -68,13 +68,13 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
         var self = this;
         BootstrapDialog.show({
             title: "Add root element",
-            message: 'Title: <input id="title" type="text"><br>Type:<select id="type"><option value="object">Object</option><option value="array">Array</option></select>',
+            message: 'Title: <input id="title" type="text"><br>Type: Object',
             draggable: true,
             buttons: [{
                     label: 'Add root Element',
                     cssClass: "btn-primary",
                     action: function (dialogRef) {
-                        self.model.createSchema(dialogRef.getModalBody().find('#title').val(), dialogRef.getModalBody().find('#type').val());
+                        self.model.createSchema(dialogRef.getModalBody().find('#title').val());
                         dialogRef.close();
                     }
                 },
@@ -93,44 +93,55 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
         var optionList = [
             {
                 name: "XML",
-                id: "xml"
+                id: "xml",
+                extension: ".xml"
             },
             {
                 name: "JSON",
-                id: "json"
+                id: "json",
+                extension: ".json"
             },
             {
                 name: "CSV",
-                id: "csv"
+                id: "csv",
+                extension: ".csv"
             }, {
                 name: "XSD",
-                id: "xsd"
+                id: "xsd",
+                extension: ".xsd"
             }, {
                 name: "JSON Schema",
-                id: "jsonschema"
+                id: "jsonschema",
+                extension: ".json"
             },
             {
                 name: "Connector",
-                id: "connector"
+                id: "connector",
+                extension: "null"
             }
         ];
         var typeOptions = (function (arr) {
             var str = "";
             arr.map(function (type) {
-                var op = "<option value=" + type.id + " >" + type.name + "</option>";
+                var op = "<option value=" + type.id + " data-ext=" + type.extension + " >" + type.name + "</option>";
                 str += op;
             });
             return str;
         })(optionList);
+        var tempFileType = ".xml";
+        var setFileType = function () {
+            console.log(document.getElementById("load-file-type"));
+            return ".json";
+        }
         BootstrapDialog.show({
             title: "Load file",
-            message: ' Type: <select id="type">' + typeOptions + ' </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  File: <input id="load-file" type="file" style="display:inline">',
+            message: ' Type: <select id="load-file-type"  >' + typeOptions + ' </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  File: <input id="load-file" type="file" style="display:inline" accept=' + setFileType() + ' >',
             draggable: true,
             buttons: [{
                     label: 'Load',
                     cssClass: "btn-primary",
                     action: function (dialogRef) {
-                        self.fileChange(dialogRef.getModalBody().find('#type').val(), dialogRef.getModalBody().find('#load-file')[0].files[0]);
+                        self.fileChange(dialogRef.getModalBody().find('#load-file-type').val(), dialogRef.getModalBody().find('#load-file')[0].files[0]);
                         dialogRef.close();
                     }
                                 },
@@ -252,8 +263,10 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             var len = d3.select(this).node().getComputedTextLength();
             maxLength = d3.max([maxLength, x + len]);
         });
+        var diff = maxLength - Number(parent.select(".dmcontainer-outline").attr("width"));
         parent.select(".dmcontainer-outline").attr("width", maxLength);
         parent.select(".dmcontainer-title-outline").attr("width", maxLength);
+        //set the anchors
         if (this.get('type') === "input") {
             parent.selectAll(".drag-head").each(function () {
                 var cx = maxLength,
@@ -268,6 +281,9 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                     .attr("cy", cy);
             });
         }
+        Diagram.Connectors.findFromSourceContainer(parent).map(function (connector) {
+            connector.setPoints(maxLength, connector.get('x2'), connector.get('y1'), connector.get('y2'));
+        });
     },
     traverseJSONSchema: function (root, rootName, level, rank, resultPane, parentNode) {
         var height = this.nodeHeight,
@@ -427,13 +443,12 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         iter(this.get('data'), []);
         return path;
     },
-    createSchema: function (title, type) {
-        var helperObj = type.toLowerCase() === "array" ? "items" : "properties";
+    createSchema: function (title) {
         var newSchema = {
             "title": title,
-            "type": type
+            "type": type,
+            "properties": {}
         };
-        newSchema[helperObj] = {};
 
         this.set('file', null);
         this.parseSchema(newSchema);
