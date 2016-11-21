@@ -188,10 +188,11 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 return newSchema;
             },
             xml: function () {
-                //                var jsonObj = xml2json(fileText);
+                var jsonObj = xml2json(fileText);
                 //                console.log(JSON.stringify(jsonObj, null, 4));
                 var dd = Schemify.XMLtoJSONSchema(fileText);
-                console.log(type);
+                var dd = Schemify.JSONtoJSONSchema(jsonObj);
+                console.log(JSON.stringify(jsonObj, null, 4));
                 return dd;
             },
             xsd: function () {

@@ -73,13 +73,11 @@ var Schemify = {
         var self = this;
 
         function traverseXMLTree(rootNode, parent) {
-            console.log(rootNode);
             var children = rootNode.children;
             var attributes = rootNode.attributes;
             var title = rootNode.tagName;
             if (parent[title]) { //if already defined
                 var temp = parent[title];
-                console.log(temp);
                 parent[title] = {
                     "type": "array",
                     "items": temp
@@ -106,7 +104,6 @@ var Schemify = {
                     }
                 }
                 if (attributes.length !== 0) {
-                    console.log(attributes);
                     var obj = {};
                     for (var j = 0; j < attributes.length; j++) {
                         var attr = attributes[j];
@@ -125,6 +122,7 @@ var Schemify = {
             var xmlDoc = parser.parseFromString(inputText, "text/xml");
             // documentElement always represents the root node
             var root = xmlDoc.documentElement;
+            console.log(root);
             result["title"] = root.tagName;
             result["type"] = "object";
             result["properties"] = {};
