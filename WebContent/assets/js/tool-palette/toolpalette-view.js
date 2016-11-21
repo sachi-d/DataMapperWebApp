@@ -29,7 +29,9 @@ var Tools = (function (tools) {
         render: function () {
             var self = this;
             this.collection.each(function (group) {
-                var groupView = new Tools.Views.ToolGroupView({model: group});
+                var groupView = new Tools.Views.ToolGroupView({
+                    model: group
+                });
                 groupView.render(self.$el);
                 self.$el.addClass('non-user-selectable');
             });

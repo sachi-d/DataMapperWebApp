@@ -122,10 +122,19 @@ var Schemify = {
             var xmlDoc = parser.parseFromString(inputText, "text/xml");
             // documentElement always represents the root node
             var root = xmlDoc.documentElement;
-            console.log(root);
             result["title"] = root.tagName;
             result["type"] = "object";
             result["properties"] = {};
+            if (root.attributes.length > 0) {
+                var obj = {};
+                for (var j = 0; j < root.attributes.length; j++) {
+                    var attr = root.attributes[j];
+                    obj[attr.name] = {
+                        "type": self.getType(attr.textContent)
+                    }
+                }
+                result["attributes"] = obj;
+            }
             for (var i = 0; i < root.children.length; i++) {
                 traverseXMLTree(root.children[i], result["properties"]);
             }
@@ -133,7 +142,6 @@ var Schemify = {
             return result;
         }
         parseXMLTree(xmlText, schema);
-        console.log(schema);
         return schema;
     },
 

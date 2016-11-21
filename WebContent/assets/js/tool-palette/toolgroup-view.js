@@ -49,19 +49,21 @@ var Tools = (function (tools) {
             groupBodyDiv.attr('class', "tool-group-body");
 
             this.model.toolCollection.each(function (tool) {
-                var toolView = new Tools.Views.ToolView({model: tool});
+                var toolView = new Tools.Views.ToolView({
+                    model: tool
+                });
                 toolView.render(groupBodyDiv);
             });
 
             this.el = groupDiv[0].outerHTML;
             this.$el = groupDiv;
 
-            // groupHeaderDiv.click(function () {
-            //     // groupBodyDiv.slideToggle(500, function () {
-            //     groupCollapseIcon.toggleClass("glyphicon-chevron-up")
-            //         .toggleClass("glyphicon-chevron-down");
-            //     // });
-            // });
+            groupHeaderDiv.click(function () {
+                // groupBodyDiv.slideToggle(500, function () {
+                groupCollapseIcon.toggleClass("glyphicon-chevron-up")
+                    .toggleClass("glyphicon-chevron-down");
+                // });
+            });
             return this;
         }
     });

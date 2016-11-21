@@ -164,7 +164,6 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
     getJSONschema: function (fileText) {
         var type = this.get('fileType');
         var filename = this.get('file').name;
-        console.log(filename);
         var schemaOutput = {
             jsonschema: function () {
                 return JSON.parse(fileText);
@@ -196,11 +195,9 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 return dd;
             },
             xsd: function () {
-                // use as function
-                var filename =
-                    xsd2json(filename, function (err, schemaObject) {
-                        console.log(JSON.stringify(schemaObject, null, 2));
-                    });
+                var sch = Schemify.XMLtoJSONSchema(fileText);
+                //                console.log(JSON.stringify(sch, null, 4));
+                return sch;
             }
         };
         return schemaOutput[type]();
@@ -571,7 +568,6 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         }
         var nextSibling, y, parent, parentNode, overhead;
         var rep = isChild ? findLastNodeChild(trigNode.get('node').node().nextSibling) : findLastNodeSib(trigNode.get('node').node());
-        console.log(rep);
         var repd = d3.select(rep);
         y = Number(repd.attr('y')) + Number(repd.attr('height'));
 
