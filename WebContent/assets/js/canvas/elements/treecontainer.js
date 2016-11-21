@@ -347,7 +347,10 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             }
             if (keys.hasOwnProperty("properties")) {
                 level = this.traverseJSONSchema(keys, "", level, rank, tempParent, node); //recurse through the items of array
+            } else {
+                tempParent = tempParent.append("g").attr("class", "nested-group");
             }
+
         } else { //if (DataMapper.Types.indexOf(root.type) > -1) {    //when the type is a primitive
             if (rootName !== "") {
                 var nodeText = rootName;
@@ -373,12 +376,11 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 this.get('nodeCollection').add(node);
                 rank++;
                 level++;
+                tempParent = tempParent.append("g").attr("class", "nested-group");
             }
         }
         if (root.attributes) {
-            if (node.get('isLeaf')) {
-                tempParent = tempParent.append("g").attr("class", "nested-group");
-            }
+
             var keys = root.attributes;
             for (var i = 0; i < Object.keys(keys).length; i++) { //traverse through each PROPERTY of the object
                 var keyName = Object.keys(keys)[i];
@@ -445,9 +447,9 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
 
 
 
-    addNode: function (trigNode, newTitle, newType, isChild) {
+    addNode: function (trigNode, newTitle, newType, isChild, isAttribute) {
         newType = newType.toLowerCase();
-        var category = "leaf",
+        var category = isAttribute ? "attribute" : "leaf",
             isLeaf = true,
             textType = newType;
         if (newType === "object" || newType === "array") {
@@ -482,7 +484,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         function addSibling(data, currentVal, newAt, newVal) {
             var sch = data;
             if (isChild) {
-                data[newAt] = newVal;
+                sch[newAt] = newVal;
             } else {
                 var newObj = {};
                 Object.keys(data).some(function (k) { //to maintain the order of the child nodes
@@ -506,12 +508,25 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                     } else {
                         p = o[k];
                     }
-                    var newData = addSibling(p["properties"] || p["items"]["properties"], trigKey, newTitle, valueTemplate);
+                    var tempData = {};
+                    if (isAttribute) {
+                        if (!p["attributes"]) {
+                            p["attributes"] = {};
+                        }
+                        tempData = p["attributes"];
+                    } else {
+                        tempData = p["properties"] || p["items"]["properties"];
+                    }
+                    var newData = addSibling(tempData, trigKey, newTitle, valueTemplate);
 
-                    if (p.properties) {
-                        p.properties = newData;
-                    } else if (p.items.properties) {
-                        p.items.properties = newData;
+                    if (isAttribute) {
+                        p.attributes = newData;
+                    } else {
+                        if (p.properties) {
+                            p.properties = newData;
+                        } else if (p.items.properties) {
+                            p.items.properties = newData;
+                        }
                     }
                     return true;
                 }

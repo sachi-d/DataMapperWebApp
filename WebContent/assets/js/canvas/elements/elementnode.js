@@ -62,6 +62,9 @@ DataMapper.Views.NodeView = Backbone.View.extend({
                 case "clear-node":
                     self.clearNode();
                     break;
+                case "add-attribute":
+                    self.addAttribute();
+                    break;
                 }
             }
 
@@ -70,7 +73,7 @@ DataMapper.Views.NodeView = Backbone.View.extend({
         });
 
     },
-    addNode: function () {
+    addNode: function (type) {
 
         var self = this;
 
@@ -78,14 +81,38 @@ DataMapper.Views.NodeView = Backbone.View.extend({
             childOnly = this.model.get('parentNode') === null ? ' checked readonly ' : '';
         BootstrapDialog.show({
             title: "Add new node",
-            message: 'Title: <input id="title" type="text"><br>Type:<select id="type">' + this.getTypeOptionList("Object") + '</select><div ' + isLeaf + ' ><br>Add as child: <input type="checkbox" id="isChild" ' + childOnly + '></div> ',
+            message: 'Title: <input id="title" type="text"><br>Type:<select id="type">' + this.getTypeOptionList("Object", "null") + '</select><div ' + isLeaf + ' ><br>Add as child: <input type="checkbox" id="isChild" ' + childOnly + '></div> ',
             draggable: true,
             buttons: [{
                     label: 'Add',
                     cssClass: "btn-primary",
                     action: function (dialogRef) {
                         var modalBody = dialogRef.getModalBody();
-                        self.model.get('parentContainer').addNode(self.model, modalBody.find('#title').val(), modalBody.find('#type').val(), modalBody.find('#isChild').is(":checked"));
+                        self.model.get('parentContainer').addNode(self.model, modalBody.find('#title').val(), modalBody.find('#type').val(), modalBody.find('#isChild').is(":checked"), false);
+                        dialogRef.close();
+                    }
+            },
+                {
+                    label: 'Cancel',
+                    action: function (dialogRef) {
+                        dialogRef.close();
+                    }
+                }
+            ]
+        });
+    },
+    addAttribute: function () {
+        var self = this;
+        BootstrapDialog.show({
+            title: "Add attribute",
+            message: 'Title: <input id="title" type="text"><br>Type:<select id="type">' + this.getTypeOptionList("Object", "leaf") + '</select> ',
+            draggable: true,
+            buttons: [{
+                    label: 'Add attribute',
+                    cssClass: "btn-primary",
+                    action: function (dialogRef) {
+                        var modalBody = dialogRef.getModalBody();
+                        self.model.get('parentContainer').addNode(self.model, modalBody.find('#title').val(), modalBody.find('#type').val(), true, true);
                         dialogRef.close();
                     }
             },
@@ -101,9 +128,10 @@ DataMapper.Views.NodeView = Backbone.View.extend({
     editNode: function () {
         var self = this,
             disabled = this.model.get('parentNode') === null ? ' disabled ' : '';
+        var isParent = this.model.get('textType') === "object" || this.model.get('textType') === "array" ? "parent" : "leaf";
         BootstrapDialog.show({
             title: "Edit node",
-            message: 'Title: <input id="title" type="text" value="' + self.model.get('text') + '"><br>Type:<select id="type" ' + disabled + '>' + self.getTypeOptionList(this.model.get('textType')) + '</select>',
+            message: 'Title: <input id="title" type="text" value="' + self.model.get('text') + '"><br>Type:<select id="type" ' + disabled + '>' + self.getTypeOptionList(this.model.get('textType'), isParent) + '</select>',
             draggable: true,
             onhidde: function (dialogRef) {
                 var fruit = dialogRef.getModalBody().find('#title').val();
@@ -133,10 +161,19 @@ DataMapper.Views.NodeView = Backbone.View.extend({
     clearNode: function () {
         this.model.get('parentContainer').deleteNode(this.model);
     },
-    getTypeOptionList: function (selectedType) {
+    getTypeOptionList: function (selectedType, constraint) { //constraint= "null" or "leaf" or "parent"
         var list = "";
         DataMapper.Types.map(function (type) {
             var value = type.toLowerCase();
+            if (constraint === "leaf") {
+                if (value === "object" || value === "array") {
+                    return;
+                }
+            } else if (constraint === "parent") {
+                if (value !== "object" && value !== "array") {
+                    return;
+                }
+            }
             var isSelected = (selectedType.toLowerCase().split("[")[0]) === value ? "selected" : "";
             list += '<option value="' + value + '" ' + isSelected + '>' + type + '</option>';
         });
@@ -177,12 +214,19 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
             .attr("id", this.id);
         this.set('node', parent1);
 
-        var text = parent1.append("text").attr("class", "node-element-text")
+        var text = parent1.append("text")
             .attr("x", Number(this.get('x')) + 12)
             .attr("y", Number(this.get('y')) + (3 * height / 4))
             .text(function () {
                 var subType = model.get('category') === "array" ? "array[" + model.get('textType') + "]" : model.get('textType');
                 return model.get('text') + ":" + subType;
+            })
+            .attr("class", function () {
+                if (model.get('category') === "attribute") {
+                    return "attribute-text";
+                } else {
+                    return "node-element-text";
+                }
             });
 
         if (this.get('category') === "operator") {
