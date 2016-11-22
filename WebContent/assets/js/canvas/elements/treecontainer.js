@@ -117,7 +117,7 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
             {
                 name: "Connector",
                 id: "connector",
-                extension: "null"
+                extension: "*"
             }
         ];
         var typeOptions = (function (arr) {
@@ -128,14 +128,16 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
             });
             return str;
         })(optionList);
-        var tempFileType = ".xml";
-        var setFileType = function () {
-            console.log(document.getElementById("load-file-type"));
-            return ".json";
-        }
+
+        //event listener to capture type change and set file extension
+        $(document).on("change", '#load-file-type', function (event) {
+            getType = $(this).find('option:selected').attr('data-ext');
+            $('#load-file').attr('accept', getType)
+        });
+
         BootstrapDialog.show({
             title: "Load file",
-            message: ' Type: <select id="load-file-type"  >' + typeOptions + ' </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  File: <input id="load-file" type="file" style="display:inline" accept=' + setFileType() + ' >',
+            message: ' Type: <select id="load-file-type"  >' + typeOptions + ' </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  File: <input id="load-file" type="file" style="display:inline" accept=".xml" >',
             draggable: true,
             buttons: [{
                     label: 'Load',
