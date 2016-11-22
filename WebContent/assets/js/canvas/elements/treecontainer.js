@@ -131,8 +131,10 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
 
         //event listener to capture type change and set file extension
         $(document).on("change", '#load-file-type', function (event) {
-            getType = $(this).find('option:selected').attr('data-ext');
-            $('#load-file').attr('accept', getType)
+            var getType = $(this).find('option:selected').attr('data-ext');
+            //            console.log(getType);
+            $('#load-file').attr('accept', getType);
+            //            console.log($('#load-file').attr('accept'));
         });
 
         BootstrapDialog.show({
@@ -143,8 +145,21 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
                     label: 'Load',
                     cssClass: "btn-primary",
                     action: function (dialogRef) {
-                        self.fileChange(dialogRef.getModalBody().find('#load-file-type').val(), dialogRef.getModalBody().find('#load-file')[0].files[0]);
-                        dialogRef.close();
+                        var fileType = dialogRef.getModalBody().find('#load-file-type').val();
+                        var fileSelect = dialogRef.getModalBody().find('#load-file')[0].files[0];
+                        if (fileSelect) {
+                            var tempType1 = "." + fileSelect.name.split(".").pop();
+                            var tempType2 = dialogRef.getModalBody().find('#load-file-type')[0].selectedOptions[0].dataset.ext;
+                            if (tempType1 !== tempType2) {
+                                alert("Mismatching file types");
+                            } else {
+                                self.fileChange(fileType, fileSelect);
+                                dialogRef.close();
+                            }
+                        } else {
+                            alert("Empty file");
+                        }
+                        //                        dialogRef.close();
                     }
                                 },
                 {
@@ -202,7 +217,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             xml: function () {
                 var jsonObj = xml2json(fileText);
                 //                console.log(JSON.stringify(jsonObj, null, 4));
-                var dd = Schemify.XMLtoJSONSchema(fileText);
+                //                var dd = Schemify.XMLtoJSONSchema(fileText);
                 var dd = Schemify.JSONtoJSONSchema(jsonObj);
                 console.log(JSON.stringify(jsonObj, null, 4));
                 return dd;
