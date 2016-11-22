@@ -108,7 +108,7 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
         BootstrapDialog.show({
             //            type: BootstrapDialog.TYPE_WARNING,
             title: label + "?",
-            message: '<span class="glyphicon glyphicon-warning-sign"></span> Are you sure you want to ' + message + '?',
+            message: 'Are you sure you want to ' + message + '?',
             draggable: true,
             buttons: [{
                     label: label,
