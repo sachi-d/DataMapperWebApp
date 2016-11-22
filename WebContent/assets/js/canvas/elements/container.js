@@ -88,19 +88,43 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
                     self.loadFile();
                     break;
                 case "clear-container":
-                    self.clearContainer();
+                    self.confirmDeletion(self.clearContainer, "clear the container", "Clear container");
                     break;
                 case "add-root":
                     self.addRootElement();
                     break;
                 case "delete-container":
-                    self.deleteContainer();
+                    self.confirmDeletion(self.deleteContainer, "delete the container", "Delete container");
                     break;
                 }
             }
 
             // Hide it AFTER the action was triggered
             $(menu).hide(100);
+        });
+
+    },
+    confirmDeletion: function (refreshCallback, message, label) {
+        BootstrapDialog.show({
+            //            type: BootstrapDialog.TYPE_WARNING,
+            title: label + "?",
+            message: '<span class="glyphicon glyphicon-warning-sign"></span> Are you sure you want to ' + message + '?',
+            draggable: true,
+            buttons: [{
+                    label: label,
+                    cssClass: "btn-danger",
+                    action: function (dialogRef) {
+                        refreshCallback();
+                        dialogRef.close();
+                    }
+                                },
+                {
+                    label: 'Cancel',
+                    action: function (dialogRef) {
+                        dialogRef.close();
+                    }
+                                }
+                                ]
         });
 
     },
