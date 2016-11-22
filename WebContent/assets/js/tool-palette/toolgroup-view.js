@@ -58,13 +58,26 @@ var Tools = (function (tools) {
             this.el = groupDiv[0].outerHTML;
             this.$el = groupDiv;
 
-            groupHeaderDiv.click(function () {
-                groupBodyDiv.slideToggle(500, function () {
-                    groupCollapseIcon.toggleClass("glyphicon-chevron-up")
-                        .toggleClass("glyphicon-chevron-down");
-                });
+            //            groupHeaderDiv.click(function () { 
+            //            groupBodyDiv.slideToggle(500, function () {
+            //                groupCollapseIcon.toggleClass("glyphicon-chevron-up")
+            //                    .toggleClass("glyphicon-chevron-down");
+            //            });
+            //            });
+            //            groupBodyDiv.toggle();
+
+            parent.click(function () {
+//                 groupCollapseIcon.toggleClass("glyphicon-chevron-up")
+//                                .toggleClass("glyphicon-chevron-down");
+                if (groupHeaderDiv.hasClass("ui-accordion-header-active")) {
+                        groupCollapseIcon.addClass("glyphicon-chevron-up");
+                        groupCollapseIcon.removeClass("glyphicon-chevron-down");
+                    } else {
+                        groupCollapseIcon.addClass("glyphicon-chevron-down");
+                        groupCollapseIcon.removeClass("glyphicon-chevron-up");
+                    }
             });
-            groupBodyDiv.toggle();
+
             return this;
         }
     });
