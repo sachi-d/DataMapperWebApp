@@ -214,6 +214,12 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
             .attr("id", this.id);
         this.set('node', parent1);
 
+        var back = parent1.append("rect")
+            .attr("x", this.get('x'))
+            .attr("y", this.get('y'))
+            .attr("width", this.get('width'))
+            .attr("height", this.get('height'))
+            .attr("fill", "white");
         var text = parent1.append("text")
             .attr("x", Number(this.get('x')) + 12)
             .attr("y", Number(this.get('y')) + (3 * height / 4))
@@ -230,7 +236,7 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
             });
 
         if (this.get('category') === "operator") {
-            this.drawOutline();
+            back.attr("stroke", "black");
             text.attr("fill", "#989898");
         }
         parent1.attr("type", this.get('type'));
@@ -249,15 +255,7 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
         model.updateLeaf();
         return parent1;
     },
-    drawOutline: function () {
-        this.get('node').append("rect")
-            .attr("x", this.get('x'))
-            .attr("y", this.get('y'))
-            .attr("width", this.get('width'))
-            .attr("height", this.get('height'))
-            .attr("stroke", "black")
-            .attr("fill", "none");
-    },
+
     calculateDotPosition: function () {
         if (this.get('isLeaf')) {
             if (this.get('type') === "input") {

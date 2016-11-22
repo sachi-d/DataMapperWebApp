@@ -463,7 +463,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
     createSchema: function (title) {
         var newSchema = {
             "title": title,
-            "type": type,
+            "type": "object",
             "properties": {}
         };
 
