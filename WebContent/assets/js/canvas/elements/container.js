@@ -88,13 +88,19 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
                     self.loadFile();
                     break;
                 case "clear-container":
-                    self.confirmDeletion(self.clearContainer, "clear the container", "Clear container");
+                    var confirm = self.confirmDeletion(self.clearContainer, "clear the container", "Clear container");
+                    if (confirm) {
+                        self.clearContainer();
+                    }
                     break;
                 case "add-root":
                     self.addRootElement();
                     break;
                 case "delete-container":
-                    self.confirmDeletion(self.deleteContainer, "delete the container", "Delete container");
+                    //                    var confirm = self.confirmDeletion("delete the container", "Delete container");
+                    //                    if (confirm) {
+                    self.deleteContainer();
+
                     break;
                 }
             }
@@ -104,7 +110,9 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
         });
 
     },
-    confirmDeletion: function (refreshCallback, message, label) {
+    confirmDeletion: function (callbackFunc, message, label) {
+        var confirmation = false;
+        console.log(callbackFunc);
         BootstrapDialog.show({
             //            type: BootstrapDialog.TYPE_WARNING,
             title: label + "?",
@@ -114,7 +122,7 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
                     label: label,
                     cssClass: "btn-danger",
                     action: function (dialogRef) {
-                        refreshCallback();
+                        confirmation = true;
                         dialogRef.close();
                     }
                                 },
@@ -126,9 +134,12 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
                                 }
                                 ]
         });
-
+        return confirmation;
     },
     deleteContainer: function () {
+        if (!confirm("Are you sure you want to delete?")) {
+            return false;
+        }
         Diagram.Connectors.findFromTargetContainer(this.model.get('parent')).map(function (connector) {
             connector.removeConnector();
         });

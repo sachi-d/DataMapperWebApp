@@ -1,25 +1,15 @@
-#page-body {
-    width: 100%;
-    margin: 0 auto;
-    /*padding: 0;*/
-}
-
-#canvas-container {
-    /*    border: 2px solid black;
-        margin: 50px auto;
-        padding: 10px;
-        width: 80%;
-        overflow: auto;*/
+body {
+    background: #232323;
 }
 
 .canvas {
     border: 1px solid black;
-    margin: 0 auto;
+    margin: 0;
+    background: #fff;
 }
 
 .leaf {
     display: block;
-    /*     /////////////////////////////width and height are used in drawing svg circles*/
     width: 150px;
     height: 30px;
     position: relative;
@@ -29,11 +19,12 @@
     display: inline;
 }
 
-.node-element :active {
+.node-element:active {
     opacity: 0.5;
 }
 
-.node-element:hover, g.node-element:hover {
+.node-element:hover,
+g.node-element:hover {
     opacity: 0.5;
 }
 

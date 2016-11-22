@@ -19,23 +19,49 @@
     <script src="assets/lib/bootstrap_v3.3.6/js/bootstrap-dialog.min.js"></script>
     <script src="assets/fileHandler.js"></script>
     <style>
-        /*
-        .drag-line-overlay:hover { opacity: 0.2; } .drag-line-overlay { opacity: 0; }
-*/
-        
         #page-content {
             width: 100vw;
         }
         
-        #tool-palette {
-            background: #232323;
+        header .container-fluid {
+            padding: 10px;
+        }
+        
+        header .brand h1 {
+            display: inline-block;
+            line-height: 1;
+            font-weight: 300;
+            font-size: 17px;
+            margin: 0 0 0 5px;
+            color: #ffffff;
+            padding: 6px 0 0 0;
+            font-style: normal;
+            text-transform: uppercase;
+        }
+        
+        header .brand img.logo {
+            height: 24px;
+        }
+        
+        img {
+            vertical-align: middle;
         }
     </style>
 </head>
 
 <body>
-    <button onclick="showMappings()">showMappings</button>
 
+    <header class="header header-default">
+        <div class="container-fluid">
+            <div class="pull-left brand float-remove-xs text-center-xs">
+                <a href="#">
+                    <img src="assets/images/logo-inverse.svg" alt="WSO2" title="WSO2" class="logo">
+                    <h1>JavaScript based Data Mapper</h1>
+                </a>
+            </div>
+        </div>
+
+    </header>
     <div id="page-content" class="container">
         <div class="row">
             <div id="tool-palette" class="col-md-2"></div>
@@ -72,7 +98,7 @@
         </div>
     </div>
 
-
+    <button onclick="showMappings()">showMappings</button>
 
     <script>
         var DataMapper = {
