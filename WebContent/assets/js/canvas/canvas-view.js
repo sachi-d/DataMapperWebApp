@@ -73,7 +73,7 @@ DataMapper.Views.CanvasView = Backbone.View.extend({
             y: yy //this.model.updateContainerHeight()
         });
         var view = new DataMapper.Views.TreeContainerView({
-            id: "container-" + Diagram.TreeContainers.length,
+            id: type + "-container-" + model.cid,
             model: model
         });
         view.render();

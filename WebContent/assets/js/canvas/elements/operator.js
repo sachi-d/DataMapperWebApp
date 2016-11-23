@@ -28,7 +28,7 @@ DataMapper.Models.Operator = DataMapper.Models.Container.extend({
     },
     nodeCollection: null,
     initialize: function () {
-        this.set('id', this.get('title') + "-" + Diagram.Operators.length);
+        this.set('id', this.get('title') + "-" + this.cid);
         this.set('nodeCollection', new DataMapper.Collections.NodeList());
         this.set('inputCount', this.get('inputLabels').length);
         this.set('outputCount', this.get('outputLabels').length);

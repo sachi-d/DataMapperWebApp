@@ -9,7 +9,8 @@ var toolGroupDefs = [{
         title: "Input",
         icon: "assets/images/tool-icons/sample-tool-icon.svg",
         defaults: {
-            isContainer: true
+            isContainer: true,
+            type: "input"
         }
         }]
     }, {

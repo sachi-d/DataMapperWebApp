@@ -35,7 +35,7 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
     bindMenu: function (menu) {
         var self = this;
         var id = this.el;
-        var classClicked = id + "-clicked";
+        var classClicked = id + "-clicked"; //BUG if repeated id is used(new id is the same as an old id which was deleted) - event is captured multiple times
         $(id + " .dmcontainer-structure").on("contextmenu", function (event) {
             // console.log(menu);
             // Avoid the real one
@@ -106,7 +106,6 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
     },
     confirmDeletion: function (callbackFunc, message, label, context) {
         var self = this;
-        console.log(this);
         BootstrapDialog.show({
             //            type: BootstrapDialog.TYPE_WARNING,
             title: label + "?",
@@ -116,11 +115,9 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
                     label: label,
                     cssClass: "btn-danger",
                     action: function (dialogRef) {
-                        if (context) {
-                            callbackFunc.call(context);
-                        } else {
-                            callbackFunc();
-                        }
+                        context = context || this;
+                        callbackFunc.call(context);
+
                         dialogRef.close();
                     }
                                 },
@@ -134,7 +131,6 @@ DataMapper.Views.ContainerView = Backbone.View.extend({
         });
     },
     deleteContainer: function () {
-        console.log(this);
         Diagram.Connectors.findFromTargetContainer(this.model.get('parent')).map(function (connector) {
             connector.removeConnector();
         });

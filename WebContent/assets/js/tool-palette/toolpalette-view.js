@@ -36,11 +36,13 @@ var Tools = (function (tools) {
                 self.$el.addClass('non-user-selectable');
             });
 
-            $("#tool-palette").accordion({ //to get accordion collapsibility
+            //get jquery-ui-accordion collapsibility
+            $("#tool-palette").accordion({
                 header: ".tool-group-header",
                 collapsible: true,
                 heightStyle: "content"
             });
+            //set the correct icons - trigger
             $("#tool-palette").click();
             return this;
         }

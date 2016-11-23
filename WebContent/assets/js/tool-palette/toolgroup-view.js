@@ -66,16 +66,15 @@ var Tools = (function (tools) {
             //            });
             //            groupBodyDiv.toggle();
 
+            //set the icons in jquery-ui-accordion collapsibility
             parent.click(function () {
-//                 groupCollapseIcon.toggleClass("glyphicon-chevron-up")
-//                                .toggleClass("glyphicon-chevron-down");
                 if (groupHeaderDiv.hasClass("ui-accordion-header-active")) {
-                        groupCollapseIcon.addClass("glyphicon-chevron-up");
-                        groupCollapseIcon.removeClass("glyphicon-chevron-down");
-                    } else {
-                        groupCollapseIcon.addClass("glyphicon-chevron-down");
-                        groupCollapseIcon.removeClass("glyphicon-chevron-up");
-                    }
+                    groupCollapseIcon.addClass("glyphicon-chevron-up");
+                    groupCollapseIcon.removeClass("glyphicon-chevron-down");
+                } else {
+                    groupCollapseIcon.addClass("glyphicon-chevron-down");
+                    groupCollapseIcon.removeClass("glyphicon-chevron-up");
+                }
             });
 
             return this;
