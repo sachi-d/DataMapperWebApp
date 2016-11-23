@@ -142,46 +142,44 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
             message: ' Type: <select id="load-file-type"  >' + typeOptions + ' </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  File: <input id="load-file" type="file" style="display:inline" accept=".xml" >',
             draggable: true,
             buttons: [{
-                    label: 'Load',
-                    cssClass: "btn-primary",
-                    action: function (dialogRef) {
-                        var fileType = dialogRef.getModalBody().find('#load-file-type').val();
-                        var fileSelect = dialogRef.getModalBody().find('#load-file')[0].files[0];
-                        if (fileSelect) {
-                            var tempType1 = "." + fileSelect.name.split(".").pop();
-                            var tempType2 = dialogRef.getModalBody().find('#load-file-type')[0].selectedOptions[0].dataset.ext;
-                            if (tempType1 !== tempType2) {
-                                alert("Mismatching file types");
-                            } else {
-                                self.fileChange(fileType, fileSelect);
-                                dialogRef.close();
-                            }
+                label: 'Load',
+                cssClass: "btn-primary",
+                action: function (dialogRef) {
+                    var fileType = dialogRef.getModalBody().find('#load-file-type').val();
+                    var fileSelect = dialogRef.getModalBody().find('#load-file')[0].files[0];
+                    if (fileSelect) {
+                        var tempType1 = "." + fileSelect.name.split(".").pop();
+                        var tempType2 = dialogRef.getModalBody().find('#load-file-type')[0].selectedOptions[0].dataset.ext;
+                        if (tempType1 !== tempType2) {
+                            alert("Mismatching file types");
                         } else {
-                            alert("Empty file");
+                            self.fileChange(fileType, fileSelect);
+                            dialogRef.close();
                         }
-                        //                        dialogRef.close();
+                    } else {
+                        alert("Empty file");
                     }
-                                },
-                {
-                    label: 'Cancel',
-                    action: function (dialogRef) {
-                        dialogRef.close();
-                    }
-                                }
-                                ]
+                }
+                    }, {
+                label: 'Cancel',
+                action: function (dialogRef) {
+                    dialogRef.close();
+                }
+                                }]
         });
     }
 });
 
 DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
     defaults: {
-        elementCount: 0
+        elementCount: 0,
+        x: 0,
+        y: 40,
+        containerWidth: 300,
+        nodeHeight: 20,
+        rankMargin: 50,
     },
-    x: 0,
-    y: 40,
-    containerWidth: 300,
-    nodeHeight: 20,
-    rankMargin: 50,
+
     file: '',
     fileType: 'schema',
     data: null,
@@ -249,9 +247,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
     },
     parseSchema: function (data) {
         this.set('data', data);
-
-        var title = (data.properties || data.items) ? data.title || "Root" : null;
-        var count = (title === null) ? 0 : this.traverseJSONSchema(data, title, 0, 0, this.get('parent').append("g").attr("class", "nested-group"), null);
+        var count = this.drawTree();
         this.set('elementCount', count);
         this.updateContainerHeight();
         this.updateContainerWidth();
@@ -262,7 +258,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         var h = 0;
         outline.attr("height", function () {
             var count = model.get('elementCount'),
-                height = model.nodeHeight;
+                height = model.get('nodeHeight');
             if (count < 5) {
                 count = 5;
             }
@@ -302,163 +298,27 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             connector.setPoints(maxLength, connector.get('x2'), connector.get('y1'), connector.get('y2'));
         });
     },
-    traverseJSONSchema: function (root, rootName, level, rank, resultPane, parentNode) {
-        var height = this.nodeHeight,
-            width = this.containerWidth,
-            margin = this.rankMargin,
-            x = 0,
-            overhead = rank * margin,
-            y = level * height,
-            node = null;
-        var tempParent = resultPane;
-        if (root.type === "object") {
-            if (rootName !== "") {
-                var nodeText = rootName;
-                node = new DataMapper.Models.Node({
-                    parent: resultPane,
-                    parentNode: parentNode,
-                    parentContainer: this,
-                    text: nodeText,
-                    textType: root.type,
-                    x: x,
-                    y: y,
-                    type: this.get('type'),
-                    category: "object",
-                    isLeaf: false,
-                    height: height,
-                    width: width,
-                    isSchema: true,
-                    overhead: overhead
-                });
-                new DataMapper.Views.NodeView({
-                    model: node
-                }).render();
-                this.get('nodeCollection').add(node);
-                rank++;
-                level++;
-            } else {
-                node = parentNode;
-            }
-            tempParent = resultPane.append("g").attr("class", "nested-group");
-            var keys = root.properties || {}; //select PROPERTIES
-            for (var i = 0; i < Object.keys(keys).length; i++) { //traverse through each PROPERTY of the object
-                var keyName = Object.keys(keys)[i];
-                var key = keys[keyName];
-                level = this.traverseJSONSchema(key, keyName, level, rank, tempParent, node);
-            }
-
-        } else if (root.type === "array") {
-            var keys = root.items || {}; //select ITEMS
-            if (rootName !== "") {
-                var nodeText = rootName;
-                node = new DataMapper.Models.Node({
-                    parent: tempParent,
-                    parentNode: parentNode,
-                    parentContainer: this,
-                    text: nodeText,
-                    textType: keys.type,
-                    x: x,
-                    y: y,
-                    type: this.get('type'),
-                    category: "array",
-                    isLeaf: !keys.hasOwnProperty("properties"),
-                    height: height,
-                    width: width,
-                    isSchema: true,
-                    overhead: overhead
-                });
-                new DataMapper.Views.NodeView({
-                    model: node
-                }).render();
-
-                this.get('nodeCollection').add(node);
-                rank++;
-                level++;
-            }
-            if (keys.hasOwnProperty("properties")) {
-                level = this.traverseJSONSchema(keys, "", level, rank, tempParent, node); //recurse through the items of array
-            } else {
-                tempParent = tempParent.append("g").attr("class", "nested-group");
-            }
-
-        } else { //if (DataMapper.Types.indexOf(root.type) > -1) {    //when the type is a primitive
-            if (rootName !== "") {
-                var nodeText = rootName;
-                node = new DataMapper.Models.Node({
-                    parent: resultPane,
-                    parentNode: parentNode,
-                    parentContainer: this,
-                    text: nodeText,
-                    textType: root.type,
-                    x: x,
-                    y: y,
-                    type: this.get('type'),
-                    category: "leaf",
-                    isLeaf: true,
-                    height: height,
-                    width: width,
-                    isSchema: true,
-                    overhead: overhead
-                });
-                new DataMapper.Views.NodeView({
-                    model: node
-                }).render();
-                this.get('nodeCollection').add(node);
-                rank++;
-                level++;
-                tempParent = tempParent.append("g").attr("class", "nested-group");
-            }
+    drawTree: function () {
+        var data = this.get('data');
+        var title = (data.properties || data.items) ? data.title || "Root" : null;
+        if (title === null) {
+            return 0;
         }
-        if (root.attributes) {
-
-            var keys = root.attributes;
-            for (var i = 0; i < Object.keys(keys).length; i++) { //traverse through each PROPERTY of the object
-                var keyName = Object.keys(keys)[i];
-                var key = keys[keyName];
-                y = level * height;
-                overhead = rank * margin;
-                node = new DataMapper.Models.Node({
-                    parent: tempParent,
-                    parentNode: node,
-                    parentContainer: this,
-                    text: keyName,
-                    textType: key.type,
-                    x: x,
-                    y: y,
-                    type: this.get('type'),
-                    category: "attribute",
-                    isLeaf: true,
-                    height: height,
-                    width: width,
-                    isSchema: true,
-                    overhead: overhead
-                });
-                new DataMapper.Views.NodeView({
-                    model: node
-                }).render();
-                this.get('nodeCollection').add(node);
-
-                level++;
-            }
-        }
+        var resultPane = this.get('parent').append("g").attr("class", "nested-group");
+        var tree = new DataMapper.Models.TreeStructure({
+            parentContainer: this,
+            data: data,
+            rootTitle: title,
+            level: 0,
+            rank: 0,
+            resultPane: resultPane,
+            parentNode: null,
+        });
+        var level = tree.drawTree(data);
+        this.set('tree', tree);
+        this.set('elementCount', level);
+        console.log(tree.get('children'));
         return level;
-    },
-    getPath: function (search) {
-        function iter(o, p) {
-            return Object.keys(o).some(function (k) {
-                if (k === search && o[k]) {
-                    path = p.concat(k).join('.');
-                    return true;
-                }
-                if (o[k] !== null && typeof o[k] === 'object') {
-                    return iter(o[k],
-                        k === 'properties' && !o.title ? p : p.concat(k === 'properties' && o.title ? o.title : k));
-                }
-            });
-        }
-        var path;
-        iter(this.get('data'), []);
-        return path;
     },
     createSchema: function (title) {
         var newSchema = {
@@ -470,11 +330,6 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         this.set('file', null);
         this.parseSchema(newSchema);
     },
-
-
-
-
-
 
     addNode: function (trigNode, newTitle, newType, isChild, isAttribute) {
         newType = newType.toLowerCase();

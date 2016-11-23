@@ -1,0 +1,46 @@
+{
+    "title": "mytitle",
+    "type": "object",
+    "properties": {
+        "propArr": {
+            "type": "array",
+            "items": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "sss": {
+                            "type": "number"
+                        }
+                    }
+                }
+            }
+        },
+        "propArray2": {
+            "type": "array",
+            "items": {
+                "type": "number"
+            }
+        },
+        "propArray3": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "proA": {
+                        "type": "number"
+                    },
+                    "proB": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "prop1": {
+            "type": "string"
+        },
+        "prop2": {
+            "type": "number"
+        }
+    }
+}

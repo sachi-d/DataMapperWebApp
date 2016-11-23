@@ -19,6 +19,10 @@
     <script src="assets/lib/bootstrap_v3.3.6/js/bootstrap-dialog.min.js"></script>
     <script src="assets/fileHandler.js"></script>
     <style>
+        body {
+            background: #232323;
+        }
+        
         #page-content {
             width: 100vw;
         }
@@ -155,7 +159,7 @@
                 model.get('nodeCollection').models.map(function (node) {
                     variableList.push({
                         id: count,
-                        text: model.getPath(node.get('text')),
+                        text: model.get('tree').getPath(node.get('text')),
                         type: node.get('textType'),
                         refID: node.get('id')
                     });
