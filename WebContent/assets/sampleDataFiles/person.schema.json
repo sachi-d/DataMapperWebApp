@@ -72,5 +72,10 @@
         "nickname": {
             "type": "string"
         }
+    },
+    "attributes": {
+        "personID": {
+            "type": "number"
+        }
     }
 }

@@ -25,6 +25,12 @@ DataMapper.Views.NodeView = Backbone.View.extend({
             // Avoid the real one
             event.preventDefault();
 
+            //hide add options for attributes
+            if ($(this).hasClass("attribute-text")) {
+                $('[data-action="add-node"]').hide();
+                $('[data-action="add-attribute"]').hide();
+            }
+
             // Show contextmenu
             $(menu).finish().toggle(100)
                 .css({ // In the right position (the mouse)
@@ -194,7 +200,11 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
         type: "", //input or output or null
         category: "leaf", //object, array or endType or operator,
         dotPosition: [],
-        node: d3.select("#canvas")
+        node: d3.select("#canvas"),
+        objectIcon: "assets/images/object-icon.png",
+        arrayIcon: "assets/images/array-icon.png",
+        leafIcon: "assets/images/leaf-icon.png",
+        attributeIcon: "assets/images/attribute-icon.png"
     },
     initialize: function () {
         this.set("id", "node-" + this.cid);
@@ -227,13 +237,10 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
                 var subType = model.get('category') === "array" ? "array[" + model.get('textType') + "]" : model.get('textType');
                 return model.get('text') + ":" + subType;
             })
-            .attr("class", function () {
-                if (model.get('category') === "attribute") {
-                    return "attribute-text";
-                } else {
-                    return "node-element-text";
-                }
-            });
+            .attr("class", "node-element-text");
+        if (model.get('category') === "attribute") {
+            text.classed("attribute-text", true);
+        }
 
         if (this.get('category') === "operator") {
             back.attr("stroke", "black");
@@ -289,15 +296,16 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
     },
     updateIcon: function () {
         var type = this.get('category').toLowerCase();
+        var self = this;
         this.get('node').select("image").attr("xlink:href", function () {
             if (type === "object") {
-                return "assets/images/object-icon.png";
+                return self.get('objectIcon');
             } else if (type === "array") {
-                return "assets/images/array-icon.png";
+                return self.get('arrayIcon');
             } else if (type === "attribute") {
-                return "assets/images/attribute-icon.png";
+                return self.get('attributeIcon');
             }
-            return "assets/images/leaf-icon.png";
+            return self.get('leafIcon');
         });
     },
     updatePosition: function (newX, newY) {

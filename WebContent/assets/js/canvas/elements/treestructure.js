@@ -24,6 +24,10 @@ DataMapper.Models.TreeStructure = Backbone.Model.extend({
     children: null,
     initialize: function () {
         this.set('children', {}); // title: tree
+        var root = this.get('parentNode');
+        if (root) {
+
+        }
     },
     drawTree: function (root) {
 
@@ -36,7 +40,10 @@ DataMapper.Models.TreeStructure = Backbone.Model.extend({
             x = 0,
             y = level * this.get('parentContainer').get('nodeHeight'),
             overhead = rank * this.get('parentContainer').get('rankMargin'),
-            tempParent = null;
+            tempParent = null,
+            node = parentNode;
+
+
         if (root.type === "object") {
             if (rootName !== "") {
                 node = this.drawTreeNode(resultPane, parentNode, rootName, root.type, "object", false, x, y, overhead);
@@ -44,11 +51,43 @@ DataMapper.Models.TreeStructure = Backbone.Model.extend({
                 rank++;
                 level++;
 
-            } else {
-                node = parentNode;
             }
-            tempParent = node.get('supportGroup');
-            var keys = root.properties || {}; //select PROPERTIES
+
+        } else if (root.type === "array") {
+            //            console.log(root);
+            var keys = root.items || {}; //select ITEMS
+            if (rootName !== "") {
+                var nodeText = rootName;
+                node = this.drawTreeNode(resultPane, parentNode, nodeText, keys.type, "array", !keys.hasOwnProperty("properties"), x, y, overhead);
+                nodeCollection.add(node);
+                rank++;
+                level++;
+            }
+
+        } else { //if (DataMapper.Types.indexOf(root.type) > -1) {    //when the type is a primitive
+            if (rootName !== "") {
+                var nodeText = rootName;
+                node = this.drawTreeNode(resultPane, parentNode, nodeText, root.type, "leaf", true, x, y, overhead);
+                nodeCollection.add(node);
+                rank++;
+                level++;
+            }
+        }
+        tempParent = node.get('supportGroup');
+        if (root.attributes) {
+            var keys = root.attributes;
+            for (var i = 0; i < Object.keys(keys).length; i++) { //traverse through each PROPERTY of the object
+                var keyName = Object.keys(keys)[i];
+                var key = keys[keyName];
+                y = level * this.get('parentContainer').get('nodeHeight');
+                overhead = rank * this.get('parentContainer').get('rankMargin');
+                var attr = this.drawTreeNode(tempParent, node, keyName, key.type, "attribute", true, x, y, overhead);
+                nodeCollection.add(attr);
+                level++;
+            }
+        }
+        if (root.properties) {
+            var keys = root.properties; //select PROPERTIES
             for (var i = 0; i < Object.keys(keys).length; i++) { //traverse through each PROPERTY of the object 
                 var keyName = Object.keys(keys)[i];
                 var key = keys[keyName];
@@ -64,56 +103,22 @@ DataMapper.Models.TreeStructure = Backbone.Model.extend({
                 level = tree.drawTree(key);
                 this.get('children')[keyName] = tree;
             }
-
-        } else if (root.type === "array") {
-            //            console.log(root);
-            var keys = root.items || {}; //select ITEMS
-            if (rootName !== "") {
-                var nodeText = rootName;
-                node = this.drawTreeNode(resultPane, parentNode, nodeText, keys.type, "array", !keys.hasOwnProperty("properties"), x, y, overhead);
-                nodeCollection.add(node);
-                rank++;
-                level++;
-                tempParent = node.get('supportGroup');
-            }
-            if (keys.properties) {
-                var tree = new DataMapper.Models.TreeStructure({
-                    parentContainer: this.get('parentContainer'),
-                    data: keys,
-                    rootTitle: "",
-                    level: level,
-                    rank: rank,
-                    resultPane: node.get('supportGroup'),
-                    parentNode: node,
-                });
-                level = tree.drawTree(keys);
-                this.get('children')["items"] = tree;
-            } else {
-                tempParent = node.get('supportGroup');
-            }
-
-        } else { //if (DataMapper.Types.indexOf(root.type) > -1) {    //when the type is a primitive
-            if (rootName !== "") {
-                var nodeText = rootName;
-                node = this.drawTreeNode(resultPane, parentNode, nodeText, root.type, "leaf", true, x, y, overhead);
-                nodeCollection.add(node);
-                rank++;
-                level++;
-                tempParent = node.get('supportGroup')
-            }
         }
-        if (root.attributes) {
-            var keys = root.attributes;
-            for (var i = 0; i < Object.keys(keys).length; i++) { //traverse through each PROPERTY of the object
-                var keyName = Object.keys(keys)[i];
-                var key = keys[keyName];
-                y = level * this.get('parentContainer').get('nodeHeight');
-                overhead = rank * this.get('parentContainer').get('rankMargin');
-                node = this.drawTreeNode(tempParent, node, keyName, key.type, "attribute", true, x, y, overhead);
-                nodeCollection.add(node);
-                level++;
-            }
+        if (root.items) {
+            var tree = new DataMapper.Models.TreeStructure({
+                parentContainer: this.get('parentContainer'),
+                data: keys,
+                rootTitle: "",
+                level: level,
+                rank: rank,
+                resultPane: node.get('supportGroup'),
+                parentNode: node,
+            });
+            level = tree.drawTree(keys);
+            this.get('children')[rootName] = tree;
         }
+
+
         return level;
     },
     drawTreeNode: function (parent, parentNode, text, textType, category, isLeaf, x, y, overhead) {
@@ -139,6 +144,9 @@ DataMapper.Models.TreeStructure = Backbone.Model.extend({
         }).render();
         var group = parent.append("g").attr("class", "nested-group");
         node.set('supportGroup', group);
+        if (parentNode !== null) {
+            console.log(text + "-parent-" + parentNode.get('text'));
+        }
         return node;
     },
     getPath: function (search) {
@@ -157,5 +165,12 @@ DataMapper.Models.TreeStructure = Backbone.Model.extend({
         var path;
         iter(this.get('parentContainer').get('data'), []);
         return path;
+    },
+    show: function () {
+        var children = this.get('children');
+        console.log(this.get('rootTitle'));
+        for (var c in children) {
+            children[c].show();
+        }
     }
 });
