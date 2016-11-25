@@ -275,13 +275,30 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
 
 
         if (this.get('isSchema')) {
-            parent1.select("text").attr("x", this.get("x") + 12 + this.get('overhead')).classed("tree-node-element-text", true);
+            var rank = Number(this.get('rank'));
+            var initX = Number(this.get('x')),
+                initY = Number(this.get('y')),
+                imgWidth = model.get('height');
 
-            parent1.append("svg:image")
-                .attr("x", Number(this.get('x')) + Number(this.get('overhead')))
-                .attr("y", Number(this.get('y')) + 4)
-                .attr("width", 11)
-                .attr("height", 11);
+            //set empty branch icons
+            for (var i = 0; i < rank; i++) {
+                parent1.append("svg:image")
+                    .attr("class", "branch-icon-" + i)
+                    .attr("xlink:href", "assets/image/tree-branch-icons/empty.png")
+                    .attr("x", initX)
+                    .attr("y", initY)
+                    .attr("height", imgWidth)
+                    .attr("width", imgWidth * 2);
+                initX += imgWidth * 2;
+            }
+            var iconWidth = imgWidth - 6;
+            parent1.append("svg:image").attr("class", "node-icon")
+                .attr("x", initX + 3)
+                .attr("y", initY + 3)
+                .attr("width", iconWidth)
+                .attr("height", iconWidth);
+            initX += imgWidth;
+            parent1.select("text").attr("x", initX).classed("tree-node-element-text", true);
             model.updateIcon();
         }
         model.updateLeaf();
@@ -324,7 +341,7 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
     updateIcon: function () {
         var type = this.get('category').toLowerCase();
         var self = this;
-        this.get('node').select("image").attr("xlink:href", function () {
+        this.get('node').select(".node-icon").attr("xlink:href", function () {
             if (type === "object") {
                 return self.get('objectIcon');
             } else if (type === "array") {
@@ -392,6 +409,42 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
         }
         this.get('parentContainer').get('nodeCollection').remove(this);
         this.get('node').remove();
+        this.get('supportGroup').remove();
+    },
+    calculateBranchIcons: function () {
+        var rank = Number(this.get('rank'));
+        if (rank === 0) {
+            return [];
+        }
+        var icons = [],
+            dir = "assets/images/tree-branch-icons/",
+            empty = dir + "empty.png",
+            line = dir + "line.png",
+            join = dir + "join.png",
+            joinbottom = dir + "joinbottom.png";
+
+        function isLastChild(node) {
+            console.log(node.get('node'));
+            if (node.get('node').node().nextSibling.nextSibling) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+        var myNode = this;
+        var end = isLastChild(myNode) ? joinbottom : join;
+        icons.push(end);
+        while (icons.length !== rank) {
+            myNode = myNode.get('parentNode');
+            var tempEnd = isLastChild(myNode) ? empty : line;
+            icons.push(tempEnd);
+        }
+        //swap array
+        var newArray = [];
+        for (var i = 0; i < icons.length; i++) {
+            newArray.push(icons[icons.length - 1 - i]);
+        }
+        return newArray;
     }
 });
 
@@ -411,6 +464,18 @@ DataMapper.Collections.NodeList = Backbone.Collection.extend({
                 node.updatePosition(0, currY + depth * node.get('height'));
                 var newLevel = Number(node.get('tree').get('level')) + depth;
                 node.get('tree').set('level', newLevel);
+            }
+        });
+    },
+    setBranchIcons: function () {
+        this.models.map(function (myNode) {
+            var icons = myNode.calculateBranchIcons();
+            if (icons.length !== myNode.get('rank')) {
+                console.log("error ");
+            }
+            var nodeObj = myNode.get('node');
+            for (var i = 0; i < icons.length; i++) {
+                nodeObj.select(".branch-icon-" + i).attr("xlink:href", icons[i]);
             }
         });
     }

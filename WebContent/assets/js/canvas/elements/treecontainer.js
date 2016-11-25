@@ -317,6 +317,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             parentNode: null,
         });
         var level = tree.drawTree(data, false);
+        this.get('nodeCollection').setBranchIcons();
         this.set('tree', tree);
         this.set('elementCount', level);
         //        console.log(tree.get('children'));
@@ -485,8 +486,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         self.set('elementCount', self.get('elementCount') + 1);
         this.updateContainerHeight();
         this.updateContainerWidth();
-
-
+        this.get('nodeCollection').setBranchIcons();
     },
     editNode: function (trigNode, newTitle, newType) {
         var iterate = (function iter(o, search) {
@@ -553,9 +553,10 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         this.set('elementCount', this.get('elementCount') - count);
         console.log(count);
         this.get('nodeCollection').pushNodes(trigNode.get('y'), -count);
-        trigNode.get('supportGroup').remove();
+        //        trigNode.get('supportGroup').remove();
         this.updateContainerHeight();
         this.updateContainerWidth();
+        this.get('nodeCollection').setBranchIcons();
         //        trigNode.deleteNode();
     },
     clearContainer: function () {
@@ -567,6 +568,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         this.set('data', null);
         this.updateContainerHeight();
         this.updateContainerWidth();
+
     }
 });
 DataMapper.Collections.TreeContainers = Backbone.Collection.extend({
