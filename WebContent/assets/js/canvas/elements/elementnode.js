@@ -166,7 +166,30 @@ DataMapper.Views.NodeView = Backbone.View.extend({
         });
     },
     clearNode: function () {
-        this.model.get('parentContainer').deleteNode(this.model);
+        console.log(this.model.get('tree'));
+        var self = this;
+        BootstrapDialog.show({
+            title: "Delete node?",
+            message: 'Are you sure you want to delete the node? <br> Children nodes too will be deleted.',
+            draggable: true,
+            buttons: [{
+                    label: "Delete node",
+                    cssClass: "btn-danger",
+                    action: function (dialogRef) {
+                        self.model.get('parentContainer').deleteNode(self.model);
+                        dialogRef.close();
+                    }
+                                },
+                {
+                    label: 'Cancel',
+                    action: function (dialogRef) {
+                        dialogRef.close();
+                    }
+                                }
+                                ]
+        });
+
+
     },
     getTypeOptionList: function (selectedType, constraint) { //constraint= "null" or "leaf" or "parent"
         var list = "";
@@ -226,6 +249,7 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
         this.set('node', parent1);
 
         var back = parent1.append("rect")
+            .classed("node-element-back", true)
             .attr("x", this.get('x'))
             .attr("y", this.get('y'))
             .attr("width", this.get('width'))
@@ -359,21 +383,15 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
         }
     },
     deleteNode: function () {
-        var trigNode = this;
-        Diagram.Connectors.findFromSourceNode(trigNode.get('node')).map(function (connector) {
+        Diagram.Connectors.findFromSourceNode(this.get('node')).map(function (connector) {
             connector.removeConnector();
         });
-        var temp = Diagram.Connectors.findFromTargetNode(trigNode.get('node'));
+        var temp = Diagram.Connectors.findFromTargetNode(this.get('node'));
         if (temp) {
             temp.removeConnector();
         }
-        if (trigNode.get('node').node().nextSibling) {
-            var coParent = d3.select(trigNode.get('node').node().nextSibling);
-            if (coParent.classed("nested-group")) {
-                coParent.remove();
-            }
-        }
-        trigNode.get('node').remove();
+        this.get('parentContainer').get('nodeCollection').remove(this);
+        this.get('node').remove();
     }
 });
 

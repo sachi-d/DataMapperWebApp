@@ -43,7 +43,7 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
             .attr("x", 0).attr("y", 0)
             .attr("height", height * 5)
             .attr("width", width)
-            .attr("fill", "none")
+            .attr("fill", "white")
             .attr("stroke", "#000");
 
         return parent;
@@ -55,14 +55,7 @@ DataMapper.Views.TreeContainerView = DataMapper.Views.ContainerView.extend({
         this.model.readFile();
     },
     clearContainer: function () {
-        Diagram.Connectors.clearConnectionsFromContainer(this.model.get('parent'));
-        this.model.get('parent').selectAll(".nested-group").remove();
-        this.model.set('nodeCollection', new DataMapper.Collections.NodeList());
-        this.model.set('elementCount', 0);
-        this.model.set('file', null);
-        this.model.set('data', null);
-        this.model.updateContainerHeight();
-        this.model.updateContainerWidth();
+        this.model.clearContainer();
     },
     addRootElement: function () {
         var self = this;
@@ -279,6 +272,15 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         var diff = maxLength - Number(parent.select(".dmcontainer-outline").attr("width"));
         parent.select(".dmcontainer-outline").attr("width", maxLength);
         parent.select(".dmcontainer-title-outline").attr("width", maxLength);
+
+        //set width of the nodes
+        parent.selectAll(".node-element").each(function () {
+            d3.select(this).attr("width", maxLength);
+            d3.select(this).selectAll(".node-element-back").each(function () {
+                d3.select(this).attr("width", maxLength);
+            });
+        });
+
         //set the anchors
         if (this.get('type') === "input") {
             parent.selectAll(".drag-head").each(function () {
@@ -518,8 +520,9 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         trigNode.updateLeaf();
     },
     deleteNode: function (trigNode) {
-        if (trigNode.get('text') === this.get('data').title) {
-            //clearcontainer
+        if (trigNode.get('parentNode') === null) {
+            this.clearContainer();
+            return;
         }
         //delete from the schema
         var iterate = (function iter(o, search) {
@@ -538,9 +541,32 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         })(this.get('data'), trigNode.get('text'));
 
         //delete from UI
-        this.get('nodeCollection').remove(trigNode);
-        this.get('nodeCollection').pushNodes(trigNode.get('y'), -Number(trigNode.get('height')));
-        trigNode.deleteNode();
+        var parent = trigNode.get('parentNode');
+        if (parent) {
+            var tree = parent.get('tree');
+        } else {
+            var tree = this.get('tree');
+        }
+        console.log(tree);
+        var childTree = tree.removeNodeFromTree(trigNode);
+        var count = childTree.deleteTree(0);
+        this.set('elementCount', this.get('elementCount') - count);
+        console.log(count);
+        this.get('nodeCollection').pushNodes(trigNode.get('y'), -count);
+        trigNode.get('supportGroup').remove();
+        this.updateContainerHeight();
+        this.updateContainerWidth();
+        //        trigNode.deleteNode();
+    },
+    clearContainer: function () {
+        Diagram.Connectors.clearConnectionsFromContainer(this.get('parent'));
+        this.get('parent').selectAll(".nested-group").remove();
+        this.set('nodeCollection', new DataMapper.Collections.NodeList());
+        this.set('elementCount', 0);
+        this.set('file', null);
+        this.set('data', null);
+        this.updateContainerHeight();
+        this.updateContainerWidth();
     }
 });
 DataMapper.Collections.TreeContainers = Backbone.Collection.extend({

@@ -73,6 +73,9 @@ DataMapper.Models.TreeStructure = Backbone.Model.extend({
                 level++;
             }
         }
+        if (rootName === "") {
+            node = parentNode;
+        }
         tempParent = node.get('supportGroup');
         if (root.attributes) {
             var keys = root.attributes;
@@ -110,18 +113,23 @@ DataMapper.Models.TreeStructure = Backbone.Model.extend({
                 this.addChild(keyName, tree);
             }
         }
-        if (root.items) {
-            var tree = new DataMapper.Models.TreeStructure({
-                parentContainer: this.get('parentContainer'),
-                data: keys,
-                rootTitle: "",
-                level: level,
-                rank: rank,
-                resultPane: node.get('supportGroup'),
-                parentNode: node,
-            });
-            level = tree.drawTree(keys, false);
-            this.addChild(rootName, tree);
+        if (root.items && root.items.properties) {
+            var keys = root.items.properties; //select PROPERTIES
+            for (var i = 0; i < Object.keys(keys).length; i++) { //traverse through each PROPERTY of the object 
+                var keyName = Object.keys(keys)[i];
+                var key = keys[keyName];
+                var tree = new DataMapper.Models.TreeStructure({
+                    parentContainer: this.get('parentContainer'),
+                    data: key,
+                    rootTitle: keyName,
+                    level: level,
+                    rank: rank,
+                    resultPane: tempParent,
+                    parentNode: node,
+                });
+                level = tree.drawTree(key, false);
+                this.addChild(keyName, tree);
+            }
         }
 
 
@@ -197,5 +205,31 @@ DataMapper.Models.TreeStructure = Backbone.Model.extend({
         this.addChild(text, tree);
 
         return newNode;
+    },
+    removeNodeFromTree: function (node) { //remove node from parent tree
+        var key = node.get('text');
+        var childTree = this.get('children')[key];
+        delete this.get('children')[key];
+        console.log(this.get('children'));
+        return childTree;
+    },
+    deleteTree: function (count) {
+        if (Object.keys(this.get('children')).length === 0) {
+            //if no children
+            count++;
+            this.get('rootNode').deleteNode();
+            return count;
+        } else {
+            for (var key in this.get('children')) {
+                var obj = this.get('children')[key];
+                count = obj.deleteTree(count);
+                delete this.get('children')[key];
+            }
+            return this.deleteTree(count);
+        }
     }
 });
+
+//Scenarios------------------------
+//removing the rootNOde
+//adding child with existing name
