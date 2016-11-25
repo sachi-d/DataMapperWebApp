@@ -432,22 +432,29 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
 
         var nextSibling, y, parent, parentNode, overhead;
         var rep = findLastNode(trigNode.get('node').node());
-        var repd = d3.select(rep);
-        y = Number(repd.attr('y')) + Number(repd.attr('height'));
+
+        var lastNodeAbove = self.get('nodeCollection').getNodeFromDOMObject(rep);
+        y = Number(lastNodeAbove.get('y')) + Number(lastNodeAbove.get('height'));
+        var lev = lastNodeAbove.get('tree').get('level') + 1,
+            ran;
 
         if (isChild) {
-
             parent = d3.select(trigNode.get('node').node().nextSibling);
             parentNode = trigNode;
             overhead = Number(trigNode.get('overhead')) + self.get('rankMargin');
+            ran = trigNode.get('tree').get('rank') + 1;
         } else {
-
             parent = d3.select(trigNode.get('node').node().parentElement);
             parentNode = trigNode.get('parentNode');
             overhead = trigNode.get('overhead');
+            ran = trigNode.get('tree').get('rank');
         }
-        self.get('nodeCollection').pushNodes(y, Number(trigNode.get('height')));
-        var newNode = parentNode.get('tree').addNodeToTree(parent, parentNode, newTitle, textType, category, isLeaf, trigNode.get('x'), y, overhead);
+        self.get('nodeCollection').pushNodes(y, 1);
+
+
+
+        var newNode = parentNode.get('tree').addNodeToTree(parent, parentNode, newTitle, textType, category, isLeaf, trigNode.get('x'), y, overhead, valueTemplate, lev, ran);
+
         var newNestNode = newNode.get('supportGroup');
         newNode = newNode.get('node');
 
@@ -477,8 +484,6 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         this.updateContainerHeight();
         this.updateContainerWidth();
 
-        console.log(parentNode);
-        parentNode.get('tree').show();
 
     },
     editNode: function (trigNode, newTitle, newType) {

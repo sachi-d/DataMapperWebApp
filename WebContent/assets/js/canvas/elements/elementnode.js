@@ -20,7 +20,7 @@ DataMapper.Views.NodeView = Backbone.View.extend({
         var self = this;
         var id = this.el;
         var classClicked = id + "-clicked";
-        $(id + " .node-element-text").on("contextmenu", function (event) {
+        $(id + " .tree-node-element-text").on("contextmenu", function (event) {
 
             // Avoid the real one
             event.preventDefault();
@@ -29,6 +29,9 @@ DataMapper.Views.NodeView = Backbone.View.extend({
             if ($(this).hasClass("attribute-text")) {
                 $('[data-action="add-node"]').hide();
                 $('[data-action="add-attribute"]').hide();
+            } else {
+                $('[data-action="add-node"]').show();
+                $('[data-action="add-attribute"]').show();
             }
 
             // Show contextmenu
@@ -248,7 +251,7 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
 
 
         if (this.get('isSchema')) {
-            parent1.select("text").attr("x", this.get("x") + 12 + this.get('overhead'));
+            parent1.select("text").attr("x", this.get("x") + 12 + this.get('overhead')).classed("tree-node-element-text", true);
 
             parent1.append("svg:image")
                 .attr("x", Number(this.get('x')) + Number(this.get('overhead')))
@@ -387,7 +390,9 @@ DataMapper.Collections.NodeList = Backbone.Collection.extend({
         this.find(function (node) {
             var currY = Number(node.get('y'));
             if (currY >= newY) {
-                node.updatePosition(0, currY + depth);
+                node.updatePosition(0, currY + depth * node.get('height'));
+                var newLevel = Number(node.get('tree').get('level')) + depth;
+                node.get('tree').set('level', newLevel);
             }
         });
     }

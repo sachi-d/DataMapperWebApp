@@ -25,12 +25,7 @@ DataMapper.Models.TreeStructure = Backbone.Model.extend({
         children: {}
     },
     initialize: function () {
-
-        var root = this.get('parentNode');
-        console.log(root);
-        if (root) {
-            root.set('tree', this);
-        }
+        //        console.log(this.get('data'));
         this.set('children', {}); // title: tree
     },
     drawTree: function (root, isAttribute) {
@@ -159,6 +154,7 @@ DataMapper.Models.TreeStructure = Backbone.Model.extend({
         var group = parent.append("g").attr("class", "nested-group");
         node.set('supportGroup', group);
         parentContainer.get('nodeCollection').add(node);
+        node.set('tree', this);
         return node;
     },
     getPath: function (search) {
@@ -185,9 +181,20 @@ DataMapper.Models.TreeStructure = Backbone.Model.extend({
             children[c].show();
         }
     },
-    addNodeToTree: function (parent, parentNode, text, textType, category, isLeaf, x, y, overhead) {
+    addNodeToTree: function (parent, parentNode, text, textType, category, isLeaf, x, y, overhead, data, level, rank) {
         var newNode = this.drawTreeNode(parent, parentNode, text, textType, category, isLeaf, x, y, overhead);
-        //add node to tree
+        var tree = new DataMapper.Models.TreeStructure({
+            parentContainer: this.get('parentContainer'),
+            data: data,
+            rootTitle: text,
+            level: level,
+            rank: rank,
+            resultPane: parent,
+            parentNode: parentNode,
+        });
+
+        newNode.set('tree', tree);
+        this.addChild(text, tree);
 
         return newNode;
     }
