@@ -132,20 +132,18 @@ DataMapper.Views.NodeView = Backbone.View.extend({
         });
     },
     editNode: function () {
+        console.log(this.model.get('tree'));
         var self = this,
-            disabled = this.model.get('parentNode') === null ? ' disabled ' : '';
-        var isParent = this.model.get('textType') === "object" || this.model.get('textType') === "array" ? "parent" : "leaf";
+            disabled = this.model.get('parentNode') === null ? ' disabled ' : '',
+            type = this.model.get('textType'),
+            isParent = type === "object" || type === "array" ? "parent" : "leaf",
+            optionParent = '<option value="' + type + '">' + type + '</option>',
+            options = isParent === "parent" ? optionParent : self.getTypeOptionList(type, isParent);
+
         BootstrapDialog.show({
             title: "Edit node",
-            message: 'Title: <input id="title" type="text" value="' + self.model.get('text') + '"><br>Type:<select id="type" ' + disabled + '>' + self.getTypeOptionList(this.model.get('textType'), isParent) + '</select>',
+            message: 'Title: <input id="title" type="text" value="' + self.model.get('text') + '"><br>Type:<select id="type" ' + disabled + '>' + options + '</select>',
             draggable: true,
-            onhidde: function (dialogRef) {
-                var fruit = dialogRef.getModalBody().find('#title').val();
-                if ($.trim(fruit.toLowerCase()) !== 'banana') {
-                    alert('Need banana!');
-                    return false;
-                }
-            },
             buttons: [{
                     label: 'Edit',
                     cssClass: "btn-primary",
@@ -274,21 +272,23 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
     },
     updateLeaf: function () {
         if (this.get('textType') !== "object" && this.get('textType') !== "array") {
-            this.set('isLeaf', true);
-            this.get('node').classed("leaf-node", true);
-            if (this.get('dotPosition').length !== 2) {
-                this.calculateDotPosition();
-            }
+            if (!this.get('node').classed('leaf-node')) {
+                this.set('isLeaf', true);
+                this.get('node').classed("leaf-node", true);
+                if (this.get('dotPosition').length !== 2) {
+                    this.calculateDotPosition();
+                }
 
-            var anchor = new DataMapper.Models.Anchor({
-                parent: this.get('node'),
-                cx: this.get('dotPosition')[0],
-                cy: this.get('dotPosition')[1],
-                type: this.get('type')
-            });
-            new DataMapper.Views.AnchorView({
-                model: anchor
-            });
+                var anchor = new DataMapper.Models.Anchor({
+                    parent: this.get('node'),
+                    cx: this.get('dotPosition')[0],
+                    cy: this.get('dotPosition')[1],
+                    type: this.get('type')
+                });
+                new DataMapper.Views.AnchorView({
+                    model: anchor
+                });
+            }
         }
     },
     updateText: function () {

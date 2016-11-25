@@ -314,10 +314,9 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             resultPane: resultPane,
             parentNode: null,
         });
-        var level = tree.drawTree(data);
+        var level = tree.drawTree(data, false);
         this.set('tree', tree);
         this.set('elementCount', level);
-        tree.show();
         //        console.log(tree.get('children'));
         return level;
     },
@@ -346,7 +345,6 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         }
         var self = this;
         var parentKey = isChild ? trigNode.get('text') : trigNode.get('parentNode').get('text');
-        console.log(parentKey);
         var trigKey = trigNode.get('text');
         var valueTemplate = (function getTemplate(type) {
             var defaultVal = {
@@ -388,7 +386,6 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             return Object.keys(o).some(function (k) {
 
                 if ((k === search || o.title === search) && o[k]) {
-                    console.log(search);
                     var p;
                     if (o.title) {
                         p = o;
@@ -424,9 +421,9 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         })(this.get('data'), parentKey);
 
         //find the last node 
-        function findLastNodeSib(node) {
+        function findLastNode(node) {
             if (node.nextSibling && node.nextSibling.lastChild) {
-                return findLastNodeSib(node.nextSibling.lastChild.previousSibling);
+                return findLastNode(node.nextSibling.lastChild.previousSibling);
 
             } else {
                 return node;
@@ -434,7 +431,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         }
 
         var nextSibling, y, parent, parentNode, overhead;
-        var rep = findLastNodeSib(trigNode.get('node').node());
+        var rep = findLastNode(trigNode.get('node').node());
         var repd = d3.select(rep);
         y = Number(repd.attr('y')) + Number(repd.attr('height'));
 
@@ -450,37 +447,15 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             overhead = trigNode.get('overhead');
         }
         self.get('nodeCollection').pushNodes(y, Number(trigNode.get('height')));
-        var node = new DataMapper.Models.Node({
-            parent: parent,
-            parentNode: parentNode,
-            parentContainer: self,
-            text: newTitle,
-            textType: textType,
-            x: trigNode.get('x'),
-            y: y,
-            type: trigNode.get('type'),
-            category: category,
-            isLeaf: isLeaf,
-            height: trigNode.get('height'),
-            width: trigNode.get('width'),
-            isSchema: true,
-            overhead: overhead,
-        });
-        var newNode = new DataMapper.Views.NodeView({
-            model: node
-        }).render();
-        var newNestNode;
-        if (newType === "object" || newType === "array") {
-            newNestNode = parent.append("g").attr("class", "nested-group");
-        }
+        var newNode = parentNode.get('tree').addNodeToTree(parent, parentNode, newTitle, textType, category, isLeaf, trigNode.get('x'), y, overhead);
+        var newNestNode = newNode.get('supportGroup');
+        newNode = newNode.get('node');
 
         //reorder the DOM elements
         if (!isChild) {
             var t1 = $(newNode.node()).detach(),
-                t2;
-            if (newNestNode) {
                 t2 = $(newNestNode.node()).detach();
-            }
+
             var flag = false;
             var counterNode = trigNode.get('node').node();
             if (d3.select(counterNode.nextSibling).classed("nested-group")) {
@@ -493,24 +468,22 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 }
                 if (tchild.isSameNode(counterNode)) {
                     t1.appendTo($(parent.node()));
-                    if (t2) {
-                        t2.appendTo($(parent.node()));
-                    }
+                    t2.appendTo($(parent.node()));
                     flag = true;
                 }
             });
         }
-
-        self.get('nodeCollection').add(node);
         self.set('elementCount', self.get('elementCount') + 1);
         this.updateContainerHeight();
         this.updateContainerWidth();
+
+        console.log(parentNode);
+        parentNode.get('tree').show();
 
     },
     editNode: function (trigNode, newTitle, newType) {
         var iterate = (function iter(o, search) {
             return Object.keys(o).some(function (k) {
-
                 if (o[k]) {
                     if (k === search) {
 

@@ -1,7 +1,17 @@
-.canvas {
+.tabs-container {
+    /*    background: #fff;*/
+}
+
+#canvas-container {
+    background-color: white;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAHUlEQVQYV2NkYGAwBuKzQIwXMBJSAJMfVUidcAQAnUQBC6jEGBUAAAAASUVORK5CYII=);
+    padding-left: 0;
+    padding-right: 0;
+}
+
+#canvas {
     border: 1px solid black;
     margin: 0;
-    background: #fff;
 }
 
 .leaf {

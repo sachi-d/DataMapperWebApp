@@ -68,12 +68,14 @@
     </header>
     <div id="page-content" class="container">
         <div class="row">
-            <div id="tool-palette" class="col-md-2"></div>
-            <div id="canvas-container" class="col-md-10">
-                <svg id="canvas" class="canvas" width="100%" height="100%" viewBox="0 0 1500 800">
+            <div class="col-md-12 tabs-container">
+                <div id="tool-palette" class="col-md-2"></div>
+                <div id="canvas-container" class="col-md-10">
+                    <svg id="canvas" class="canvas" width="100%" height="100%" viewBox="0 0 1500 800">
 
-                </svg>
+                    </svg>
 
+                </div>
             </div>
         </div>
 
@@ -149,7 +151,6 @@
     <script src="assets/lib/xsd2json/xsd2json.js"></script>
     <script>
         function showMappings() {
-
             var variableList = [],
                 count = 0,
                 inputAdjList = [],

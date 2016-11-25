@@ -1,42 +1,42 @@
-
-#tool-palette{
+#tool-palette {
     height: 100%;
     border-right: 2px solid #373737;
+    /*    edit #232323 or white*/
+    background: #232323;
 }
 
-.tool-group{
+.tool-group {
     width: 100%;
     border-bottom: 2px solid #1e1e1e;
 }
 
-.tool-group-header{
+.tool-group-header {
     cursor: pointer;
     height: 40px;
     padding: 10px 18px 10px 18px;
 }
 
-.tool-group-header-title{
+.tool-group-header-title {
     cursor: pointer;
+    /*    edit #555 or white*/
     color: white;
     font-size: 14px;
     text-transform: uppercase;
 }
 
-.tool-group-header-title:hover{
+.tool-group-header-title:hover {
     cursor: pointer;
     color: white;
 }
 
-.tool-group-header-collapse-icon{
+.tool-group-header-collapse-icon {}
 
-}
-
-.tool-group-body{
+.tool-group-body {
     overflow: hidden;
     padding: 0 15px 10px 15px;
 }
 
-.collapse-icon{
+.collapse-icon {
     float: right;
     padding-top: 3px;
     font-size: 10px;
@@ -59,15 +59,16 @@
 }
 
 .tool-image {
-    max-width:60px;
-    max-height:75px;
-    display : block;
-    margin : auto;
+    max-width: 60px;
+    max-height: 75px;
+    display: block;
+    margin: auto;
 }
 
 .tool-title {
-    padding-top:0px;
+    padding-top: 0px;
+    /*    edit #555 or white*/
     color: white;
-    display : block;
-    margin : auto;
+    display: block;
+    margin: auto;
 }
