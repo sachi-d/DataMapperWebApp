@@ -72,6 +72,26 @@ var Schemify = {
         var schema = this.initSchema();
         var self = this;
 
+        //parse XML tree
+        var root = this.parseXMLTree(xmlText);
+
+        schema["title"] = root.tagName;
+        schema["type"] = "object";
+        schema["properties"] = {};
+        if (root.attributes.length > 0) {
+            var obj = {};
+            for (var j = 0; j < root.attributes.length; j++) {
+                var attr = root.attributes[j];
+                obj[attr.name] = {
+                    "type": self.getType(attr.textContent)
+                }
+            }
+            schema["attributes"] = obj;
+        }
+        for (var i = 0; i < root.children.length; i++) {
+            traverseXMLTree(root.children[i], schema["properties"]);
+        }
+
         function traverseXMLTree(rootNode, parent) {
             var children = rootNode.children;
             var attributes = rootNode.attributes;
@@ -116,36 +136,106 @@ var Schemify = {
             }
         }
 
-        //parse XML tree
-        function parseXMLTree(inputText, result) {
-            parser = new DOMParser();
-            var xmlDoc = parser.parseFromString(inputText, "text/xml");
-            // documentElement always represents the root node
-            var root = xmlDoc.documentElement;
-            result["title"] = root.tagName;
-            result["type"] = "object";
-            result["properties"] = {};
-            if (root.attributes.length > 0) {
-                var obj = {};
-                for (var j = 0; j < root.attributes.length; j++) {
-                    var attr = root.attributes[j];
-                    obj[attr.name] = {
-                        "type": self.getType(attr.textContent)
-                    }
-                }
-                result["attributes"] = obj;
-            }
-            for (var i = 0; i < root.children.length; i++) {
-                traverseXMLTree(root.children[i], result["properties"]);
-            }
-
-            return result;
-        }
-        parseXMLTree(xmlText, schema);
         return schema;
     },
 
+    XSDtoJSONSchema: function (xsdText) {
+        var schema = this.initSchema();
+        schema["title"] = "Root",
+            schema["properties"] = {},
+            schema["type"] = "object",
+            schema["attributes"] = {};
 
+        var root = this.parseXMLTree(xsdText);
+
+        var complexTypes = {};
+        var ignoreTags = ["any", "anyAttribute", "sequence", "all", "choice"];
+        var ignoreAttributes = ["substitutionGroups", "default", "fixed", "use", "maxOccurs", "minOccurs"];
+        var namespaces = []; //the first entry is default namespace
+        var schemaAttributes = root.attributes;
+        var generalElements = root.children;
+
+        //filter the namespaces eg.xs,xsd,xsi...
+        for (var i = 0; i < schemaAttributes.length; i++) {
+            var attr = schemaAttributes[i];
+            var splitKey = attr.name.split(":");
+            if (splitKey.length > 1 && splitKey[0] === "xmlns") {
+                namespaces.push(splitKey[1]);
+                if (attr.value.includes("http://www.w3.org") && i !== 0) { //set primary as first
+                    var prim = namespaces.pop();
+                    namespaces.push(namespaces[0]);
+                    namespaces[0] = prim;
+                }
+            }
+        }
+        //        console.log(namespaces);
+
+        //filter complexType definitions and root
+        var rootElement;
+        for (var i = 0; i < generalElements.length; i++) {
+            var child = generalElements[i];
+            var tagName = getTagName(child.tagName);
+            if (tagName) {
+                var name = child.attributes.name.value;
+                if (child.attributes.type) {
+                    var type = child.attributes.type.value;
+                }
+                if (tagName === "complexType" && child.attributes.name) {
+                    var val = getComplexSchemaTemplate(child);
+                    complexTypes[name] = val;
+                } else if (tagName === "element") {
+                    schema["title"] = name;
+                    rootElement = child;
+                }
+            }
+        }
+
+
+        function traverseXSDTree(root, result) {
+
+        }
+
+        function getTagName(name) {
+            var keys = name.split(":");
+            if (keys.length == 2 && namespaces.indexOf(keys[0] > -1)) {
+                return keys[1];
+            }
+        }
+
+        function getComplexSchemaTemplate(root) {
+            var obj = {};
+            for (var j = 0; j < root.children.length; j++) {
+                var child = root.children[j];
+                var tagName = getTagName(child.tagName);
+                if (tagName) {
+                    if (ignoreTags.indexOf(tagName) > -1) {
+
+                    } else if (tagName === "attribute") {
+
+                    }
+                }
+            }
+            return obj;
+        }
+
+        function addSchemaItem(result, key, type) {
+            var obj = {
+                "type": type
+            }
+            result[key] = obj;
+            console.log(obj);
+            return obj;
+        }
+
+        return schema;
+    },
+    parseXMLTree: function (xmlText) {
+        parser = new DOMParser();
+        var xmlDoc = parser.parseFromString(xmlText, "text/xml");
+        // documentElement always represents the root node
+        var root = xmlDoc.documentElement;
+        return root;
+    },
 
     getType: function (text) {
         if (text === "true" || text === "false") {

@@ -214,7 +214,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
                 return dd;
             },
             xsd: function () {
-                var sch = Schemify.XMLtoJSONSchema(fileText);
+                var sch = Schemify.XSDtoJSONSchema(fileText);
                 //                console.log(JSON.stringify(sch, null, 4));
                 return sch;
             }

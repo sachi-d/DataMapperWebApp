@@ -424,7 +424,6 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
             joinbottom = dir + "joinbottom.png";
 
         function isLastChild(node) {
-            console.log(node.get('node'));
             if (node.get('node').node().nextSibling.nextSibling) {
                 return false;
             } else {

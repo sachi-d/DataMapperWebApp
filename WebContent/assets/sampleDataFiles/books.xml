@@ -3,6 +3,7 @@
         <book id="bk101">
             <author authID="rere" rre="22">Gambardella, Matthew</author>
             <title>XML Developer's Guide</title>
+            <title>XMsvelopet Guide</title>
             <genre>Computer</genre>
             <price>44.95</price>
             <publish_date>2000-10-01</publish_date>
@@ -11,6 +12,7 @@
         <book id="bk102">
             <author authID="rere" rre="23">bfgbtr, Matthew</author>
             <title>XML Developet Guide</title>
+            <title>XML Develops Guide</title>
             <genre>Compugter</genre>
             <price>4uh</price>
             <publish_date>2030-10-01</publish_date>
