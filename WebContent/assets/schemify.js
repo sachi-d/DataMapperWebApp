@@ -140,6 +140,7 @@ var Schemify = {
     },
 
     XSDtoJSONSchema: function (xsdText) {
+        var self = this;
         var schema = this.initSchema();
         schema["title"] = "Root",
             schema["properties"] = {},
@@ -149,11 +150,13 @@ var Schemify = {
         var root = this.parseXMLTree(xsdText);
 
         var complexTypes = {};
-        var ignoreTags = ["any", "anyAttribute", "sequence", "all", "choice"];
+        var ignoreTags = ["any", "anyAttribute", "sequence", "all", "choice", "annotation", "documentation"];
         var ignoreAttributes = ["substitutionGroups", "default", "fixed", "use", "maxOccurs", "minOccurs"];
         var namespaces = []; //the first entry is default namespace
         var schemaAttributes = root.attributes;
         var generalElements = root.children;
+        var globalElements = [];
+
 
         //filter the namespaces eg.xs,xsd,xsi...
         for (var i = 0; i < schemaAttributes.length; i++) {
@@ -170,30 +173,82 @@ var Schemify = {
         }
         //        console.log(namespaces);
 
-        //filter complexType definitions and root
-        var rootElement;
-        for (var i = 0; i < generalElements.length; i++) {
-            var child = generalElements[i];
-            var tagName = getTagName(child.tagName);
-            if (tagName) {
-                var name = child.attributes.name.value;
-                if (child.attributes.type) {
-                    var type = child.attributes.type.value;
-                }
-                if (tagName === "complexType" && child.attributes.name) {
-                    var val = getComplexSchemaTemplate(child);
-                    complexTypes[name] = val;
-                } else if (tagName === "element") {
-                    schema["title"] = name;
-                    rootElement = child;
-                }
+
+        //filter definitions in root
+        var definitions = {};
+        for (var i = 0; i < root.children.length; i++) {
+            var child = root.children[i];
+            if (child.attributes.name) {
+                var res = traverseXSDTree(child, {});
+                definitions[child.attributes.name.value] = res;
+            }
+            if (child.tagName === namespaces[0] + ":element") {
+                globalElements.push(child);
             }
         }
+        console.log(definitions);
 
 
-        function traverseXSDTree(root, result) {
-
+        //set the root 
+        var schemaRoot = globalElements[0];
+        //        console.log(globalElements);
+        if (globalElements.length > 1) {
+            console.log("multiple possible roots - first possible element selected");
+            //if no child elements and primary - select next
+            var count = globalElements.length - 1;
+            while (count >= 0) {
+                schemaRoot = globalElements[count];
+                if (schemaRoot.children.length !== 0 || !isPrimaryType(schemaRoot.attributes.type.value)) {
+                    break;
+                }
+                count--;
+            }
         }
+        schema["title"] = schemaRoot.attributes.name;
+        //        console.log(schemaRoot.attributes.name);
+
+
+        //traverse the items and add to definitions
+        function traverseXSDTree(root, result) {
+            var obj = {};
+            var tagName = getTagName(root.tagName);
+            if (ignoreTags.indexOf(tagName) > -1 || (tagName === "complexType" && !root.attributes.length)) { //if the tag is 
+                obj = result;
+            } else {
+                var tempName = root.attributes.name || root.attributes.ref;
+                if (tempName) {
+                    var rootName = tempName.value;
+                    result[rootName] = {};
+                    obj = result[rootName];
+                }
+            }
+
+            if (root.children.length === 0) {
+                for (var j = 0; j < root.attributes.length; j++) {
+                    var attr = root.attributes[j];
+                    if (attr.name === "type") {
+                        if (isPrimaryType(attr.value)) {
+                            obj["isLeaf"] = true;
+                        }
+                        obj["type"] = getTagName(attr.value);
+                    } else {
+                        obj[attr.name] = attr.value;
+                    }
+                }
+                if (tagName === "attribute") {
+                    obj["isAttribute"] = true;
+                }
+                return result;
+            }
+
+            for (var i = 0; i < root.children.length; i++) {
+                var child = root.children[i];
+                var res = traverseXSDTree(child, obj);
+            }
+            return result;
+        }
+
+
 
         function getTagName(name) {
             var keys = name.split(":");
@@ -202,21 +257,16 @@ var Schemify = {
             }
         }
 
-        function getComplexSchemaTemplate(root) {
-            var obj = {};
-            for (var j = 0; j < root.children.length; j++) {
-                var child = root.children[j];
-                var tagName = getTagName(child.tagName);
-                if (tagName) {
-                    if (ignoreTags.indexOf(tagName) > -1) {
-
-                    } else if (tagName === "attribute") {
-
-                    }
-                }
+        function isPrimaryType(type) {
+            var keys = type.split(":");
+            if (keys.length == 2 && namespaces[0] === keys[0]) {
+                return keys[1];
+            } else {
+                return false;
             }
-            return obj;
         }
+
+
 
         function addSchemaItem(result, key, type) {
             var obj = {
