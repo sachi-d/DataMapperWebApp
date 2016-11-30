@@ -204,15 +204,17 @@ var Schemify = {
                 count--;
             }
         }
-        schema["title"] = schemaRoot.attributes.name;
+        schema["title"] = schemaRoot.attributes.name.value;
         //        console.log(schemaRoot.attributes.name);
+
+        //create schema from root
 
 
         //traverse the items and add to definitions
         function traverseXSDTree(root, result) {
             var obj = {};
             var tagName = getTagName(root.tagName);
-            if (ignoreTags.indexOf(tagName) > -1 || (tagName === "complexType" && !root.attributes.length)) { //if the tag is 
+            if (ignoreTags.indexOf(tagName) > -1 || ((tagName === "complexType" || tagName === "simpleType") && !root.attributes.length) || tagName === "restriction") { //if the tag is 
                 obj = result;
             } else {
                 var tempName = root.attributes.name || root.attributes.ref;
@@ -229,8 +231,10 @@ var Schemify = {
                     if (attr.name === "type") {
                         if (isPrimaryType(attr.value)) {
                             obj["isLeaf"] = true;
+                        } else {
+                            obj["isLeaf"] = false;
                         }
-                        obj["type"] = getTagName(attr.value);
+                        obj["type"] = getTagName(attr.value) || attr.value;
                     } else {
                         obj[attr.name] = attr.value;
                     }
@@ -238,6 +242,14 @@ var Schemify = {
                 if (tagName === "attribute") {
                     obj["isAttribute"] = true;
                 }
+                return result;
+            }
+
+            if (getTagName(root.parentElement.tagName) === "simpleType") {
+                //                console.log(obj);
+                obj["type"] = getTagName(root.attributes.base.value);
+                obj["isLeaf"] = true;
+                //                console.log(obj);
                 return result;
             }
 
