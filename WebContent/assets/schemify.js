@@ -179,14 +179,15 @@ var Schemify = {
         for (var i = 0; i < root.children.length; i++) {
             var child = root.children[i];
             if (child.attributes.name) {
-                var res = traverseXSDTree(child, {});
-                definitions[child.attributes.name.value] = res;
+                definitions[child.attributes.name.value] = {};
+                var res = traverseXSDTree(child, definitions[child.attributes.name.value], child.attributes.name.value);
+
             }
             if (child.tagName === namespaces[0] + ":element") {
                 globalElements.push(child);
             }
         }
-        console.log(definitions);
+        console.log(JSON.stringify(definitions, null, 4));
 
 
         //set the root 
@@ -204,24 +205,83 @@ var Schemify = {
                 count--;
             }
         }
-        schema["title"] = schemaRoot.attributes.name.value;
+        var rootTitle = schemaRoot.attributes.name.value;
+        schema["title"] = rootTitle;
+        schemaRoot = definitions[rootTitle];
         //        console.log(schemaRoot.attributes.name);
 
+        var myCount = 0;
         //create schema from root
+        createSchemaFromDefs(schemaRoot, rootTitle, schema);
+        if (schema[rootTitle]) {
+            if (schema[rootTitle]["attributes"]) {
+                schema["attributes"] = schema[rootTitle]["attributes"];
+                delete schema[rootTitle]["attributes"];
+            }
+            schema["properties"] = schema[rootTitle];
+            delete schema[rootTitle];
+        }
+
+
+        function createSchemaFromDefs(rootObj, rootKey, target) {
+
+            if (typeof rootObj === "string") {
+                return target;
+            }
+            console.log(rootObj);
+            if (rootObj["isLeaf"]) {
+                if (rootObj["isAttribute"]) {
+                    target["attributes"] = target["attributes"] || {};
+                    target["attributes"][rootKey] = rootObj;
+                } else {
+                    target["properties"] = target["properties"] || {};
+                    target["properties"][rootKey] = rootObj;
+                }
+                return target
+            }
+            if (rootObj["properties"] && rootObj["properties"]["type"] || rootObj["ref"]) {
+                var myType = rootObj["ref"] || rootObj["properties"]["type"];
+                var def = definitions[myType];
+                target[rootKey] = {
+                    "type": "object"
+                };
+                for (var k = 0; k < Object.keys(def).length; k++) {
+                    var key = Object.keys(def)[k];
+                    var val = def[key];
+                    createSchemaFromDefs(val, key, target[rootKey]);
+                }
+            } else {
+
+                for (var k = 0; k < Object.keys(rootObj).length; k++) {
+                    var key = Object.keys(rootObj)[k];
+                    var val = rootObj[key];
+
+                    createSchemaFromDefs(val, key, target);
+
+                }
+            }
+            return target;
+        }
 
 
         //traverse the items and add to definitions
-        function traverseXSDTree(root, result) {
-            var obj = {};
+        function traverseXSDTree(root, result, title) {
+            var obj = result;
             var tagName = getTagName(root.tagName);
             if (ignoreTags.indexOf(tagName) > -1 || ((tagName === "complexType" || tagName === "simpleType") && !root.attributes.length) || tagName === "restriction") { //if the tag is 
                 obj = result;
             } else {
                 var tempName = root.attributes.name || root.attributes.ref;
                 if (tempName) {
-                    var rootName = tempName.value;
-                    result[rootName] = {};
-                    obj = result[rootName];
+                    if (tagName !== "complexType" && tagName !== "simpleType") {
+                        var rootName = tempName.value;
+                        if (rootName !== title) {
+                            result[rootName] = {};
+                            obj = result[rootName];
+                        }
+                    } else {
+                        obj = result;
+                    }
                 }
             }
 
@@ -232,7 +292,9 @@ var Schemify = {
                         if (isPrimaryType(attr.value)) {
                             obj["isLeaf"] = true;
                         } else {
-                            obj["isLeaf"] = false;
+                            obj["properties"] = {};
+                            obj["type"] = "object";
+                            obj = obj["properties"];
                         }
                         obj["type"] = getTagName(attr.value) || attr.value;
                     } else {
@@ -255,7 +317,7 @@ var Schemify = {
 
             for (var i = 0; i < root.children.length; i++) {
                 var child = root.children[i];
-                var res = traverseXSDTree(child, obj);
+                var res = traverseXSDTree(child, obj, "");
             }
             return result;
         }
@@ -277,18 +339,7 @@ var Schemify = {
                 return false;
             }
         }
-
-
-
-        function addSchemaItem(result, key, type) {
-            var obj = {
-                "type": type
-            }
-            result[key] = obj;
-            console.log(obj);
-            return obj;
-        }
-
+        console.log(schema);
         return schema;
     },
     parseXMLTree: function (xmlText) {
