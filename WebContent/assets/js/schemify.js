@@ -151,7 +151,7 @@ var Schemify = {
 
         var complexTypes = {};
         var ignoreTags = ["any", "anyAttribute", "sequence", "all", "choice", "annotation", "documentation"];
-        var ignoreAttributes = ["substitutionGroups", "default", "fixed", "use", "maxOccurs", "minOccurs"];
+
         var namespaces = []; //the first entry is default namespace
         var schemaAttributes = root.attributes;
         var generalElements = root.children;
@@ -187,7 +187,7 @@ var Schemify = {
                 globalElements.push(child);
             }
         }
-        //console.log(JSON.stringify(definitions, null, 4));
+        console.log(JSON.stringify(definitions, null, 4));
 
 
         //set the root 
@@ -214,35 +214,47 @@ var Schemify = {
         //create schema from root
         createSchemaFromDefs(schemaRoot, schema);
 
-        function createSchemaFromDefs(rootObj, target) {
 
+        //create the schema using the calculated definitions
+        function createSchemaFromDefs(rootObj, target) {
             for (var kk = 0; kk < Object.keys(rootObj).length; kk++) {
                 var key = Object.keys(rootObj)[kk];
                 var val = rootObj[key];
                 if (typeof val === "object") {
-                    target["properties"] = target["properties"] || {};
-                    var tempTarget = target["properties"];
+                    var tempTarget = target;
 
-                    if (val["isAttribute"]) {
+                    target["properties"] = target["properties"] || {};
+                    tempTarget = target["properties"];
+
+
+                    if (val["isAttribute"]) { //iff attribute - change the target location
                         target["attributes"] = target["attributes"] || {};
                         tempTarget = target["attributes"];
                     }
-                    tempTarget[key] = {};
-                    if (val["type"] && definitions[val.type] && definitions[val.type]["isLeaf"]) {
+
+                    if (val["type"] && definitions[val.type]) { //if the type is a definition, choose it as the subject
                         val = definitions[val.type];
-                    } //else {
-                    if (!val["isLeaf"]) {
-                        tempTarget[key]["type"] = "object";
-                        createSchemaFromDefs(val, tempTarget[key]);
-                    } else {
+                    }
+
+                    if (val["isLeaf"]) {
+                        //if a leaf node - add it to the target
                         tempTarget[key] = val;
+
+                    } else {
+                        if (val["isGroupDef"]) {
+                            //if the definition is group - use the parent target (not in a new nested child)
+                            tempTarget = target;
+                            createSchemaFromDefs(val, tempTarget);
+                        } else {
+                            tempTarget[key] = {};
+                            tempTarget[key]["type"] = "object";
+                            createSchemaFromDefs(val, tempTarget[key]);
+
+                        }
                     }
                 } else {
                     if (key === "type" && definitions[val]) {
-
-                        if (definitions[val]["isLeaf"]) {
-
-                        } else {
+                        if (!definitions[val]["isLeaf"]) {
                             createSchemaFromDefs(definitions[val], target);
                         }
                     }
@@ -268,6 +280,9 @@ var Schemify = {
                         }
                     } else {
                         obj = result;
+                    }
+                    if (tagName === "group") {
+                        obj["isGroupDef"] = true;
                     }
                 }
             }
