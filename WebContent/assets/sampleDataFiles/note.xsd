@@ -5,13 +5,13 @@
                 <xs:sequence>
                     <xs:element name="to" type="xs:string" />
                     <xs:element name="from" type="xs:string" maxOccurs="10" />
-                    <xs:element name="heading" />
+                    <xs:element name="heading" type="xs:number" />
                     <xs:element name="body">
                         <xs:complexType>
                             <xs:sequence>
                                 <xs:element name="tto" type="xs:string" />
                                 <xs:element name="tfrom" type="xs:string" maxOccurs="10" />
-                                <xs:element name="theading" />
+                                <xs:element name="theading" type="xs:number" />
                                 <xs:element name="tbody" type="xs:string" />
                             </xs:sequence>
                             <xs:attribute name="tnoteID" type="xs:integer" />

@@ -212,55 +212,38 @@ var Schemify = {
 
         var myCount = 0;
         //create schema from root
-        createSchemaFromDefs(schemaRoot, rootTitle, schema);
-        if (schema[rootTitle]) {
-            if (schema[rootTitle]["attributes"]) {
-                schema["attributes"] = schema[rootTitle]["attributes"];
-                delete schema[rootTitle]["attributes"];
-            }
-            schema["properties"] = schema[rootTitle];
-            delete schema[rootTitle];
-        }
+        createSchemaFromDefs(schemaRoot, schema);
 
+        function createSchemaFromDefs(rootObj, target) {
 
-        function createSchemaFromDefs(rootObj, rootKey, target) {
-
-            if (typeof rootObj === "string") {
-                return target;
-            }
-            console.log(rootObj);
-            if (rootObj["isLeaf"]) {
-                if (rootObj["isAttribute"]) {
-                    target["attributes"] = target["attributes"] || {};
-                    target["attributes"][rootKey] = rootObj;
-                } else {
+            for (var kk = 0; kk < Object.keys(rootObj).length; kk++) {
+                var key = Object.keys(rootObj)[kk];
+                var val = rootObj[key];
+                if (typeof val === "object") {
                     target["properties"] = target["properties"] || {};
-                    target["properties"][rootKey] = rootObj;
-                }
-                return target
-            }
-            if (rootObj["properties"] && rootObj["properties"]["type"] || rootObj["ref"]) {
-                var myType = rootObj["ref"] || rootObj["properties"]["type"];
-                var def = definitions[myType];
-                target[rootKey] = {
-                    "type": "object"
-                };
-                for (var k = 0; k < Object.keys(def).length; k++) {
-                    var key = Object.keys(def)[k];
-                    var val = def[key];
-                    createSchemaFromDefs(val, key, target[rootKey]);
-                }
-            } else {
+                    var tempTarget = target["properties"];
 
-                for (var k = 0; k < Object.keys(rootObj).length; k++) {
-                    var key = Object.keys(rootObj)[k];
-                    var val = rootObj[key];
-
-                    createSchemaFromDefs(val, key, target);
-
+                    if (val["isAttribute"]) {
+                        target["attributes"] = target["attributes"] || {};
+                        tempTarget = target["attributes"];
+                    }
+                    tempTarget[key] = {};
+//                    if (val["type "] && definitions[val.type]) {
+    //                        console.log(val["type"]);
+    //                    } else {
+                        if (!val["isLeaf"]) {
+                            tempTarget[key]["type"] = "object";
+                            createSchemaFromDefs(val, tempTarget[key]);
+                        } else {
+                            tempTarget[key] = val;
+                        }
+//                    }
+                } else {
+                    if (key === "type" && definitions[val]) {
+                        createSchemaFromDefs(definitions[val], target);
+                    }
                 }
             }
-            return target;
         }
 
 
@@ -291,10 +274,6 @@ var Schemify = {
                     if (attr.name === "type") {
                         if (isPrimaryType(attr.value)) {
                             obj["isLeaf"] = true;
-                        } else {
-                            obj["properties"] = {};
-                            obj["type"] = "object";
-                            obj = obj["properties"];
                         }
                         obj["type"] = getTagName(attr.value) || attr.value;
                     } else {
