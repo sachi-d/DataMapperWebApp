@@ -187,7 +187,7 @@ var Schemify = {
                 globalElements.push(child);
             }
         }
-        console.log(JSON.stringify(definitions, null, 4));
+        //console.log(JSON.stringify(definitions, null, 4));
 
 
         //set the root 
@@ -228,19 +228,23 @@ var Schemify = {
                         tempTarget = target["attributes"];
                     }
                     tempTarget[key] = {};
-//                    if (val["type "] && definitions[val.type]) {
-    //                        console.log(val["type"]);
-    //                    } else {
-                        if (!val["isLeaf"]) {
-                            tempTarget[key]["type"] = "object";
-                            createSchemaFromDefs(val, tempTarget[key]);
-                        } else {
-                            tempTarget[key] = val;
-                        }
-//                    }
+                    if (val["type"] && definitions[val.type] && definitions[val.type]["isLeaf"]) {
+                        val = definitions[val.type];
+                    } //else {
+                    if (!val["isLeaf"]) {
+                        tempTarget[key]["type"] = "object";
+                        createSchemaFromDefs(val, tempTarget[key]);
+                    } else {
+                        tempTarget[key] = val;
+                    }
                 } else {
                     if (key === "type" && definitions[val]) {
-                        createSchemaFromDefs(definitions[val], target);
+
+                        if (definitions[val]["isLeaf"]) {
+
+                        } else {
+                            createSchemaFromDefs(definitions[val], target);
+                        }
                     }
                 }
             }
@@ -276,6 +280,8 @@ var Schemify = {
                             obj["isLeaf"] = true;
                         }
                         obj["type"] = getTagName(attr.value) || attr.value;
+                    } else if (attr.name === "ref") {
+                        obj["type"] = attr.value;
                     } else {
                         obj[attr.name] = attr.value;
                     }
@@ -286,7 +292,7 @@ var Schemify = {
                 return result;
             }
 
-            if (getTagName(root.parentElement.tagName) === "simpleType") {
+            if (getTagName(root.parentElement.tagName) === "simpleType" && root.attributes.base) {
                 //                console.log(obj);
                 obj["type"] = getTagName(root.attributes.base.value);
                 obj["isLeaf"] = true;
@@ -318,7 +324,7 @@ var Schemify = {
                 return false;
             }
         }
-        console.log(schema);
+
         return schema;
     },
     parseXMLTree: function (xmlText) {
