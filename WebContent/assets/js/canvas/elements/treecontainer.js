@@ -220,7 +220,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             }
         };
         var schema = schemaOutput[type]();
-        console.log(JSON.stringify(schema, null, 4));
+        //        console.log(JSON.stringify(schema, null, 4));
         return schema;
 
 
@@ -350,6 +350,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         }
         var self = this;
         var parentKey = isChild ? trigNode.get('text') : trigNode.get('parentNode').get('text');
+        //        console.log(parentKey);
         var trigKey = trigNode.get('text');
         var valueTemplate = (function getTemplate(type) {
             var defaultVal = {
@@ -392,16 +393,15 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
 
                 if ((k === search || o.title === search) && o[k]) {
                     var p;
-                    if (o.title) {
+                    if (o.title && o.title === search) {
                         p = o;
                     } else {
                         p = o[k];
                     }
+                    //                    console.log(JSON.stringify(p, null, 4));
                     var tempData = {};
                     if (isAttribute) {
-                        if (!p["attributes"]) {
-                            p["attributes"] = {};
-                        }
+                        p["attributes"] = p["attributes"] || {};
                         tempData = p["attributes"];
                     } else {
                         tempData = p["properties"] || p["items"]["properties"];
@@ -489,6 +489,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         this.updateContainerHeight();
         this.updateContainerWidth();
         this.get('nodeCollection').setBranchIcons();
+        //        console.log(JSON.stringify(this.get('data'), null, 4));
     },
     editNode: function (trigNode, newTitle, newType) {
         var iterate = (function iter(o, search) {
@@ -549,11 +550,11 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
         } else {
             var tree = this.get('tree');
         }
-        console.log(tree);
+        //        console.log(tree);
         var childTree = tree.removeNodeFromTree(trigNode);
         var count = childTree.deleteTree(0);
         this.set('elementCount', this.get('elementCount') - count);
-        console.log(count);
+        //        console.log(count);
         this.get('nodeCollection').pushNodes(trigNode.get('y'), -count);
         //        trigNode.get('supportGroup').remove();
         this.updateContainerHeight();
