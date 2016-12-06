@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:enterprise.soap.sforce.com">
+        <soapenv:Header>
+            <urn:SessionHeader>
+                <urn:sessionId>QwWsHJyTPW.1pd0_jXlNKOSU</urn:sessionId>
+            </urn:SessionHeader>
+        </soapenv:Header>
+        <soapenv:Body>
+            <urn:convertLead>
+                <urn:leadConverts>
+                    <!-- Zero or more repetitions -->
+                    <urn:convertedStatus>Qualified</urn:convertedStatus>
+                    <urn:doNotCreateOpportunity>false</urn:doNotCreateOpportunity>
+                    <urn:leadId>00QD000000FP14JMAT</urn:leadId>
+                    <urn:opportunityName>Partner Opportunity</urn:opportunityName>
+                    <urn:overwriteLeadSource>true</urn:overwriteLeadSource>
+                    <urn:ownerId>005D0000000nVYVIA2</urn:ownerId>
+                    <urn:sendNotificationEmail>true</urn:sendNotificationEmail>
+                </urn:leadConverts>
+            </urn:convertLead>
+        </soapenv:Body>
+    </soapenv:Envelope>

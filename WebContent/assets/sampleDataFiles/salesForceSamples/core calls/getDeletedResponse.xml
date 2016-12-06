@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:soapenv=" http://schemas.xmlsoap.org/soap/envelope/ " xmlns="urn:enterprise.soap.sforce.com">
+        <soapenv:Body>
+            <getDeletedResponse>
+                <result>
+                    <deletedRecords>
+                        <deletedDate>2007-05-29T18:03:16.000Z</deletedDate>
+                        <id>003D000000OXGH6IAP</id>
+                    </deletedRecords>
+                    <deletedRecords>
+                        <deletedDate>2007-05-29T18:14:49.000Z</deletedDate>
+                        <id>003D000000OXWBgIAP</id>
+                    </deletedRecords>
+                    <deletedRecords>
+                        <deletedDate>2007-05-29T18:14:49.000Z</deletedDate>
+                        <id>003D000000OXWBhIAP</id>
+                    </deletedRecords>
+                    <earliestDateAvailable>2007-05-23T22:23:00.000Z</earliestDateAvailable>
+                    <latestDateCovered>2007-05-15T23:48:00.000Z</latestDateCovered>
+                </result>
+            </getDeletedResponse>
+        </soapenv:Body>
+    </soapenv:Envelope>

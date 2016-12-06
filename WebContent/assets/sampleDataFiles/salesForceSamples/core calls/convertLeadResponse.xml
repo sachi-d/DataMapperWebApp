@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns="urn:enterprise.soap.sforce.com">
+        <soapenv:Body>
+            <convertLeadResponse>
+                <result>
+                    <accountId>001D000000HRzTRIA1</accountId>
+                    <contactId>003D000000OXGH6IAP</contactId>
+                    <leadId>00QD000000FP14JMAT</leadId>
+                    <opportunityId>006D000000AeWmaIAF</opportunityId>
+                    <success>true</success>
+                </result>
+            </convertLeadResponse>
+        </soapenv:Body>
+    </soapenv:Envelope>

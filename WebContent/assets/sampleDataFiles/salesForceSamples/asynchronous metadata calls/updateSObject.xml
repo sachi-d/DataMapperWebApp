@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <soapenv:Header>
+            <ns1:SessionHeader soapenv:mustUnderstand="0" xmlns:ns1="http://soap.sforce.com/2006/04/metadata">
+                <ns1:sessionId>3e8700Dx00000007Vw349cJVbVn0uH_XDGVOoWSldsfoghufOb5Ig_QXDWfdnLalLxWYTeWldfsglCz0wQeDoMXYMKVBtStrC_jK560KG1Y78p_9KV9rMBGkwbdVbWTNK6IWJBAiL9swCW</ns1:sessionId>
+            </ns1:SessionHeader>
+        </soapenv:Header>
+        <soapenv:Body>
+            <update xmlns="http://soap.sforce.com/2006/04/metadata">
+                <UpdateMetadata>
+                    <currentName>sample__c</currentName>
+                    <metadata xsi:type="ns2:CustomObject" xmlns:ns2="http://soap.sforce.com/2006/04/metadata">
+                        <fullName>sample__c</fullName>
+                        <deploymentStatus>InDevelopment</deploymentStatus>
+                        <description>created by the Metadata API</description>
+                        <enableActivities>true</enableActivities>
+                        <label>sample Object</label>
+                        <nameField>
+                            <label>sample__c Name</label>
+                            <type>Text</type>
+                        </nameField>
+                        <pluralLabel>sample Objects</pluralLabel>
+                        <sharingModel>ReadWrite</sharingModel>
+                    </metadata>
+                </UpdateMetadata>
+            </update>
+        </soapenv:Body>
+    </soapenv:Envelope>

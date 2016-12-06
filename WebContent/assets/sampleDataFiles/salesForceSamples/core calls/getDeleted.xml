@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:soapenv=" http://schemas.xmlsoap.org/soap/envelope/ " xmlns:urn="urn:enterprise.soap.sforce.com">
+        <soapenv:Header>
+            <urn:SessionHeader>
+                <urn:sessionId><b>QwWsHJyTPW.1pd0_jXlNKOSU</b></urn:sessionId>
+            </urn:SessionHeader>
+        </soapenv:Header>
+        <soapenv:Body>
+            <urn:getDeleted>
+                <urn:sObjectType><b>Contact</b></urn:sObjectType>
+                <urn:startDate><b>2007-05-29T15:00:00Z</b></urn:startDate>
+                <urn:endDate><b>2007-05-29T22:37:12.1230000-08:00</b></urn:endDate>
+            </urn:getDeleted>
+        </soapenv:Body>
+    </soapenv:Envelope>

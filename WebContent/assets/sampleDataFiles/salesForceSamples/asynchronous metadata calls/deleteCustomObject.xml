@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <soapenv:Header>
+            <ns1:SessionHeader soapenv:mustUnderstand="0" xmlns:ns1="http://soap.sforce.com/2006/04/metadata">
+                <ns1:sessionId>3e8700Dx00000007S6zdkjgdrat9iE.XYosg0Zspm3k5yQeUPLhF2aB2ZlPOcZ6R5unzRNikj6fZm3J1TS2xBOwFdarymverjhk0Z3cC464jFB95nz00mmxDvS.FUUdevmZfGZ._NcmsMwQCW</ns1:sessionId>
+            </ns1:SessionHeader>
+        </soapenv:Header>
+        <soapenv:Body>
+            <delete xmlns="http://soap.sforce.com/2006/04/metadata">
+                <metadata xsi:type="ns2:CustomObject" xmlns:ns2="http://soap.sforce.com/2006/04/metadata">
+                    <fullName>sample__c</fullName>
+                </metadata>
+            </delete>
+        </soapenv:Body>
+    </soapenv:Envelope>

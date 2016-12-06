@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:enterprise.soap.sforce.com">
+        <soapenv:Header>
+            <urn:SessionHeader>
+                <urn:sessionId>QwWsHJyTPW.1pd0_jXlNKOSU</urn:sessionId>
+            </urn:SessionHeader>
+        </soapenv:Header>
+        <soapenv:Body>
+            <urn:queryAll>
+                <urn:queryString>SELECT Id, Name, IsDeleted FROM Account WHERE Name LIKE '%acme%'</urn:queryString>
+            </urn:queryAll>
+        </soapenv:Body>
+    </soapenv:Envelope>
