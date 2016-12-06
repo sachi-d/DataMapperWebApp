@@ -260,7 +260,9 @@ DataMapper.Models.Node = Backbone.Model.extend({ //set parent, text, x,y, type,c
             .attr("y", Number(this.get('y')) + (3 * height / 4))
             .text(function () {
                 var subType = model.get('category') === "array" ? "array[" + model.get('textType') + "]" : model.get('textType');
-                return model.get('text') + ":" + subType;
+
+                //do not print "object:
+                return subType === "object" ? model.get('text') : model.get('text') + ":" + subType;
             })
             .attr("class", "node-element-text");
         if (model.get('category') === "attribute") {

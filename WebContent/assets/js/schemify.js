@@ -82,8 +82,11 @@ var Schemify = {
             var obj = {};
             for (var j = 0; j < root.attributes.length; j++) {
                 var attr = root.attributes[j];
-                obj[attr.name] = {
-                    "type": self.getType(attr.textContent)
+                //skip xmlns stuff 
+                if (!attr.name.includes("xmlns")) {
+                    obj[attr.name] = {
+                        "type": self.getType(attr.textContent)
+                    }
                 }
             }
             schema["attributes"] = obj;
@@ -111,6 +114,8 @@ var Schemify = {
             if (children.length === 0 && attributes.length === 0) {
                 return;
             } else {
+
+                //add children
                 if (children.length !== 0) {
                     parent[title] = {
                         "type": "object",
@@ -123,13 +128,17 @@ var Schemify = {
                         traverseXMLTree(child, nestParent);
                     }
                 }
+
+                //add attributes
                 if (attributes.length !== 0) {
                     var obj = {};
                     for (var j = 0; j < attributes.length; j++) {
                         var attr = attributes[j];
+
                         obj[attr.name] = {
                             "type": self.getType(attr.textContent)
                         }
+
                     }
                     parent[title]["attributes"] = obj;
                 }

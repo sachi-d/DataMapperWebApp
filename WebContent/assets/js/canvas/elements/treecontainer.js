@@ -220,7 +220,7 @@ DataMapper.Models.TreeContainer = DataMapper.Models.Container.extend({
             }
         };
         var schema = schemaOutput[type]();
-        //        console.log(JSON.stringify(schema, null, 4));
+        console.log(JSON.stringify(schema, null, 4));
         return schema;
 
 
