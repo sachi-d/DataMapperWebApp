@@ -78,6 +78,7 @@ var Schemify = {
         schema["title"] = root.tagName;
         schema["type"] = "object";
         schema["properties"] = {};
+        var namespace = "";
         if (root.attributes.length > 0) {
             var obj = {};
             for (var j = 0; j < root.attributes.length; j++) {
@@ -86,6 +87,10 @@ var Schemify = {
                 if (!attr.name.includes("xmlns")) {
                     obj[attr.name] = {
                         "type": self.getType(attr.textContent)
+                    }
+                } else {
+                    if (attr.value.includes("www.w3.org") && attr.name.split(":").length > 1) {
+                        namespace = attr.name.split(":")[1];
                     }
                 }
             }
@@ -99,12 +104,48 @@ var Schemify = {
             var children = rootNode.children;
             var attributes = rootNode.attributes;
             var title = rootNode.tagName;
-            if (parent[title]) { //if already defined
-                var temp = parent[title];
-                parent[title] = {
-                    "type": "array",
-                    "items": temp
-                };
+
+            var isArray = false;
+
+            //check if array
+            //            for (var jj = 0; jj < rootNode.parentElement.children.length;jj++) {
+            //                var childSib = rootNode.parentElement.children[jj];
+            //                if (childSib.isSameNode(rootNode)) {
+            //                    console.log("same node");
+            //                    continue;
+            //                } else {
+            //                    if (childSib.tagName === title) {
+            //                        if (childSib.attributes.length === rootNode.attributes.length) {
+            //                            isArray = true;
+            //                            for (var jk = 0; jk < childSib.attributes.length; jk++) {
+            //                                if (childSib.attributes[jk].name === namespace + ":type") {
+            //                                    isArray = false;
+            //                                    break;
+            //                                }
+            //                            }
+            //                        } else {
+            //                            isArray = false;
+            //                        }
+            //                    }
+            //                }
+            //            } 
+            if (parent[title]) { //if array
+                parent[title]["type"] = "array";
+                if (parent[title]["properties"]) {
+                    parent[title]["items"] = {
+                        "type": "object",
+                        "properties": parent[title]["properties"],
+                    }
+
+                    delete parent[title]["properties"];
+                }
+                //                var temp = parent[title];
+                //                console.log(temp);
+                //                parent[title] = {
+                //                    "type": "array",
+                //                    "items": {}
+                //                };
+                //                console.log(temp);
                 return;
             } else {
                 parent[title] = {
@@ -135,8 +176,10 @@ var Schemify = {
                     for (var j = 0; j < attributes.length; j++) {
                         var attr = attributes[j];
 
-                        obj[attr.name] = {
-                            "type": self.getType(attr.textContent)
+                        if (!attr.name.includes("xmlns")) {
+                            obj[attr.name] = {
+                                "type": self.getType(attr.textContent)
+                            }
                         }
 
                     }

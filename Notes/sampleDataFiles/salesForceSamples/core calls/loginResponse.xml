@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:soapenv=" http://schemas.xmlsoap.org/soap/envelope/ " xmlns="urn:enterprise.soap.sforce.com" xmlns:xsi="fdf">
+        <soapenv:Body>
+            <loginResponse>
+                <result>
+                    <passwordExpired>false</passwordExpired>
+                    <serverUrl><a rel="nofollow" class="external free" href="https://na1.salesforce.com/services/Soap/c/10.0">https://na1.salesforce.com/services/Soap/c/10.0</a></serverUrl>
+                    <sessionId>QwWsHJyTPW.1pd0_jXlNKOSU</sessionId>
+                    <userId>005D0000000nVYVIA2</userId>
+                    <userInfo>
+                        <accessibilityMode>false</accessibilityMode>
+                        <currencySymbol>$</currencySymbol>
+                        <organizationId>00DD0000000EFW9MAO</organizationId>
+                        <organizationMultiCurrency>false</organizationMultiCurrency>
+                        <organizationName>danorg</organizationName>
+                        <profileId>00eD0000000v3qmIAA</profileId>
+                        <roleId xsi:nil="true" />
+                        <userDefaultCurrencyIsoCode xsi:nil="true" />
+                        <userEmail>user@domain.com</userEmail>
+                        <userFullName>Joe User</userFullName>
+                        <userId>005D0000000nVQVIA2</userId>
+                        <userLanguage>en_US</userLanguage>
+                        <userLocale>en_US</userLocale>
+                        <userName>user@domain.com</userName>
+                        <userTimeZone>America/Los_Angeles</userTimeZone>
+                        <userType>Standard</userType>
+                        <userUiSkin>Theme2</userUiSkin>
+                    </userInfo>
+                </result>
+            </loginResponse>
+        </soapenv:Body>
+    </soapenv:Envelope>

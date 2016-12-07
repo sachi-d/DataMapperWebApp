@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:soapenv=" http://schemas.xmlsoap.org/soap/envelope/ " xmlns:urn="urn:enterprise.soap.sforce.com" xmlns:urn1="sobject.enterprise.soap.sforce.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <soapenv:Header>
+            <urn:SessionHeader>
+                <urn:sessionId><b>QwWsHJyTPW.1pd0_jXlNKOSU</b></urn:sessionId>
+            </urn:SessionHeader>
+        </soapenv:Header>
+        <soapenv:Body>
+            <urn:merge>
+                <urn:request>
+                    <urn:masterRecord xsi:type="urn1:w">
+                        <urn1:Id><b>001D000000HTK8N</b></urn1:Id>
+                        <!--You may enter ANY elements to update at this point-->
+                        <Description><b>Merged with Dupe Account.</b></Description>
+                    </urn:masterRecord>
+                    <urn:recordToMergeIds><b>001D000000HTK8O</b></urn:recordToMergeIds>
+                </urn:request>
+            </urn:merge>
+        </soapenv:Body>
+    </soapenv:Envelope>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns="urn:enterprise.soap.sforce.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sf="http://www.w3.org/2001/XMLSchema-instance">
+        <soapenv:Body>
+            <queryResponse>
+                <result xsi:type="QueryResult">
+                    <done>true</done>
+                    <queryLocator xsi:nil="true" />
+                    <records xsi:type="sf:sObject">
+                        <sf:type>Account</sf:type>
+                        <sf:Id>001D000000HRzKCIA1</sf:Id>
+                        <sf:Id>001D000000HRzKCIA1</sf:Id>
+                        <sf:Name>salesforce.com</sf:Name>
+                        <sf:BillingStreet>The Landmark @ One Market, Suite 300</sf:BillingStreet>
+                    </records>
+                    <records xsi:type="sf:sObject">
+                        <sf:type>Account</sf:type>
+                        <sf:Id>001D000000HRzKDIA1</sf:Id>
+                        <sf:Id>001D000000HRzKDIA1</sf:Id>
+                        <sf:Name>Acme Rocket Supply, Inc.</sf:Name>
+                        <sf:BillingStreet>10 Main Rd.</sf:BillingStreet>
+                    </records>
+                    <records xsi:type="sf:sObject">
+                        <sf:type>Account</sf:type>
+                        <sf:Id>001D000000HRzKEIA1</sf:Id>
+                        <sf:Id>001D000000HRzKEIA1</sf:Id>
+                        <sf:Name>Global Media</sf:Name>
+                        <sf:BillingStreet>150 Chestnut Street</sf:BillingStreet>
+                    </records>
+                    <size>3</size>
+                </result>
+            </queryResponse>
+        </soapenv:Body>
+    </soapenv:Envelope>

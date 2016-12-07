@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:urn="urn:enterprise.soap.sforce.com" xmlns:soapenv="http://www.w3.org/2001/XMLSchema-instance">
+        <soapenv:Header>
+            <urn:SessionHeader>
+                <urn:sessionId><b>QwWsHJyTPW.1pd0_jXlNKOSU</b></urn:sessionId>
+            </urn:SessionHeader>
+        </soapenv:Header>
+        <soapenv:Body>
+            <urn:search>
+                <urn:searchString><b>find {4159017000} in phone fields returning</b>
+                    <b>contact(id, phone, firstname, lastname), lead(id, phone,</b>
+                    <b>firstname, lastname), account(id, phone, name)</b></urn:searchString>
+            </urn:search>
+        </soapenv:Body>
+    </soapenv:Envelope>

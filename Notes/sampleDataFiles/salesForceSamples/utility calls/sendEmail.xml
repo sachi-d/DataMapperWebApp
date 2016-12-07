@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:soapenv="urn:partner.soap.sforce.com" xmlns:urn="urn:enterprise.soap.sforce.com" xmlns:xsi="urn:partner.soap.sforce.com">
+        <soapenv:Header>
+            <urn:SessionHeader>
+                <urn:sessionId><b>QwWsHJyTPW.1pd0_jXlNKOSU</b></urn:sessionId>
+            </urn:SessionHeader>
+        </soapenv:Header>
+        <soapenv:Body>
+            <urn:sendEmail>
+                <!--0 to 10 repetitions:-->
+                <urn:messages xsi:type="urn:SingleEmailMessage">
+                    <urn:bccSender><b>true</b></urn:bccSender>
+                    <urn:emailPriority><b>High</b></urn:emailPriority>
+                    <urn:subject><b>Happy Holidays from Salesforce.com!</b></urn:subject>
+                    <urn:useSignature><b>true</b></urn:useSignature>
+                    <urn:targetObjectId><b>003D000000OXWVi</b></urn:targetObjectId>
+                    <urn:plainTextBody><b>Hello, this is a holiday greeting!</b></urn:plainTextBody>
+                </urn:messages>
+            </urn:sendEmail>
+        </soapenv:Body>
+    </soapenv:Envelope>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:soapenv="urn:partner.soap.sforce.com" xmlns="urn:enterprise.soap.sforce.com">
+        <soapenv:Body>
+            <emptyRecycleBinResponse>
+                <result>
+                    <id>001D000000HTK8OIAX</id>
+                    <success>true</success>
+                </result>
+                <result>
+                    <id>001D000000HSDf9IAH</id>
+                    <success>true</success>
+                </result>
+            </emptyRecycleBinResponse>
+        </soapenv:Body>
+    </soapenv:Envelope>

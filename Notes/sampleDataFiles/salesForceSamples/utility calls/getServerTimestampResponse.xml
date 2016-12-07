@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:soapenv="urn:partner.soap.sforce.com" xmlns="urn:enterprise.soap.sforce.com">
+        <soapenv:Body>
+            <getServerTimestampResponse>
+                <result>
+                    <timestamp>2007-05-29T22:54:42.014Z</timestamp>
+                </result>
+            </getServerTimestampResponse>
+        </soapenv:Body>
+    </soapenv:Envelope>

@@ -1,0 +1,19 @@
+core calls ---------------------------------------------------------
+
+convertLead = XMLtoJSONschema - skip attributes which include "xmlns"
+create = detect non-array with xsi:type [BUG]
+
+retrieveResponse = different array elements
+
+searchRessponse = xsi:type
+
+
+
+asynchronous metadata calls ------------------------------------------
+clean---
+
+
+describe calls -------------------------------------------------------
+
+SObjectResponse = update cnavas height[BUG]
+tabsResponse = ECLIPSE not showing children[BUG]

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:soapenv="urn:enterprise.soap.sforce.com">
+        <soapenv:Body>
+            <upsertResponse>
+                <result>
+                    <created>false</created>
+                    <id>001D000000HRzKDIA1</id>
+                    <success>true</success>
+                </result>
+                <result>
+                    <created>true</created>
+                    <id>001D000000HSDQZIA5</id>
+                    <success>true</success>
+                </result>
+            </upsertResponse>
+        </soapenv:Body>
+    </soapenv:Envelope>

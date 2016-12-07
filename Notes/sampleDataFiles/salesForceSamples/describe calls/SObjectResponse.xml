@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:soapenv="urn:partner.soap.sforce.com">
+        <soapenv:Body>
+            <describeSObjectResponse>
+                <result>
+                    <activateable>false</activateable>
+                    <childRelationships>
+                        <cascadeDelete>false</cascadeDelete>
+                        <childSObject>Account</childSObject>
+                        <field>ParentId</field>
+                    </childRelationships>
+
+                    <createable>true</createable>
+                    <custom>false</custom>
+                    <deletable>true</deletable>
+                    <fields>
+                        <autoNumber>false</autoNumber>
+                        <byteLength>18</byteLength>
+                        <calculated>false</calculated>
+                        <caseSensitive>false</caseSensitive>
+                        <createable>false</createable>
+                        <custom>false</custom>
+                        <defaultedOnCreate>true</defaultedOnCreate>
+                        <digits>0</digits>
+                        <filterable>true</filterable>
+                        <idLookup>true</idLookup>
+                        <label>Account ID</label>
+                        <length>18</length>
+                        <name>Id</name>
+                        <nameField>false</nameField>
+                        <namePointing>false</namePointing>
+                        <nillable>false</nillable>
+                        <precision>0</precision>
+                        <restrictedPicklist>false</restrictedPicklist>
+                        <scale>0</scale>
+                        <soapType>tns:ID</soapType>
+                        <sortable>true</sortable>
+                        <type>id</type>
+                        <unique>false</unique>
+                        <updateable>false</updateable>
+                    </fields>
+                    <fields>
+                        <autoNumber>false</autoNumber>
+                        <byteLength>120</byteLength>
+                        <calculated>false</calculated>
+                        <caseSensitive>false</caseSensitive>
+                        <createable>true</createable>
+                        <custom>false</custom>
+                        <defaultedOnCreate>false</defaultedOnCreate>
+                        <digits>0</digits>
+                        <filterable>true</filterable>
+                        <idLookup>false</idLookup>
+                        <label>Account Type</label>
+                        <length>40</length>
+                        <name>Type</name>
+                        <nameField>false</nameField>
+                        <namePointing>false</namePointing>
+                        <nillable>true</nillable>
+                        <picklistValues>
+                            <active>true</active>
+                            <defaultValue>false</defaultValue>
+                            <label>Analyst</label>
+                            <value>Analyst</value>
+                        </picklistValues>
+                        <picklistValues>
+                            <active>true</active>
+                            <defaultValue>false</defaultValue>
+                            <label>Competitor</label>
+                            <value>Competitor</value>
+                        </picklistValues>
+                        . . .
+                        <precision>0</precision>
+                        <restrictedPicklist>false</restrictedPicklist>
+                        <scale>0</scale>
+                        <soapType>xsd:string</soapType>
+                        <sortable>true</sortable>
+                        <type>picklist</type>
+                        <unique>false</unique>
+                        <updateable>true</updateable>
+                    </fields>
+                    <keyPrefix>001</keyPrefix>
+                    <label>Account</label>
+                    <labelPlural>Accounts</labelPlural>
+                    <layoutable>true</layoutable>
+                    <mergeable>true</mergeable>
+                    <name>Account</name>
+                    <queryable>true</queryable>
+                    <recordTypeInfos>
+                        <available>true</available>
+                        <defaultRecordTypeMapping>true</defaultRecordTypeMapping>
+                        <name>Master</name>
+                        <recordTypeId>012000000000000AAA</recordTypeId>
+                    </recordTypeInfos>
+                    <replicateable>true</replicateable>
+                    <retrieveable>true</retrieveable>
+                    <searchable>true</searchable>
+                    <undeletable>true</undeletable>
+                    <updateable>true</updateable>
+                    <urlDetail><a rel="nofollow" class="external free" href="https://na1.salesforce.com/{ID}">https://na1.salesforce.com/{ID}</a></urlDetail>
+                    <urlEdit><a rel="nofollow" class="external free" href="https://na1.salesforce.com/{ID}/e">https://na1.salesforce.com/{ID}/e</a></urlEdit>
+                    <urlNew><a rel="nofollow" class="external free" href="https://na1.salesforce.com/001/e">https://na1.salesforce.com/001/e</a></urlNew>
+                </result>
+            </describeSObjectResponse>
+        </soapenv:Body>
+    </soapenv:Envelope>

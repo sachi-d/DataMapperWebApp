@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:urn="urn:enterprise.soap.sforce.com" xmlns:soapenv="http://www.w3.org/2001/XMLSchema-instance">
+        <soapenv:Header>
+            <urn:SessionHeader>
+                <urn:sessionId><b>QwWsHJyTPW.1pd0_jXlNKOSU</b></urn:sessionId>
+            </urn:SessionHeader>
+        </soapenv:Header>
+        <soapenv:Body>
+            <urn:undelete>
+                <!--1 or more repetitions:-->
+                <urn:ids><b>001D000000HRzTR</b></urn:ids>
+                <urn:ids><b>001D000000HS2Og</b></urn:ids>
+            </urn:undelete>
+        </soapenv:Body>
+    </soapenv:Envelope>

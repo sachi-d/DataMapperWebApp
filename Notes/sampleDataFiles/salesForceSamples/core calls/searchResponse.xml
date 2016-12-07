@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:sf="urn:enterprise.soap.sforce.com" xmlns:soapenv="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <soapenv:Body>
+            <searchResponse>
+                <result>
+                    <searchRecords>
+                        <record xsi:type="sf:sObject">
+                            <sf:type>Contact</sf:type>
+                            <sf:Id>003D000000OXGBPIA5</sf:Id>
+                            <sf:Id>003D000000OXGBPIA5</sf:Id>
+                            <sf:Phone>(415) 901-7000</sf:Phone>
+                            <sf:FirstName>Marc</sf:FirstName>
+                            <sf:LastName>Benioff</sf:LastName>
+                        </record>
+                    </searchRecords>
+                    <searchRecords>
+                        <record xsi:type="sf:sObject">
+                            <sf:type>Account</sf:type>
+                            <sf:Id>001D000000HS2SsIAL</sf:Id>
+                            <sf:Id>001D000000HS2SsIAL</sf:Id>
+                            <sf:Phone>(415) 901-7000</sf:Phone>
+                            <sf:Name>salesforce.com</sf:Name>
+                        </record>
+                    </searchRecords>
+                </result>
+            </searchResponse>
+        </soapenv:Body>
+    </soapenv:Envelope>

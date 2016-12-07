@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:soapenv="urn:partner.soap.sforce.com" xmlns="urn:enterprise.soap.sforce.com">
+        <soapenv:Body>
+            <describeSObjectsResponse>
+                <result> ... </result>
+                <!--Same as <a href="/page/Enterprise_Describe_SObject" title="Enterprise Describe SObject">describeSObject</a> result-->
+                <result> ... </result>
+            </describeSObjectsResponse>
+        </soapenv:Body>
+    </soapenv:Envelope>

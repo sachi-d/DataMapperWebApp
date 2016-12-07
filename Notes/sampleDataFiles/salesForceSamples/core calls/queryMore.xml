@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:urn="urn:enterprise.soap.sforce.com" xmlns:soapenv="http://www.w3.org/2001/XMLSchema-instance">
+        <soapenv:Header>
+            <urn:QueryOptions>
+                <urn:batchSize><b>200</b></urn:batchSize>
+            </urn:QueryOptions>
+            <urn:SessionHeader>
+                <urn:sessionId><b>QwWsHJyTPW.1pd0_jXlNKOSU</b></urn:sessionId>
+            </urn:SessionHeader>
+        </soapenv:Header>
+        <soapenv:Body>
+            <urn:queryMore>
+                <urn:queryLocator><b>01gD0000001vELkIAM-200</b></urn:queryLocator>
+            </urn:queryMore>
+        </soapenv:Body>
+    </soapenv:Envelope>

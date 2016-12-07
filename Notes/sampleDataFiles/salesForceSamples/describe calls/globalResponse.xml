@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:soapenv="urn:enterprise.soap.sforce.com">
+        <soapenv:Body>
+            <describeGlobalResponse>
+                <result>
+                    <encoding>UTF-8</encoding>
+                    <maxBatchSize>200</maxBatchSize>
+                    <types>Account</types>
+                    <types>AccountContactRole</types>
+
+
+
+                    <types>UserRole</types>
+                    <types>WebLink</types>
+                </result>
+            </describeGlobalResponse>
+        </soapenv:Body>
+    </soapenv:Envelope>

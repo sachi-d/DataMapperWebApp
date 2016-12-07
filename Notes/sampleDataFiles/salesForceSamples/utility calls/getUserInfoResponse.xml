@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:soapenv="urn:partner.soap.sforce.com" xmlns="urn:enterprise.soap.sforce.com" xmlns:xsi="urn:partner.soap.sforce.com">
+        <soapenv:Body>
+            <getUserInfoResponse>
+                <result>
+                    <accessibilityMode>false</accessibilityMode>
+                    <currencySymbol>$</currencySymbol>
+                    <organizationId>00DD0000000EEW9MAO</organizationId>
+                    <organizationMultiCurrency>false</organizationMultiCurrency>
+                    <organizationName>Acme</organizationName>
+                    <profileId>00eD0000000v3qnIAA</profileId>
+                    <roleId xsi:nil="true" />
+                    <userDefaultCurrencyIsoCode xsi:nil="true" />
+                    <userEmail>jsmith@acme.com</userEmail>
+                    <userFullName>John Smith</userFullName>
+                    <userId>005D0000000nWYVIA2</userId>
+                    <userLanguage>en_US</userLanguage>
+                    <userLocale>en_US</userLocale>
+                    <userName>jsmith@acme.com</userName>
+                    <userTimeZone>America/Los_Angeles</userTimeZone>
+                    <userType>Standard</userType>
+                    <userUiSkin>Theme2</userUiSkin>
+                </result>
+            </getUserInfoResponse>
+        </soapenv:Body>
+    </soapenv:Envelope>

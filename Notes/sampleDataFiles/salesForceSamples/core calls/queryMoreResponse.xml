@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:sf="urn:enterprise.soap.sforce.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:soapenv="http://www.w3.org/2001/XMLSchema-instance">
+        <soapenv:Body>
+            <queryMoreResponse>
+                <result xsi:type="QueryResult">
+                    <done>false</done>
+                    <queryLocator>01gD0000001vELkIAM-400</queryLocator>
+                    <records xsi:type="sf:sObject">
+                        <sf:type>Account</sf:type>
+                        <sf:Id>001D000000HS2PPIA1</sf:Id>
+                        <sf:Id>001D000000HS2PPIA1</sf:Id>
+                        <sf:Name>MarketRemedy, Inc.</sf:Name>
+                    </records>
+                    <records xsi:type="sf:sObject">
+                        <sf:type>Account</sf:type>
+                        <sf:Id>001D000000HS2PMIA1</sf:Id>
+                        <sf:Id>001D000000HS2PMIA1</sf:Id>
+                        <sf:Name>Forex Capital Markets Japan</sf:Name>
+                    </records>
+
+
+                    <records xsi:type="sf:sObject">
+                        <sf:type>Account</sf:type>
+                        <sf:Id>001D000000HS2PNIA1</sf:Id>
+                        <sf:Id>001D000000HS2PNIA1</sf:Id>
+                        <sf:Name>Vizrt</sf:Name>
+                    </records>
+                    <size>427</size>
+                </result>
+            </queryMoreResponse>
+        </soapenv:Body>
+    </soapenv:Envelope>

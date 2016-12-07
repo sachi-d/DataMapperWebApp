@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:urn="urn:enterprise.soap.sforce.com" xmlns:urn1="urn:sobject.enterprise.soap.sforce.com" xmlns:soapenv="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <soapenv:Header>
+            <urn:SessionHeader>
+                <urn:sessionId><b>QwWsHJyTPW.1pd0_jXlNKOSU</b></urn:sessionId>
+            </urn:SessionHeader>
+        </soapenv:Header>
+        <soapenv:Body>
+            <urn:update>
+                <urn:sObjects xsi:type="urn1:Account">
+                    <!--Zero or more repetitions:-->
+                    <urn1:fieldsToNull><b>NumberOfEmployees</b></urn1:fieldsToNull>
+                    <urn1:fieldsToNull><b>Fax</b></urn1:fieldsToNull>
+                    <urn1:Id><b>001D000000HTK3aIAH</b></urn1:Id>
+                    <!--You may enter ANY elements at this point-->
+                    <Name><b>Acme Rocket Supply, Inc.</b></Name>
+                </urn:sObjects>
+            </urn:update>
+        </soapenv:Body>
+    </soapenv:Envelope>

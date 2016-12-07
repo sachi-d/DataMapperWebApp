@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:soapenv="urn:enterprise.soap.sforce.com">
+        <soapenv:Body>
+            <undeleteResponse>
+                <result>
+                    <id>001D000000HRzTRIA1</id>
+                    <success>true</success>
+                </result>
+                <result>
+                    <id>001D000000HS2OgIAL</id>
+                    <success>true</success>
+                </result>
+            </undeleteResponse>
+        </soapenv:Body>
+    </soapenv:Envelope>

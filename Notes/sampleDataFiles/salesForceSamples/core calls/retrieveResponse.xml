@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:sf="urn:enterprise.soap.sforce.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:soapenv="http://www.w3.org/2001/XMLSchema-instance">
+        <soapenv:Body>
+            <retrieveResponse>
+                <result xsi:type="sf:sObject">
+                    <sf:type>Account</sf:type>
+                    <sf:Id>001D000000HS2SuIAL</sf:Id>
+                    <sf:Id>001D000000HS2SuIAL</sf:Id>
+                    <sf:Name>Acme</sf:Name>
+                    <sf:Website><a rel="nofollow" class="external free" href="http://www.acme.com/">http://www.acme.com/</a></sf:Website>
+                </result>
+                <result xsi:type="sf:sObject">
+                    <sf:type>Account</sf:type>
+                    <sf:Id>001D000000HRzKDIA1</sf:Id>
+                    <sf:Id>001D000000HRzKDIA1</sf:Id>
+                    <sf:Name>Acme Rocket Supply, Inc.</sf:Name>
+                    <sf:Website xsi:nil="true" />
+                </result>
+            </retrieveResponse>
+        </soapenv:Body>
+    </soapenv:Envelope>

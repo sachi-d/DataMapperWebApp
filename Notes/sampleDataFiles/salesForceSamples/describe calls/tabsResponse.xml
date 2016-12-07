@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:soapenv="urn:partner.soap.sforce.com" xmlns="urn:enterprise.soap.sforce.com">
+        <soapenv:Body>
+            <describeTabsResponse>
+                <result>
+                    <label>Sales</label>
+                    <logoUrl><a rel="nofollow" class="external free" href="https://na1.salesforce.com/img/sfa_logo_sp07.gif">https://na1.salesforce.com/img/sfa_logo_sp07.gif</a></logoUrl>
+                    <selected>true</selected>
+                    <tabs>
+                        <custom>false</custom>
+                        <iconUrl><a rel="nofollow" class="external free" href="https://na1.salesforce.com/img/icon/home32.png">https://na1.salesforce.com/img/icon/home32.png</a></iconUrl>
+                        <label>Home</label>
+                        <miniIconUrl><a rel="nofollow" class="external free" href="https://na1.salesforce.com/img/icon/home16.png">https://na1.salesforce.com/img/icon/home16.png</a></miniIconUrl>
+                        <sobjectName />
+                        <url><a rel="nofollow" class="external free" href="https://na1.salesforce.com/home/home.jsp">https://na1.salesforce.com/home/home.jsp</a></url>
+                    </tabs>
+                    <tabs>
+                        <custom>false</custom>
+                        <iconUrl><a rel="nofollow" class="external free" href="https://na1.salesforce.com/img/icon/leads32.png">https://na1.salesforce.com/img/icon/leads32.png</a></iconUrl>
+                        <label>Leads</label>
+                        <miniIconUrl><a rel="nofollow" class="external free" href="https://na1.salesforce.com/img/icon/leads16.png">https://na1.salesforce.com/img/icon/leads16.png</a></miniIconUrl>
+                        <sobjectName>Lead</sobjectName>
+                        <url><a rel="nofollow" class="external free" href="https://na1.salesforce.com/00Q/o">https://na1.salesforce.com/00Q/o</a></url>
+                    </tabs>
+                </result>
+                <result>
+                    <label>Service and Support</label>
+                    <logoUrl><a rel="nofollow" class="external free" href="https://na1.salesforce.com/img/service_support_logo_sp07.gif">https://na1.salesforce.com/img/service_support_logo_sp07.gif</a></logoUrl>
+                    <selected>false</selected>
+                    <tabs> ... </tabs>
+
+                </result>
+
+            </describeTabsResponse>
+        </soapenv:Body>
+    </soapenv:Envelope>

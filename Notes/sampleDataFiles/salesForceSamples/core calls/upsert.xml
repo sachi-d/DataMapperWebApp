@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:urn="urn:enterprise.soap.sforce.com" xmlns:urn1="urn:sobject.enterprise.soap.sforce.com" xmlns:soapenv="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <soapenv:Header>
+            <urn:SessionHeader>
+                <urn:sessionId><b>QwWsHJyTPW.1pd0_jXlNKOSU</b></urn:sessionId>
+            </urn:SessionHeader>
+        </soapenv:Header>
+        <soapenv:Body>
+            <urn:upsert>
+                <!--Custom Field defined in Setup as the External ID-->
+                <urn:externalIDFieldName><b>External_Id__c</b></urn:externalIDFieldName>
+                <urn:sObjects xsi:type="Account">
+                    <!--Zero or more repetitions:-->
+                    <b><!--Existing Id, this record will be updated--></b>
+                    <External_Id__c><b>ars1</b></External_Id__c>
+                    <Name><b>Acme Rocket Superstore</b></Name>
+                    <b><!--You may enter ANY elements at this point--></b>
+                    <NumberOfEmployees><b>340</b></NumberOfEmployees>
+                </urn:sObjects>
+                <urn:sObjects xsi:type="Account">
+                    <b><!--New External Id, this record will be created (ensure required fields are present)--></b>
+                    <External_Id__c><b>ams1</b></External_Id__c>
+                    <Name><b>Acme Medical Supplies</b></Name>
+                    <NumberOfEmployees><b>17</b></NumberOfEmployees>
+                </urn:sObjects>
+            </urn:upsert>
+        </soapenv:Body>
+    </soapenv:Envelope>

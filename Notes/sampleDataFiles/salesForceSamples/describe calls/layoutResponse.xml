@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:soapenv="urn:enterprise.soap.sforce.com">
+        <soapenv:Body>
+            <describeLayoutResponse>
+                <result>
+                    <layouts>
+                        <detailLayoutSections> ... </detailLayoutSections>
+
+                        <editLayoutSections> ... </editLayoutSections>
+
+                        <id>00hD00000017vKgIAI</id>
+                        <relatedLists> ... </relatedLists>
+
+                    </layouts>
+                    <recordTypeMappings>
+                        <available>true</available>
+                        <defaultRecordTypeMapping>true</defaultRecordTypeMapping>
+                        <layoutId>00hD00000017vKgIAI</layoutId>
+                        <name>Master</name>
+                        <picklistsForRecordType> ... </picklistsForRecordType>
+
+                        <recordTypeId>012000000000000AAA</recordTypeId>
+                    </recordTypeMappings>
+                    <recordTypeSelectorRequired>false</recordTypeSelectorRequired>
+                </result>
+            </describeLayoutResponse>
+        </soapenv:Body>
+    </soapenv:Envelope>

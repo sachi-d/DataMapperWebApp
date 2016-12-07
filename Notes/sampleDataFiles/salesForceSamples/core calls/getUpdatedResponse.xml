@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:soapenv=" http://schemas.xmlsoap.org/soap/envelope/ " xmlns="urn:enterprise.soap.sforce.com">
+        <soapenv:Body>
+            <getUpdatedResponse>
+                <result>
+                    <ids>001D000000HRzKDIA1</ids>
+                    <latestDateCovered>2007-05-15T23:48:00.000Z</latestDateCovered>
+                </result>
+            </getUpdatedResponse>
+        </soapenv:Body>
+    </soapenv:Envelope>

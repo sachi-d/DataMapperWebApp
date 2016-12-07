@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:sf="urn:enterprise.soap.sforce.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <soapenv:Body>
+            <queryAllResponse>
+                <result xsi:type="QueryResult">
+                    <done>true</done>
+                    <queryLocator xsi:nil="true" />
+                    <records xsi:type="sf:sObject">
+                        <sf:type>Account</sf:type>
+                        <sf:Id>001D000000HRzTRIA1</sf:Id>
+                        <sf:Id>001D000000HRzTRIA1</sf:Id>
+                        <sf:Name>Acme Rocket Co.</sf:Name>
+                        <sf:IsDeleted>true</sf:IsDeleted>
+                    </records>
+                    <records xsi:type="sf:sObject">
+                        <sf:type>Account</sf:type>
+                        <sf:Id>001D000000HRzKDIA1</sf:Id>
+                        <sf:Id>001D000000HRzKDIA1</sf:Id>
+                        <sf:Name>Acme Rocket Superstore</sf:Name>
+                        <sf:IsDeleted>false</sf:IsDeleted>
+                    </records>
+                    <records xsi:type="sf:sObject">
+                        <sf:type>Account</sf:type>
+                        <sf:Id>001D000000HS2SuIAL</sf:Id>
+                        <sf:Id>001D000000HS2SuIAL</sf:Id>
+                        <sf:Name>Acme</sf:Name>
+                        <sf:IsDeleted>false</sf:IsDeleted>
+                    </records>
+                    <records xsi:type="sf:sObject">
+                        <sf:type>Account</sf:type>
+                        <sf:Id>001D000000HSDQZIA5</sf:Id>
+                        <sf:Id>001D000000HSDQZIA5</sf:Id>
+                        <sf:Name>Acme Medical Supplies</sf:Name>
+                        <sf:IsDeleted>true</sf:IsDeleted>
+                    </records>
+                    <size>4</size>
+                </result>
+            </queryAllResponse>
+        </soapenv:Body>
+    </soapenv:Envelope>

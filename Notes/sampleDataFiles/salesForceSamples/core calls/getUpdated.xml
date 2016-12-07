@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <soapenv:Envelope xmlns:soapenv=" http://schemas.xmlsoap.org/soap/envelope/ " xmlns:urn="urn:enterprise.soap.sforce.com">
+        <soapenv:Header>
+            <urn:SessionHeader>
+                <urn:sessionId><b>QwWsHJyTPW.1pd0_jXlNKOSU</b></urn:sessionId>
+            </urn:SessionHeader>
+        </soapenv:Header>
+        <soapenv:Body>
+            <urn:getUpdated>
+                <urn:sObjectType><b>Account</b></urn:sObjectType>
+                <urn:startDate><b>2007-05-29T02:37:12.1230000-08:00</b></urn:startDate>
+                <urn:endDate><b>2007-05-29T23:00:00Z</b></urn:endDate>
+            </urn:getUpdated>
+        </soapenv:Body>
+    </soapenv:Envelope>
