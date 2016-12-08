@@ -105,31 +105,31 @@ var Schemify = {
             var attributes = rootNode.attributes;
             var title = rootNode.tagName;
 
-            var isArray = false;
+            //check if there is xsi:type... and add attributes
+            var myAttributes = {};
+            if (attributes.length > 0) {
+                for (var j = 0; j < attributes.length; j++) {
+                    var attr = attributes[j];
+                    if (!attr.name.includes("xmlns")) {
 
-            //check if array
-            //            for (var jj = 0; jj < rootNode.parentElement.children.length;jj++) {
-            //                var childSib = rootNode.parentElement.children[jj];
-            //                if (childSib.isSameNode(rootNode)) {
-            //                    console.log("same node");
-            //                    continue;
-            //                } else {
-            //                    if (childSib.tagName === title) {
-            //                        if (childSib.attributes.length === rootNode.attributes.length) {
-            //                            isArray = true;
-            //                            for (var jk = 0; jk < childSib.attributes.length; jk++) {
-            //                                if (childSib.attributes[jk].name === namespace + ":type") {
-            //                                    isArray = false;
-            //                                    break;
-            //                                }
-            //                            }
-            //                        } else {
-            //                            isArray = false;
-            //                        }
-            //                    }
-            //                }
-            //            } 
-            if (parent[title]) { //if array
+                        //if there is (xsi:type) add the value to title
+                        if (attr.name === namespace + ":type") {
+                            title = title + ":" + attr.value;
+                        } //else {
+                        myAttributes[attr.name] = {
+                                "type": self.getType(attr.textContent)
+                            }
+                            //                        }
+                    }
+
+                }
+            }
+
+
+            var isArray = parent[title] ? true : false;
+
+
+            if (isArray) { //if array
                 parent[title]["type"] = "array";
                 if (parent[title]["properties"]) {
                     parent[title]["items"] = {
@@ -139,13 +139,7 @@ var Schemify = {
 
                     delete parent[title]["properties"];
                 }
-                //                var temp = parent[title];
-                //                console.log(temp);
-                //                parent[title] = {
-                //                    "type": "array",
-                //                    "items": {}
-                //                };
-                //                console.log(temp);
+
                 return;
             } else {
                 parent[title] = {
@@ -172,18 +166,7 @@ var Schemify = {
 
                 //add attributes
                 if (attributes.length !== 0) {
-                    var obj = {};
-                    for (var j = 0; j < attributes.length; j++) {
-                        var attr = attributes[j];
-
-                        if (!attr.name.includes("xmlns")) {
-                            obj[attr.name] = {
-                                "type": self.getType(attr.textContent)
-                            }
-                        }
-
-                    }
-                    parent[title]["attributes"] = obj;
+                    parent[title]["attributes"] = myAttributes;
                 }
             }
         }

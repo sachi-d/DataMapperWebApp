@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:enterprise.soap.sforce.com" xmlns:urn1="urn:sobject.enterprise.soap.sforce.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:enterprise.soap.sforce.com" xmlns:urn1="urn:sobject.enterprise.soap.sforce.com" xmlns:ddd="http://www.w3.org/2001/XMLSchema-instance">
         <soapenv:Header>
             <urn:SessionHeader>
                 <urn:sessionId>QwWsHJyTPW.1pd0_jXlNKOSU</urn:sessionId>
@@ -7,14 +7,12 @@
         </soapenv:Header>
         <soapenv:Body>
             <urn:create>
-                <urn:sObjects xsi:type="urn1:Contact">
-                    <!--Zero or more repetitions:-->
-                    <!--You may enter ANY elements at this point-->
+                <urn:sObjects ddd:type="Contact">
                     <AccountId>001D000000HRzKD</AccountId>
                     <FirstName>Jane</FirstName>
                     <LastName>Doe</LastName>
                 </urn:sObjects>
-                <urn:sObjects xsi:type="urn1:Account">
+                <urn:sObjects ddd:type="ddda">
                     <Name>Acme Rockets, Inc.</Name>
                 </urn:sObjects>
             </urn:create>

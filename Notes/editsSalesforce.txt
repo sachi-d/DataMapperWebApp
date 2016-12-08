@@ -9,10 +9,6 @@ searchRessponse = xsi:type
 
 
 
-asynchronous metadata calls ------------------------------------------
-clean---
-
-
 describe calls -------------------------------------------------------
 
 SObjectResponse = update cnavas height[BUG]
