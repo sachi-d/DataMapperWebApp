@@ -1,3 +1,21 @@
+/**
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 var xmlTrial = '<?xml version= "1.0"?><catalog> <book > <author>Gambardella, Matthew</author> <title>XML Developer\'s Guide</title> <genre>Computer</genre><price>44.95</price> <publish_date>2000-10-01</publish_date> <description>An in-depth look at creating applications with XML.</description> </book>   <book >  <author>Ralls, Kim</author>  <title>Midnight Rain</title>  <genre>Fantasy</genre> <price>5.95</price> <publish_date>2000-12-16</publish_date><description>A former architect battles corporate zombies, an evil sorceress, and her own childhood to become queen of the world.</description></book></catalog>';
 
 var xsdTrial = '<?xml version="1.0"?> <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.w3schools.com" xmlns="http://www.w3schools.com" elementFormDefault="qualified"><xs:element name="note"> <xs:complexType> <xs:sequence><xs:element name="to" type="xs:string" /> <xs:element name="from" type="xs:string" />  <xs:element name="heading" type="xs:string" />     <xs:element name="body" type="xs:string" /> </xs:sequence>   </xs:complexType></xs:element></xs:schema>';

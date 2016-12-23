@@ -1,8 +1,26 @@
+/**
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 var Schemify = {
 
     initSchema: function () {
         var schema = {
-            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$schema": "http://json-schema.org/draft-04/schema#"
         };
         return schema;
     },
@@ -10,14 +28,14 @@ var Schemify = {
         var schema = this.initSchema();
         if (Object.keys(obj).length === 1) {
             var title = Object.keys(obj)[0];
-            schema["title"] = title;
+            schema.title = title;
             obj = obj[title];
         }
 
         var objType = typeof obj;
-        schema["type"] = objType;
+        schema.type = objType;
         if (objType !== "object") {
-            schema["properties"] = {};
+            schema.properties = {};
             return schema;
 
         }
@@ -27,8 +45,8 @@ var Schemify = {
         (function traverse(obj, result) {
             var keys = Object.keys(obj);
             keys.map(function (key) {
-                var subject = obj[key];
-                var type = typeof subject;
+                var subject = obj[key],
+                    type = typeof subject;
                 //if type is object or array
                 if (type === "object") {
                     //if Array
@@ -36,12 +54,12 @@ var Schemify = {
                         result[key] = {
                             "type": "array"
                         };
-                        var arrayType = typeof subject[0];
-                        var tempObject = {
-                            "items": {}
-                        };
+                        var arrayType = typeof subject[0],
+                            tempObject = {
+                                "items": {}
+                            };
                         if (arrayType !== "object") {
-                            tempObject.items["type"] = arrayType;
+                            tempObject.items.type = arrayType;
                             result[key].items = tempObject.items;
                             return true;
                         } else {
@@ -55,9 +73,7 @@ var Schemify = {
                         };
                         return traverse(subject, result[key].properties);
                     }
-                }
-                //if leaf type
-                else {
+                } else { //if leaf type
                     result[key] = {
                         "type": type
                     };
@@ -69,15 +85,15 @@ var Schemify = {
     },
 
     XMLtoJSONSchema: function (xmlText) {
-        var schema = this.initSchema();
-        var self = this;
+        var schema = this.initSchema(),
+            self = this,
 
-        //parse XML tree
-        var root = this.parseXMLTree(xmlText);
+            //parse XML tree
+            root = this.parseXMLTree(xmlText);
 
-        schema["title"] = root.tagName;
-        schema["type"] = "object";
-        schema["properties"] = {};
+        schema.title = root.tagName;
+        schema.type = "object";
+        schema.properties = {};
         var namespace = "";
         if (root.attributes.length > 0) {
             var obj = {};
@@ -94,7 +110,7 @@ var Schemify = {
                     }
                 }
             }
-            schema["attributes"] = obj;
+            schema.attributes = obj;
         }
         for (var i = 0; i < root.children.length; i++) {
             traverseXMLTree(root.children[i], schema["properties"]);
